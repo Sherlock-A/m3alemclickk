@@ -59,3 +59,4 @@ railway.json
 .env.backup
 .env.production
 .env.staging
+public/hot
