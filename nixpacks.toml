@@ -5,7 +5,7 @@ nixPkgs = ["php82", "php82Packages.composer", "php82Extensions.pdo", "php82Exten
 cmds = [
     "composer install --optimize-autoloader --no-dev --no-interaction",
     "npm ci",
-    "npm run build",
+    "node --max-old-space-size=512 node_modules/.bin/vite build",
     "mkdir -p storage/framework/views storage/framework/cache/data storage/framework/sessions storage/logs bootstrap/cache"
 ]
 
