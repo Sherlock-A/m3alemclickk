@@ -1,16 +1,19 @@
+[variables]
+VIEW_COMPILED_PATH = "/tmp/laravel-views"
+
 [phases.setup]
 nixPkgs = ["php82", "php82Packages.composer", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.openssl", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.bcmath", "php82Extensions.fileinfo", "php82Extensions.curl", "php82Extensions.zip", "nodejs_20", "nodePackages.npm"]
 
 [phases.install]
 cmds = [
+    "mkdir -p /tmp/laravel-views storage/framework/views storage/framework/cache/data storage/framework/sessions storage/logs bootstrap/cache",
     "composer install --optimize-autoloader --no-dev --no-interaction",
     "npm ci",
-    "node --max-old-space-size=512 node_modules/.bin/vite build",
-    "mkdir -p storage/framework/views storage/framework/cache/data storage/framework/sessions storage/logs bootstrap/cache"
+    "node --max-old-space-size=512 node_modules/.bin/vite build"
 ]
 
 [phases.build]
-cmds = []
+cmds = ["php artisan config:cache"]
 
 [start]
 cmd = "php artisan optimize:clear && php artisan storage:link --force && php artisan migrate --force && php artisan db:seed --force --class=CategorySeeder && php artisan db:seed --force --class=CitySeeder && php artisan db:seed --force --class=AdminSeeder && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
