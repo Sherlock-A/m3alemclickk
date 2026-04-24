@@ -1,0 +1,61 @@
+# ─── Laravel core ──────────────────────────────────────────────────────────────
+/vendor/
+/node_modules/
+/public/build/
+/public/hot/
+/public/storage/
+/storage/*.key
+/storage/framework/
+/storage/logs/
+/bootstrap/cache/
+
+# ─── Environment & secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+secrets.json
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# ─── Dependency lock files (regenerated on deploy) ────────────────────────────
+composer.lock
+package-lock.json
+yarn.lock
+
+# ─── Logs & caches ────────────────────────────────────────────────────────────
+*.log
+test.log
+.phpunit.cache/
+.phpunit.result.cache
+coverage/
+.nyc_output/
+
+# ─── Database dumps ───────────────────────────────────────────────────────────
+database/*.sql
+database/*.sqlite
+backups/
+
+# ─── IDE & OS ─────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── AI assistants ─────────────────────────────────────────────────────────────
+.claude/
+.cursor/
+.copilot/
+.codeium/
+
+# ─── Deployment artifacts ─────────────────────────────────────────────────────
+railway.json
+.railway/
+.env.backup
+.env.production
+.env.staging
