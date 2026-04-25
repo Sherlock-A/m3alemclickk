@@ -16,6 +16,30 @@ use App\Http\Controllers\Api\TrackingController;
 use App\Http\Controllers\Api\UploadController;
 use Illuminate\Support\Facades\Route;
 
+// ─── Debug (Railway diagnostics) ──────────────────────────────────────────────
+Route::get('/debug', function () {
+    try {
+        $dbOk = \Illuminate\Support\Facades\DB::connection()->getPdo() ? true : false;
+    } catch (\Throwable $e) {
+        return response()->json([
+            'db'    => false,
+            'error' => $e->getMessage(),
+            'driver'=> config('database.default'),
+        ]);
+    }
+    return response()->json([
+        'db'            => $dbOk,
+        'driver'        => config('database.default'),
+        'users'         => \App\Models\User::count(),
+        'professionals' => \App\Models\Professional::count(),
+        'categories'    => \App\Models\Category::count(),
+        'cities'        => \App\Models\City::count(),
+        'admin_exists'  => \App\Models\User::where('role', 'admin')->exists(),
+        'jwt_secret'    => strlen(config('jwt.secret')) > 0 ? 'SET ('.strlen(config('jwt.secret')).' chars)' : 'MISSING',
+        'app_key'       => strlen(config('app.key')) > 0 ? 'SET' : 'MISSING',
+    ]);
+});
+
 // ─── Auth mock (legacy, à conserver) ──────────────────────────────────────────
 Route::post('/auth/mock-login', [AuthController::class, 'mockLogin'])->middleware('throttle:30,1');
 
