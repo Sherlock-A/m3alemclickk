@@ -16,8 +16,8 @@ use App\Http\Controllers\Api\TrackingController;
 use App\Http\Controllers\Api\UploadController;
 use Illuminate\Support\Facades\Route;
 
-// ─── Debug (Railway diagnostics) ──────────────────────────────────────────────
-Route::get('/debug', function () {
+// ─── Debug (Railway diagnostics — admin only) ─────────────────────────────────
+Route::middleware('jwt:admin')->get('/debug', function () {
     try {
         $dbOk = \Illuminate\Support\Facades\DB::connection()->getPdo() ? true : false;
     } catch (\Throwable $e) {
@@ -35,9 +35,8 @@ Route::get('/debug', function () {
         'categories'    => \App\Models\Category::count(),
         'cities'        => \App\Models\City::count(),
         'admin_exists'  => \App\Models\User::where('role', 'admin')->exists(),
-        'jwt_secret'    => strlen(config('jwt.secret')) > 0 ? 'SET ('.strlen(config('jwt.secret')).' chars)' : 'MISSING',
+        'jwt_secret'    => strlen(config('jwt.secret')) > 0 ? 'SET' : 'MISSING',
         'app_key'       => strlen(config('app.key')) > 0 ? 'SET' : 'MISSING',
-        'db_path'       => config('database.connections.sqlite.database'),
     ]);
 });
 

@@ -23,16 +23,16 @@ class TrackingController extends Controller
 
         $data = $request->validate([
             'professional_id' => ['required', 'exists:professionals,id'],
-            'type' => ['required', 'in:view,whatsapp,call'],
+            'type' => ['required', 'in:view,whatsapp_click,call'],
             'meta' => ['nullable', 'array'],
         ]);
 
         $professional = Professional::findOrFail($data['professional_id']);
 
         match ($data['type']) {
-            'view' => $professional->increment('views'),
-            'whatsapp' => $professional->increment('whatsapp_clicks'),
-            'call' => $professional->increment('calls'),
+            'view'          => $professional->increment('views'),
+            'whatsapp_click'=> $professional->increment('whatsapp_clicks'),
+            'call'          => $professional->increment('calls'),
         };
 
         $tracking = Tracking::create([

@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /pro/reset-password
+Disallow: /admin/
+Allow: /
+
+Sitemap: https://m3alemclickk-production.up.railway.app/sitemap.xml

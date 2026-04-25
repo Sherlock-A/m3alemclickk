@@ -10,6 +10,7 @@ use App\Models\Tracking;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
@@ -45,12 +46,14 @@ class AdminController extends Controller
         ]);
 
         $user->update($data);
+        Cache::flush();
 
         return response()->json(['success' => true, 'user' => $user->fresh()]);
     }
 
     public function deleteProfessional(User $user)
     {
+        abort_if($user->role !== 'professional', 403, 'Action non autorisée.');
         $user->delete();
         return response()->json(['success' => true]);
     }
@@ -71,12 +74,31 @@ class AdminController extends Controller
     public function approveReview(Review $review)
     {
         $review->update(['approved' => true]);
+
+        // Recalculate professional average rating
+        $avg = Review::where('professional_id', $review->professional_id)
+            ->where('approved', true)
+            ->avg('rating');
+
+        Professional::where('id', $review->professional_id)
+            ->update(['rating' => round($avg, 2)]);
+
         return response()->json(['success' => true]);
     }
 
     public function deleteReview(Review $review)
     {
+        $proId = $review->professional_id;
         $review->delete();
+
+        // Recalculate rating after deletion
+        $avg = Review::where('professional_id', $proId)
+            ->where('approved', true)
+            ->avg('rating');
+
+        Professional::where('id', $proId)
+            ->update(['rating' => $avg ? round($avg, 2) : 0]);
+
         return response()->json(['success' => true]);
     }
 
@@ -127,11 +149,16 @@ class AdminController extends Controller
             ->take(8)
             ->get();
 
-        // Totaux période
+        // Totaux période — single aggregated query
+        $totalsRaw = Tracking::where('created_at', '>=', $from)
+            ->selectRaw("type, count(*) as total")
+            ->groupBy('type')
+            ->pluck('total', 'type');
+
         $totals = [
-            'views'    => Tracking::where('created_at', '>=', $from)->where('type', 'view')->count(),
-            'whatsapp' => Tracking::where('created_at', '>=', $from)->where('type', 'whatsapp_click')->count(),
-            'calls'    => Tracking::where('created_at', '>=', $from)->where('type', 'call')->count(),
+            'views'    => $totalsRaw['view']          ?? 0,
+            'whatsapp' => $totalsRaw['whatsapp_click'] ?? 0,
+            'calls'    => $totalsRaw['call']           ?? 0,
         ];
 
         return response()->json(compact('daily', 'topPros', 'topCategories', 'topCities', 'totals'));

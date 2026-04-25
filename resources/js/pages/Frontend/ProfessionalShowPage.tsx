@@ -63,7 +63,7 @@ export default function ProfessionalShowPage({ professional }: Props) {
     setIsFav(next.includes(professional.id));
   };
 
-  const track = async (type: 'whatsapp' | 'call') => {
+  const track = async (type: 'whatsapp_click' | 'call') => {
     await axios.post('/api/track', {
       professional_id: professional.id,
       type,
@@ -201,7 +201,7 @@ export default function ProfessionalShowPage({ professional }: Props) {
                 <div className="flex flex-wrap gap-3">
                   <a
                     href={`/api/whatsapp/${professional.id}`}
-                    onClick={() => track('whatsapp')}
+                    onClick={() => track('whatsapp_click')}
                     className="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition-colors shadow-md"
                   >
                     <MessageCircle className="h-4 w-4" /> Contacter sur WhatsApp
@@ -409,7 +409,7 @@ export default function ProfessionalShowPage({ professional }: Props) {
                 <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold mb-3">✅ Disponible maintenant</p>
                 <a
                   href={`/api/whatsapp/${professional.id}`}
-                  onClick={() => track('whatsapp')}
+                  onClick={() => track('whatsapp_click')}
                   className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white py-3 text-sm font-bold transition-colors shadow-md w-full"
                 >
                   <MessageCircle className="h-4 w-4" /> Contacter maintenant

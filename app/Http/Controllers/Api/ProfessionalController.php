@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Professional;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ProfessionalController extends Controller
 {
@@ -42,10 +43,10 @@ class ProfessionalController extends Controller
             $query->where('rating', '>=', (float) $request->input('rating_min'));
         }
 
-        // Language filter — JSON_CONTAINS handles Unicode-escaped JSON correctly
+        // Language filter — LIKE used for SQLite/MySQL compatibility
         if ($request->filled('language')) {
-            $lang = $request->string('language')->toString();
-            $query->whereRaw('JSON_CONTAINS(languages, JSON_QUOTE(?))', [$lang]);
+            $lang = mb_strtolower($request->string('language')->toString(), 'UTF-8');
+            $query->whereRaw('LOWER(languages) LIKE ?', ['%'.$lang.'%']);
         }
 
         $sort = $request->string('sort')->toString() ?: 'latest';
@@ -55,6 +56,17 @@ class ProfessionalController extends Controller
             default   => $query->latest(),
         };
 
-        return response()->json($query->paginate((int) $request->input('per_page', 12)));
+        $hasFilters = $request->hasAny(['city', 'profession', 'status', 'search', 'language', 'rating_min', 'sort']);
+        $perPage    = (int) $request->input('per_page', 12);
+        $page       = (int) $request->input('page', 1);
+
+        if ($hasFilters) {
+            return response()->json($query->paginate($perPage));
+        }
+
+        $cacheKey = "pros_p{$page}_pp{$perPage}";
+        return response()->json(
+            Cache::remember($cacheKey, 60, fn () => $query->paginate($perPage))
+        );
     }
 }

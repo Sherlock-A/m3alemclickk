@@ -7,6 +7,7 @@ use App\Models\Professional;
 use App\Models\Review;
 use App\Models\Tracking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -75,6 +76,7 @@ class DashboardController extends Controller
         ]);
 
         $professional->update($data);
+        Cache::flush();
 
         return response()->json([
             'success'      => true,

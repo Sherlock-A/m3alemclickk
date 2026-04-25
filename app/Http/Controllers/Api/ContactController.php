@@ -16,7 +16,7 @@ class ContactController extends Controller
 
         Tracking::create([
             'professional_id' => $professional->id,
-            'type' => 'whatsapp',
+            'type' => 'whatsapp_click',
             'ip' => $request->ip(),
             'city' => $request->attributes->get('geo.city', 'Casablanca'),
             'meta' => ['source' => 'redirect'],

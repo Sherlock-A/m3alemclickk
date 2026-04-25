@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->api(prepend: [
             SetLocaleAndGeo::class,
+            SecurityHeaders::class,
         ]);
 
         $middleware->alias([
