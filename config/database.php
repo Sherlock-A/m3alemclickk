@@ -3,14 +3,13 @@
 use Illuminate\Support\Str;
 
 return [
-    // Railway MySQL plugin injects MYSQLHOST — auto-detect and use mysql if present
-    'default' => env('DB_CONNECTION', env('MYSQLHOST') ? 'mysql' : 'sqlite'),
+    'default' => env('DB_CONNECTION', 'sqlite'),
 
     'connections' => [
         'sqlite' => [
             'driver'                  => 'sqlite',
             'url'                     => env('DB_URL'),
-            'database'                => env('DB_DATABASE', '/tmp/m3allem.sqlite'),
+            'database'                => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix'                  => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
