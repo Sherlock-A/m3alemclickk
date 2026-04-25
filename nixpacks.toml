@@ -1,5 +1,7 @@
 [variables]
 VIEW_COMPILED_PATH = "/tmp/laravel-views"
+DB_CONNECTION = "sqlite"
+DB_DATABASE = "/tmp/database.sqlite"
 JWT_SECRET = "560UT27Gv5UXwlAv8L6FsXyjvMU+Scex9XAtSEP6H6WT/JDj/zDmytANwculIGy+d6d0c1iZToVQf2lyM/6/ew=="
 
 [phases.setup]
@@ -17,4 +19,4 @@ cmds = [
 cmds = ["php artisan config:cache"]
 
 [start]
-cmd = "php artisan optimize:clear; php artisan storage:link --force; touch database/database.sqlite; php artisan migrate:fresh --force; php artisan db:seed --force; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+cmd = "php artisan optimize:clear; php artisan storage:link --force; touch /tmp/database.sqlite; php artisan migrate:fresh --force; php artisan db:seed --force; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
