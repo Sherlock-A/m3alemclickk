@@ -10,8 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   LogOut, Wrench, Eye, Phone, MessageCircle, Save,
   ToggleLeft, ToggleRight, LayoutDashboard, User, BarChart3,
-  ExternalLink, Copy, Star, CheckCircle, XCircle, AlertCircle,
-  X, Loader2, TrendingUp, Camera, Upload, Trash2,
+  ExternalLink, Copy, Star, CheckCircle, AlertCircle,
+  X, Loader2, TrendingUp, Camera, Upload, Trash2, MapPin, Trophy, Zap,
 } from 'lucide-react';
 import { SentimentDashboard } from '../../components/SentimentDashboard';
 import { QRCodeCard } from '../../components/QRCodeCard';
@@ -273,11 +273,49 @@ function PortfolioUploadButton({
 }
 
 // ── Main ───────────────────────────────────────────────────────────────────────
+// ── Gamification helpers ───────────────────────────────────────────────────────
+const LEVELS = [
+  { name: 'Bronze',  emoji: '🥉', color: '#cd7f32', bg: '#fdf6ee', min: 0,    max: 99   },
+  { name: 'Argent',  emoji: '🥈', color: '#9ca3af', bg: '#f8fafc', min: 100,  max: 299  },
+  { name: 'Or',      emoji: '🥇', color: '#d97706', bg: '#fffbeb', min: 300,  max: 599  },
+  { name: 'Platine', emoji: '💜', color: '#7c3aed', bg: '#f5f3ff', min: 600,  max: 999  },
+  { name: 'Diamant', emoji: '💎', color: '#0ea5e9', bg: '#f0f9ff', min: 1000, max: Infinity },
+];
+
+function computeXP(pro: any, reviews: any[], completion: number) {
+  let xp = 0;
+  xp += Math.min(pro?.views ?? 0, 300);
+  xp += (pro?.whatsapp_clicks ?? 0) * 5;
+  xp += (pro?.calls ?? 0) * 5;
+  xp += reviews.filter((r: any) => r.approved).length * 20;
+  if ((pro?.rating ?? 0) >= 4.5) xp += 50;
+  xp += Math.floor(completion);
+  xp += (pro?.completed_missions ?? 0) * 10;
+  return xp;
+}
+
+function getLevel(xp: number) {
+  return LEVELS.slice().reverse().find((l) => xp >= l.min) ?? LEVELS[0];
+}
+
+const ACHIEVEMENTS = [
+  { id: 'first_view',    icon: '👀', label: 'Premier regard',    desc: '1ère vue de profil',       check: (p: any) => (p?.views ?? 0) >= 1 },
+  { id: 'popular',       icon: '🔥', label: 'Pro populaire',     desc: '50+ vues',                 check: (p: any) => (p?.views ?? 0) >= 50 },
+  { id: 'first_contact', icon: '📞', label: 'Premier contact',   desc: 'Premier appel reçu',       check: (p: any) => (p?.calls ?? 0) >= 1 },
+  { id: 'whatsapp_pro',  icon: '💬', label: 'WhatsApp Pro',      desc: '10+ clics WhatsApp',       check: (p: any) => (p?.whatsapp_clicks ?? 0) >= 10 },
+  { id: 'first_review',  icon: '⭐', label: 'Premier avis',      desc: 'Reçu 1 avis approuvé',    check: (_: any, r: any[]) => r.filter((x: any) => x.approved).length >= 1 },
+  { id: 'five_reviews',  icon: '🌟', label: 'Expert reconnu',    desc: '5+ avis approuvés',        check: (_: any, r: any[]) => r.filter((x: any) => x.approved).length >= 5 },
+  { id: 'top_rated',     icon: '🏆', label: 'Top noté',          desc: 'Note ≥ 4.5',               check: (p: any) => (p?.rating ?? 0) >= 4.5 },
+  { id: 'complete',      icon: '✅', label: 'Profil complet',    desc: 'Complétion 100%',          check: (_: any, __: any[], c: number) => c >= 100 },
+  { id: 'missions',      icon: '🎖️', label: 'Vétéran',           desc: '20+ missions',             check: (p: any) => (p?.completed_missions ?? 0) >= 20 },
+  { id: 'verified',      icon: '🛡️', label: 'Certifié M3allem',  desc: 'Compte vérifié par admin', check: (p: any) => !!p?.verified },
+];
+
 export default function ProfessionalDashboardPage() {
   const [token] = useState<string | null>(() => localStorage.getItem('pro_token'));
   const [data, setData]       = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState(false);
+  const [retries, setRetries] = useState(0);
   const [tab, setTab]         = useState<Tab>('overview');
   const [saving, setSaving]   = useState(false);
   const [saved, setSaved]     = useState(false);
@@ -300,6 +338,7 @@ export default function ProfessionalDashboardPage() {
   useEffect(() => {
     if (!token) { window.location.href = '/pro/login'; return; }
     const controller = new AbortController();
+    setLoading(true);
     axios
       .get('/api/dashboard/professional', {
         headers: { Authorization: `Bearer ${token}` },
@@ -322,13 +361,13 @@ export default function ProfessionalDashboardPage() {
         if (status === 401 || status === 403) {
           localStorage.removeItem('pro_token');
           window.location.href = '/pro/login';
-        } else {
-          setApiError(true);
+        } else if (retries < 3) {
+          setTimeout(() => setRetries((r) => r + 1), 4000);
         }
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, []);
+  }, [retries]);
 
   const pro        = data?.professional;
   const completion = profileCompletion(pro);
@@ -457,21 +496,6 @@ export default function ProfessionalDashboardPage() {
 
       <main className="mx-auto max-w-5xl px-4 py-6 space-y-5">
 
-        {apiError && tab !== 'reviews' && (
-          <div className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-6 text-center space-y-3">
-            <XCircle className="h-8 w-8 text-red-400 mx-auto" />
-            <div>
-              <p className="text-sm font-semibold text-red-700 dark:text-red-300">Erreur de chargement</p>
-              <p className="text-xs text-red-500 dark:text-red-400 mt-0.5">Impossible de récupérer vos données. Vérifiez votre connexion.</p>
-            </div>
-            <button
-              onClick={() => { setApiError(false); setLoading(true); window.location.reload(); }}
-              className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-xs font-bold text-white hover:bg-red-600 transition-colors"
-            >
-              Réessayer
-            </button>
-          </div>
-        )}
 
         {/* ── OVERVIEW ──────────────────────────────────────────────────────── */}
         {tab === 'overview' && (
@@ -675,6 +699,125 @@ export default function ProfessionalDashboardPage() {
                 </div>
               );
             })()}
+
+            {/* ── Gamification ─────────────────────────────────────────── */}
+            {(() => {
+              const reviews = data?.reviews ?? [];
+              const xp = computeXP(pro, reviews, completion);
+              const level = getLevel(xp);
+              const nextLevel = LEVELS.find((l) => l.min > xp);
+              const xpToNext = nextLevel ? nextLevel.min - xp : 0;
+              const progress = nextLevel
+                ? Math.round(((xp - level.min) / (nextLevel.min - level.min)) * 100)
+                : 100;
+              const earned = ACHIEVEMENTS.filter((a) => a.check(pro, reviews, completion));
+              const locked = ACHIEVEMENTS.filter((a) => !a.check(pro, reviews, completion));
+              return (
+                <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
+                  {/* Header niveau */}
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
+                      <Trophy className="h-4 w-4 text-orange-500" /> Niveau & Récompenses
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{level.emoji}</span>
+                      <div>
+                        <p className="text-sm font-black" style={{ color: level.color }}>{level.name}</p>
+                        <p className="text-xs text-slate-400">{xp} XP</p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Barre XP */}
+                  <div>
+                    <div className="flex justify-between text-xs text-slate-400 mb-1.5">
+                      <span>{level.name}</span>
+                      {nextLevel && <span>{xpToNext} XP pour {nextLevel.name} {nextLevel.emoji}</span>}
+                    </div>
+                    <div className="h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-1000"
+                        style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${level.color}, ${nextLevel?.color ?? level.color})` }}
+                      />
+                    </div>
+                  </div>
+                  {/* Comment gagner XP */}
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-xs text-slate-500 dark:text-slate-400 space-y-1">
+                    <p className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1"><Zap className="h-3.5 w-3.5 text-orange-400" /> Comment gagner des XP</p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mt-1">
+                      <span>+1 XP par vue (max 300)</span>
+                      <span>+5 XP par clic WhatsApp</span>
+                      <span>+5 XP par appel</span>
+                      <span>+20 XP par avis approuvé</span>
+                      <span>+50 XP si note ≥ 4.5</span>
+                      <span>+10 XP par mission</span>
+                    </div>
+                  </div>
+                  {/* Récompenses débloquées */}
+                  {earned.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">🎁 Récompenses débloquées ({earned.length}/{ACHIEVEMENTS.length})</p>
+                      <div className="flex flex-wrap gap-2">
+                        {earned.map((a) => (
+                          <div key={a.id} title={a.desc}
+                            className="flex items-center gap-1.5 rounded-full bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 px-3 py-1.5 text-xs font-semibold text-orange-700 dark:text-orange-300">
+                            <span>{a.icon}</span> {a.label}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {/* À débloquer */}
+                  {locked.length > 0 && (
+                    <div>
+                      <p className="text-xs font-semibold text-slate-400 mb-2">🔒 À débloquer</p>
+                      <div className="flex flex-wrap gap-2">
+                        {locked.map((a) => (
+                          <div key={a.id} title={a.desc}
+                            className="flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs font-medium text-slate-400">
+                            🔒 {a.label}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* ── Carte localisation ───────────────────────────────────── */}
+            {pro?.main_city && (
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                <h2 className="text-sm font-black text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-orange-500" /> Ma localisation
+                </h2>
+                {pro.latitude && pro.longitude ? (
+                  <div className="rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800">
+                    <iframe
+                      title="Carte"
+                      width="100%"
+                      height="200"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${pro.longitude - 0.04},${pro.latitude - 0.04},${pro.longitude + 0.04},${pro.latitude + 0.04}&layer=mapnik&marker=${pro.latitude},${pro.longitude}`}
+                    />
+                  </div>
+                ) : (
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-4 flex items-center gap-3">
+                    <MapPin className="h-8 w-8 text-slate-300" />
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{pro.main_city}</p>
+                      <a
+                        href={`https://www.google.com/maps/search/${encodeURIComponent(pro.main_city + ', Maroc')}`}
+                        target="_blank" rel="noopener noreferrer"
+                        className="text-xs text-orange-500 hover:text-orange-600 font-medium"
+                      >
+                        Voir sur Google Maps →
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* QR Code */}
             {pro?.slug && (
@@ -954,12 +1097,36 @@ function ReviewsTab({ token }: { token: string | null }) {
         </div>
       )}
 
-      {approvedReviews.length === 0 ? (
+      {/* Avis en attente */}
+      {pendingReviews.length > 0 && (
+        <div className="rounded-2xl border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/10 p-4 space-y-3">
+          <p className="text-xs font-bold text-amber-700 dark:text-amber-300">⏳ {pendingReviews.length} avis en attente d'approbation par l'administrateur</p>
+          {pendingReviews.map((review) => (
+            <div key={review.id} className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-amber-100 dark:border-amber-800/40 opacity-75">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="h-7 w-7 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-xs font-bold text-amber-600">
+                  {review.client_name?.[0]?.toUpperCase()}
+                </div>
+                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{review.client_name}</span>
+                <div className="flex gap-0.5">
+                  {[1,2,3,4,5].map((s) => (
+                    <Star key={s} className={`h-3 w-3 ${s <= review.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
+                  ))}
+                </div>
+              </div>
+              {review.comment && <p className="text-xs text-slate-500 dark:text-slate-400">{review.comment}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {approvedReviews.length === 0 && pendingReviews.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 py-12 text-center">
           <Star className="h-8 w-8 mx-auto mb-3 text-slate-200 dark:text-slate-700" />
-          <p className="text-sm text-slate-500">Aucun avis approuvé pour le moment.</p>
+          <p className="text-sm text-slate-500">Aucun avis pour le moment.</p>
+          <p className="text-xs text-slate-400 mt-1">Les clients peuvent laisser un avis depuis votre profil public.</p>
         </div>
-      ) : (
+      ) : approvedReviews.length > 0 ? (
         <div className="space-y-4">
           {approvedReviews.map((review) => (
             <div key={review.id} className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-3">
@@ -977,15 +1144,15 @@ function ReviewsTab({ token }: { token: string | null }) {
                     </div>
                   </div>
                 </div>
+                <span className="text-xs text-green-600 dark:text-green-400 font-semibold bg-green-50 dark:bg-green-900/20 rounded-full px-2 py-0.5">✓ Approuvé</span>
               </div>
-
               {review.comment && (
                 <p className="text-sm text-slate-600 dark:text-slate-400">{review.comment}</p>
               )}
             </div>
           ))}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
