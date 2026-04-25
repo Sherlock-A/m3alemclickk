@@ -17,19 +17,19 @@ use App\Http\Controllers\Api\UploadController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Auth mock (legacy, à conserver) ──────────────────────────────────────────
-Route::post('/auth/mock-login', [AuthController::class, 'mockLogin'])->middleware('throttle:5,1');
+Route::post('/auth/mock-login', [AuthController::class, 'mockLogin'])->middleware('throttle:30,1');
 
 // ─── Auth Admin ────────────────────────────────────────────────────────────────
-Route::post('/admin/login',       [AuthController::class, 'adminLogin'])->middleware('throttle:5,1');
-Route::post('/admin/check-email', [AuthController::class, 'checkEmail'])->middleware('throttle:10,1');
+Route::post('/admin/login',       [AuthController::class, 'adminLogin'])->middleware('throttle:30,1');
+Route::post('/admin/check-email', [AuthController::class, 'checkEmail'])->middleware('throttle:60,1');
 
 // ─── Auth Professionnels (réelle) ─────────────────────────────────────────────
 Route::prefix('pro')->group(function () {
-    Route::post('/register',       [ProAuthController::class, 'register'])->middleware('throttle:5,1');
-    Route::post('/login',          [ProAuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/register',       [ProAuthController::class, 'register'])->middleware('throttle:30,1');
+    Route::post('/login',          [ProAuthController::class, 'login'])->middleware('throttle:30,1');
     Route::post('/logout',         [ProAuthController::class, 'logout']);
-    Route::post('/forgot-password',[ProAuthController::class, 'forgotPassword'])->middleware('throttle:3,1');
-    Route::post('/reset-password', [ProAuthController::class, 'resetPassword'])->middleware('throttle:5,1');
+    Route::post('/forgot-password',[ProAuthController::class, 'forgotPassword'])->middleware('throttle:20,1');
+    Route::post('/reset-password', [ProAuthController::class, 'resetPassword'])->middleware('throttle:30,1');
 
     Route::middleware('jwt:professional')->group(function () {
         Route::get('/me', [ProAuthController::class, 'me']);
@@ -38,11 +38,11 @@ Route::prefix('pro')->group(function () {
 
 // ─── Auth Clients (chercheurs d'artisans) ─────────────────────────────────────
 Route::prefix('client')->group(function () {
-    Route::post('/register',        [ClientAuthController::class, 'register'])->middleware('throttle:5,1');
-    Route::post('/login',           [ClientAuthController::class, 'login'])->middleware('throttle:5,1');
+    Route::post('/register',        [ClientAuthController::class, 'register'])->middleware('throttle:30,1');
+    Route::post('/login',           [ClientAuthController::class, 'login'])->middleware('throttle:30,1');
     Route::post('/logout',          [ClientAuthController::class, 'logout']);
-    Route::post('/forgot-password', [ClientAuthController::class, 'forgotPassword'])->middleware('throttle:3,1');
-    Route::post('/reset-password',  [ClientAuthController::class, 'resetPassword'])->middleware('throttle:5,1');
+    Route::post('/forgot-password', [ClientAuthController::class, 'forgotPassword'])->middleware('throttle:20,1');
+    Route::post('/reset-password',  [ClientAuthController::class, 'resetPassword'])->middleware('throttle:30,1');
 
     Route::middleware('jwt:client')->group(function () {
         Route::get('/me', [ClientAuthController::class, 'me']);
@@ -58,7 +58,7 @@ Route::get('/whatsapp/{id}', [ContactController::class, 'whatsapp']);
 Route::get('/call/{id}',     [ContactController::class, 'call']);
 Route::get('/favorites',     [FavoriteController::class, 'index']);
 Route::post('/favorites/sync',[FavoriteController::class, 'sync']);
-Route::post('/reviews',      [ReviewController::class, 'store'])->middleware('throttle:5,1');
+Route::post('/reviews',      [ReviewController::class, 'store'])->middleware('throttle:30,1');
 
 // ─── Dashboard Professionnel ───────────────────────────────────────────────────
 Route::middleware('jwt:professional')->group(function () {
