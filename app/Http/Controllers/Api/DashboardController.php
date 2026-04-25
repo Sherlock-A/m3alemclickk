@@ -20,13 +20,18 @@ class DashboardController extends Controller
             return response()->json(['message' => 'Profil professionnel introuvable.'], 404);
         }
 
+        $days = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
         $weekly = Tracking::query()
-            ->selectRaw("DATE(created_at) as date, DATE_FORMAT(MIN(created_at), '%a') as day, count(*) as total")
+            ->selectRaw("DATE(created_at) as date, count(*) as total")
             ->where('professional_id', $professional->id)
             ->where('created_at', '>=', now()->subDays(7))
             ->groupBy(DB::raw("DATE(created_at)"))
             ->orderByRaw('DATE(created_at)')
-            ->get();
+            ->get()
+            ->map(function ($row) use ($days) {
+                $row->day = $days[(int) date('w', strtotime($row->date))] ?? $row->date;
+                return $row;
+            });
 
         $reviews = Review::where('professional_id', $professional->id)
             ->orderByDesc('created_at')
