@@ -10,18 +10,18 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Plomberie',          'icon' => '🔧', 'description' => 'Réparation et installation de plomberie, canalisations, robinetterie'],
-            ['name' => 'Électricité',         'icon' => '⚡', 'description' => 'Électriciens certifiés pour installations et dépannages électriques'],
-            ['name' => 'Peinture',            'icon' => '🎨', 'description' => 'Peinture intérieure et extérieure, enduit, décoration murale'],
-            ['name' => 'Climatisation',       'icon' => '❄️', 'description' => 'Installation, entretien et réparation de climatiseurs et systèmes HVAC'],
-            ['name' => 'Menuiserie',          'icon' => '🪚', 'description' => 'Fabrication et pose de meubles, portes, fenêtres en bois et aluminium'],
-            ['name' => 'Ménage & Nettoyage', 'icon' => '🧹', 'description' => 'Services de ménage, nettoyage de bureaux et domiciles'],
-            ['name' => 'Maçonnerie',          'icon' => '🧱', 'description' => 'Travaux de maçonnerie, carrelage, revêtement de sol'],
-            ['name' => 'Serrurerie',          'icon' => '🔑', 'description' => 'Installation et dépannage de serrures, portes blindées'],
-            ['name' => 'Jardinage',           'icon' => '🌿', 'description' => 'Entretien de jardins, taille, arrosage automatique'],
-            ['name' => 'Informatique',        'icon' => '💻', 'description' => 'Dépannage PC, installation logiciels, réseaux informatiques'],
-            ['name' => 'Déménagement',        'icon' => '📦', 'description' => 'Services de déménagement, transport de meubles et emballage'],
-            ['name' => 'Soudure',             'icon' => '🔩', 'description' => 'Soudure, ferronnerie, portails et grilles métalliques'],
+            ['name' => 'Plomberie',     'icon' => 'wrench',      'description' => 'Reparation et installation de plomberie, canalisations, robinetterie'],
+            ['name' => 'Electricite',   'icon' => 'bolt',        'description' => 'Electriciens certifies pour installations et depannages electriques'],
+            ['name' => 'Peinture',      'icon' => 'paint-brush', 'description' => 'Peinture interieure et exterieure, enduit, decoration murale'],
+            ['name' => 'Climatisation', 'icon' => 'wind',        'description' => 'Installation, entretien et reparation de climatiseurs et systemes HVAC'],
+            ['name' => 'Menuiserie',    'icon' => 'hammer',      'description' => 'Fabrication et pose de meubles, portes, fenetres en bois et aluminium'],
+            ['name' => 'Menage',        'icon' => 'broom',       'description' => 'Services de menage, nettoyage de bureaux et domiciles'],
+            ['name' => 'Maconnerie',    'icon' => 'building',    'description' => 'Travaux de maconnerie, carrelage, revetement de sol'],
+            ['name' => 'Serrurerie',    'icon' => 'key',         'description' => 'Installation et depannage de serrures, portes blindees'],
+            ['name' => 'Jardinage',     'icon' => 'leaf',        'description' => 'Entretien de jardins, taille, arrosage automatique'],
+            ['name' => 'Informatique',  'icon' => 'laptop',      'description' => 'Depannage PC, installation logiciels, reseaux informatiques'],
+            ['name' => 'Demenagement',  'icon' => 'truck',       'description' => 'Services de demenagement, transport de meubles et emballage'],
+            ['name' => 'Soudure',       'icon' => 'fire',        'description' => 'Soudure, ferronnerie, portails et grilles metalliques'],
         ];
 
         foreach ($categories as $index => $cat) {
