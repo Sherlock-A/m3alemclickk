@@ -110,6 +110,15 @@ function generatePDF(title: string, rows: string[][], columns: string[], subtitl
         <tbody>${tableRows}</tbody>
       </table>
     </div>
+    <div style="display:flex;justify-content:center;padding:10px 40px 0">
+      <svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" opacity="0.12">
+        <circle cx="45" cy="45" r="43" fill="none" stroke="#f97316" stroke-width="3"/>
+        <circle cx="45" cy="45" r="36" fill="none" stroke="#f97316" stroke-width="1"/>
+        <text x="45" y="38" text-anchor="middle" font-family="Arial" font-weight="900" font-size="11" fill="#f97316">M3allem</text>
+        <text x="45" y="52" text-anchor="middle" font-family="Arial" font-weight="900" font-size="11" fill="#f97316">Click</text>
+        <text x="45" y="65" text-anchor="middle" font-family="Arial" font-size="7" fill="#f97316">CERTIFIÉ OFFICIEL</text>
+      </svg>
+    </div>
     <div class="footer">
       <div class="footer-left">M3allemClick — Plateforme des artisans marocains<br>Document généré le ${date}</div>
       <div class="footer-right">Ce document est confidentiel.<br>Toute reproduction est interdite sans autorisation.</div>
@@ -836,11 +845,11 @@ function SectionAnalytics({ headers }: { headers: any }) {
             const token = localStorage.getItem('m3allemclick_token');
             const r = await fetch('/api/admin/export/professionals', { headers: { Authorization: `Bearer ${token}` } });
             const text = await r.text();
-            const lines = text.trim().split('\n').slice(1).map(l => l.split(',').map(c => c.replace(/"/g,'')));
+            const lines = text.trim().split('\n').slice(1).map(l => l.split(';').map(c => c.replace(/^"|"$/g, '')));
             generatePDF(
               'Rapport Professionnels',
               lines,
-              ['Nom', 'Profession', 'Ville', 'Telephone', 'Note', 'Verifie'],
+              ['Nom', 'Email', 'Statut', 'Métier', 'Ville', 'Téléphone', 'Inscrit le'],
               `Export complet des professionnels inscrits sur M3allemClick`
             );
           }} className="flex items-center gap-1.5 rounded-xl border border-orange-300 bg-orange-50 px-3 py-2 text-xs text-orange-700 hover:bg-orange-100 transition-colors font-semibold">

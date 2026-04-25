@@ -11,7 +11,7 @@ import {
   LogOut, Wrench, Eye, Phone, MessageCircle, Save,
   ToggleLeft, ToggleRight, LayoutDashboard, User, BarChart3,
   ExternalLink, Copy, Star, CheckCircle, XCircle, AlertCircle,
-  X, Plus, Loader2, TrendingUp, Camera, Upload, Trash2,
+  X, Loader2, TrendingUp, Camera, Upload, Trash2,
 } from 'lucide-react';
 import { SentimentDashboard } from '../../components/SentimentDashboard';
 import { QRCodeCard } from '../../components/QRCodeCard';
@@ -371,6 +371,11 @@ export default function ProfessionalDashboardPage() {
       await axios.put('/api/dashboard/professional', values, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // Re-fetch to refresh overview with new data
+      const res = await axios.get('/api/dashboard/professional', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setData(res.data);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } finally {
@@ -452,12 +457,12 @@ export default function ProfessionalDashboardPage() {
 
       <main className="mx-auto max-w-5xl px-4 py-6 space-y-5">
 
-        {apiError && (
+        {apiError && tab !== 'reviews' && (
           <div className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-6 text-center space-y-3">
             <XCircle className="h-8 w-8 text-red-400 mx-auto" />
             <div>
-              <p className="text-sm font-semibold text-red-700 dark:text-red-300">Session expirée</p>
-              <p className="text-xs text-red-500 dark:text-red-400 mt-0.5">Veuillez vous reconnecter à votre espace professionnel.</p>
+              <p className="text-sm font-semibold text-red-700 dark:text-red-300">Erreur de chargement</p>
+              <p className="text-xs text-red-500 dark:text-red-400 mt-0.5">Impossible de récupérer vos données. Vérifiez votre connexion.</p>
             </div>
             <button
               onClick={() => { setApiError(false); setLoading(true); window.location.reload(); }}
@@ -895,7 +900,7 @@ export default function ProfessionalDashboardPage() {
 
         {/* ── REVIEWS ───────────────────────────────────────────────────────── */}
         {tab === 'reviews' && (
-          <ReviewsTab token={token} proId={pro?.id} />
+          <ReviewsTab token={token} />
         )}
       </main>
     </div>
@@ -903,17 +908,17 @@ export default function ProfessionalDashboardPage() {
 }
 
 // ── Reviews tab ────────────────────────────────────────────────────────────────
-function ReviewsTab({ token, proId }: { token: string | null; proId?: number }) {
+function ReviewsTab({ token }: { token: string | null }) {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!proId || !token) { setLoading(false); return; }
+    if (!token) { setLoading(false); return; }
     axios.get('/api/dashboard/professional', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => setReviews(r.data.reviews ?? []))
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [proId, token]);
+  }, [token]);
 
   if (loading) return (
     <div className="space-y-4">
