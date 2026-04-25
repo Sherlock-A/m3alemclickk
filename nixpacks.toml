@@ -16,4 +16,4 @@ cmds = [
 cmds = ["php artisan config:cache"]
 
 [start]
-cmd = "php artisan optimize:clear && php artisan storage:link --force && php artisan migrate --force && php artisan db:seed --force --class=CategorySeeder && php artisan db:seed --force --class=CitySeeder && php artisan db:seed --force --class=AdminSeeder && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+cmd = "php artisan optimize:clear && php artisan storage:link --force && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
