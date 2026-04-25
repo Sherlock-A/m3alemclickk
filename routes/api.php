@@ -37,6 +37,7 @@ Route::get('/debug', function () {
         'admin_exists'  => \App\Models\User::where('role', 'admin')->exists(),
         'jwt_secret'    => strlen(config('jwt.secret')) > 0 ? 'SET ('.strlen(config('jwt.secret')).' chars)' : 'MISSING',
         'app_key'       => strlen(config('app.key')) > 0 ? 'SET' : 'MISSING',
+        'db_path'       => config('database.connections.sqlite.database'),
     ]);
 });
 
