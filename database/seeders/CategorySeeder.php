@@ -11,18 +11,18 @@ class CategorySeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            ['name' => 'Plomberie',     'icon' => 'wrench',      'description' => 'Reparation et installation de plomberie'],
-            ['name' => 'Electricite',   'icon' => 'bolt',        'description' => 'Electriciens certifies pour installations'],
-            ['name' => 'Peinture',      'icon' => 'paint-brush', 'description' => 'Peinture interieure et exterieure'],
-            ['name' => 'Climatisation', 'icon' => 'wind',        'description' => 'Installation et entretien de climatiseurs'],
-            ['name' => 'Menuiserie',    'icon' => 'hammer',      'description' => 'Fabrication et pose de meubles et fenetres'],
-            ['name' => 'Menage',        'icon' => 'broom',       'description' => 'Services de menage et nettoyage'],
-            ['name' => 'Maconnerie',    'icon' => 'building',    'description' => 'Travaux de maconnerie et carrelage'],
-            ['name' => 'Serrurerie',    'icon' => 'key',         'description' => 'Installation et depannage de serrures'],
-            ['name' => 'Jardinage',     'icon' => 'leaf',        'description' => 'Entretien de jardins et espaces verts'],
-            ['name' => 'Informatique',  'icon' => 'laptop',      'description' => 'Depannage PC et reseaux informatiques'],
-            ['name' => 'Demenagement',  'icon' => 'truck',       'description' => 'Services de demenagement'],
-            ['name' => 'Soudure',       'icon' => 'fire',        'description' => 'Soudure et ferronnerie'],
+            ['name' => 'Plomberie',     'icon' => "\xF0\x9F\x94\xA7", 'description' => 'Reparation et installation de plomberie'],
+            ['name' => 'Electricite',   'icon' => "\xE2\x9A\xA1",     'description' => 'Electriciens certifies pour installations'],
+            ['name' => 'Peinture',      'icon' => "\xF0\x9F\x8E\xA8", 'description' => 'Peinture interieure et exterieure'],
+            ['name' => 'Climatisation', 'icon' => "\xE2\x9D\x84\xEF\xB8\x8F", 'description' => 'Installation et entretien de climatiseurs'],
+            ['name' => 'Menuiserie',    'icon' => "\xF0\x9F\xAA\x9A", 'description' => 'Fabrication et pose de meubles et fenetres'],
+            ['name' => 'Menage',        'icon' => "\xF0\x9F\xA7\xB9", 'description' => 'Services de menage et nettoyage'],
+            ['name' => 'Maconnerie',    'icon' => "\xF0\x9F\xA7\xB1", 'description' => 'Travaux de maconnerie et carrelage'],
+            ['name' => 'Serrurerie',    'icon' => "\xF0\x9F\x94\x91", 'description' => 'Installation et depannage de serrures'],
+            ['name' => 'Jardinage',     'icon' => "\xF0\x9F\x8C\xBF", 'description' => 'Entretien de jardins et espaces verts'],
+            ['name' => 'Informatique',  'icon' => "\xF0\x9F\x92\xBB", 'description' => 'Depannage PC et reseaux informatiques'],
+            ['name' => 'Demenagement',  'icon' => "\xF0\x9F\x93\xA6", 'description' => 'Services de demenagement'],
+            ['name' => 'Soudure',       'icon' => "\xF0\x9F\x94\xA9", 'description' => 'Soudure et ferronnerie'],
         ];
 
         foreach ($categories as $i => $cat) {

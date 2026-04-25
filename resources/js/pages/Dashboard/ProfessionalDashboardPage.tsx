@@ -456,8 +456,8 @@ export default function ProfessionalDashboardPage() {
           <div className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-6 text-center space-y-3">
             <XCircle className="h-8 w-8 text-red-400 mx-auto" />
             <div>
-              <p className="text-sm font-semibold text-red-700 dark:text-red-300">Impossible de charger vos données</p>
-              <p className="text-xs text-red-500 dark:text-red-400 mt-0.5">Vérifiez votre connexion internet puis réessayez.</p>
+              <p className="text-sm font-semibold text-red-700 dark:text-red-300">Session expirée</p>
+              <p className="text-xs text-red-500 dark:text-red-400 mt-0.5">Veuillez vous reconnecter à votre espace professionnel.</p>
             </div>
             <button
               onClick={() => { setApiError(false); setLoading(true); window.location.reload(); }}

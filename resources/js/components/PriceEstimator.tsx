@@ -4,12 +4,18 @@ import { TrendingUp, ChevronDown, ChevronUp } from 'lucide-react';
 type PriceRange = { min: number; max: number; unit: string; details: string[] };
 
 const PRICE_DB: Record<string, PriceRange> = {
-  Plomberie:      { min: 150, max: 600,  unit: 'MAD/intervention', details: ['Fuite robinet: 150–250 MAD', 'Débouchage: 200–400 MAD', 'Installation: 300–600 MAD'] },
-  Électricité:    { min: 200, max: 800,  unit: 'MAD/intervention', details: ['Prise/interrupteur: 80–150 MAD', 'Tableau électrique: 400–800 MAD', 'Installation: 200–500 MAD'] },
-  Peinture:       { min: 25,  max: 80,   unit: 'MAD/m²',           details: ['Peinture intérieure: 25–50 MAD/m²', 'Peinture décorative: 50–80 MAD/m²', 'Préparation murs incluse'] },
-  Climatisation:  { min: 300, max: 1200, unit: 'MAD/intervention', details: ['Installation clim: 500–1200 MAD', 'Nettoyage/entretien: 200–350 MAD', 'Réparation: 300–600 MAD'] },
-  Menuiserie:     { min: 200, max: 1500, unit: 'MAD/pièce',        details: ['Porte bois: 300–800 MAD', 'Placard sur mesure: 800–1500 MAD', 'Réparation: 200–400 MAD'] },
-  Ménage:         { min: 80,  max: 300,  unit: 'MAD/séance',       details: ['Ménage maison: 80–150 MAD', 'Grand nettoyage: 200–350 MAD', 'Nettoyage bureau: 150–300 MAD'] },
+  Plombier:      { min: 150, max: 600,  unit: 'MAD/intervention', details: ['Fuite robinet: 150–250 MAD', 'Debouchage: 200–400 MAD', 'Installation: 300–600 MAD'] },
+  Electricien:   { min: 200, max: 800,  unit: 'MAD/intervention', details: ['Prise/interrupteur: 80–150 MAD', 'Tableau electrique: 400–800 MAD', 'Installation: 200–500 MAD'] },
+  Peintre:       { min: 25,  max: 80,   unit: 'MAD/m2',           details: ['Peinture interieure: 25–50 MAD/m2', 'Peinture decorative: 50–80 MAD/m2', 'Preparation murs incluse'] },
+  Climatisation: { min: 300, max: 1200, unit: 'MAD/intervention', details: ['Installation clim: 500–1200 MAD', 'Nettoyage/entretien: 200–350 MAD', 'Reparation: 300–600 MAD'] },
+  Menuisier:     { min: 200, max: 1500, unit: 'MAD/piece',        details: ['Porte bois: 300–800 MAD', 'Placard sur mesure: 800–1500 MAD', 'Reparation: 200–400 MAD'] },
+  Menage:        { min: 80,  max: 300,  unit: 'MAD/seance',       details: ['Menage maison: 80–150 MAD', 'Grand nettoyage: 200–350 MAD', 'Nettoyage bureau: 150–300 MAD'] },
+  Macon:         { min: 200, max: 1000, unit: 'MAD/jour',         details: ['Carrelage: 80–150 MAD/m2', 'Maconnerie: 200–400 MAD/m2', 'Enduit/crepi: 50–100 MAD/m2'] },
+  Serrurier:     { min: 150, max: 600,  unit: 'MAD/intervention', details: ['Ouverture porte: 150–300 MAD', 'Changement serrure: 200–400 MAD', 'Blindage: 400–600 MAD'] },
+  Jardinier:     { min: 100, max: 500,  unit: 'MAD/seance',       details: ['Tonte + entretien: 100–200 MAD', 'Creation jardin: 300–500 MAD', 'Arrosage auto: 400–800 MAD'] },
+  Informatique:  { min: 100, max: 400,  unit: 'MAD/intervention', details: ['Depannage PC: 100–200 MAD', 'Installation reseau: 200–400 MAD', 'Recuperation donnees: 300–500 MAD'] },
+  Demenageur:    { min: 500, max: 3000, unit: 'MAD/demenagement', details: ['Studio: 500–1000 MAD', 'Appartement F3: 1000–2000 MAD', 'Grande villa: 2000–3000 MAD'] },
+  Soudeur:       { min: 200, max: 1200, unit: 'MAD/piece',        details: ['Portail metal: 800–1500 MAD', 'Garde-corps: 400–800 MAD', 'Reparation: 200–400 MAD'] },
 };
 
 export function PriceEstimator({ profession }: { profession: string }) {

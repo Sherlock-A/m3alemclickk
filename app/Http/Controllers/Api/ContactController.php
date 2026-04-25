@@ -22,8 +22,8 @@ class ContactController extends Controller
             'meta' => ['source' => 'redirect'],
         ]);
 
-        $message = urlencode(config('app.name').' - '.env('WHATSAPP_DEFAULT_MESSAGE'));
-        return redirect()->away("https://wa.me/{$professional->phone}?text={$message}");
+        $msg = 'Salam, j\'ai trouvé votre profil sur M3allemClick et j\'aimerais vous contacter pour un devis. Merci !';
+        return redirect()->away('https://wa.me/'.preg_replace('/\D/', '', $professional->phone).'?text='.urlencode($msg));
     }
 
     public function call(Request $request, int $id)
