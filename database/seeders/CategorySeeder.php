@@ -2,38 +2,44 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
     public function run(): void
     {
         $categories = [
-            ['name' => 'Plomberie',     'icon' => 'wrench',      'description' => 'Reparation et installation de plomberie, canalisations, robinetterie'],
-            ['name' => 'Electricite',   'icon' => 'bolt',        'description' => 'Electriciens certifies pour installations et depannages electriques'],
-            ['name' => 'Peinture',      'icon' => 'paint-brush', 'description' => 'Peinture interieure et exterieure, enduit, decoration murale'],
-            ['name' => 'Climatisation', 'icon' => 'wind',        'description' => 'Installation, entretien et reparation de climatiseurs et systemes HVAC'],
-            ['name' => 'Menuiserie',    'icon' => 'hammer',      'description' => 'Fabrication et pose de meubles, portes, fenetres en bois et aluminium'],
-            ['name' => 'Menage',        'icon' => 'broom',       'description' => 'Services de menage, nettoyage de bureaux et domiciles'],
-            ['name' => 'Maconnerie',    'icon' => 'building',    'description' => 'Travaux de maconnerie, carrelage, revetement de sol'],
-            ['name' => 'Serrurerie',    'icon' => 'key',         'description' => 'Installation et depannage de serrures, portes blindees'],
-            ['name' => 'Jardinage',     'icon' => 'leaf',        'description' => 'Entretien de jardins, taille, arrosage automatique'],
-            ['name' => 'Informatique',  'icon' => 'laptop',      'description' => 'Depannage PC, installation logiciels, reseaux informatiques'],
-            ['name' => 'Demenagement',  'icon' => 'truck',       'description' => 'Services de demenagement, transport de meubles et emballage'],
-            ['name' => 'Soudure',       'icon' => 'fire',        'description' => 'Soudure, ferronnerie, portails et grilles metalliques'],
+            ['name' => 'Plomberie',     'icon' => 'wrench',      'description' => 'Reparation et installation de plomberie'],
+            ['name' => 'Electricite',   'icon' => 'bolt',        'description' => 'Electriciens certifies pour installations'],
+            ['name' => 'Peinture',      'icon' => 'paint-brush', 'description' => 'Peinture interieure et exterieure'],
+            ['name' => 'Climatisation', 'icon' => 'wind',        'description' => 'Installation et entretien de climatiseurs'],
+            ['name' => 'Menuiserie',    'icon' => 'hammer',      'description' => 'Fabrication et pose de meubles et fenetres'],
+            ['name' => 'Menage',        'icon' => 'broom',       'description' => 'Services de menage et nettoyage'],
+            ['name' => 'Maconnerie',    'icon' => 'building',    'description' => 'Travaux de maconnerie et carrelage'],
+            ['name' => 'Serrurerie',    'icon' => 'key',         'description' => 'Installation et depannage de serrures'],
+            ['name' => 'Jardinage',     'icon' => 'leaf',        'description' => 'Entretien de jardins et espaces verts'],
+            ['name' => 'Informatique',  'icon' => 'laptop',      'description' => 'Depannage PC et reseaux informatiques'],
+            ['name' => 'Demenagement',  'icon' => 'truck',       'description' => 'Services de demenagement'],
+            ['name' => 'Soudure',       'icon' => 'fire',        'description' => 'Soudure et ferronnerie'],
         ];
 
-        foreach ($categories as $index => $cat) {
-            Category::firstOrCreate(
-                ['name' => $cat['name']],
-                [
-                    'icon'        => $cat['icon'],
-                    'description' => $cat['description'],
-                    'sort_order'  => $index + 1,
-                    'active'      => true,
-                ]
-            );
+        foreach ($categories as $i => $cat) {
+            $slug = Str::slug($cat['name']);
+            $exists = DB::table('categories')->where('name', $cat['name'])->exists();
+            if ($exists) continue;
+
+            DB::table('categories')->insert([
+                'name'        => $cat['name'],
+                'slug'        => $slug,
+                'icon'        => $cat['icon'],
+                'description' => $cat['description'],
+                'sort_order'  => $i + 1,
+                'active'      => 1,
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
         }
     }
 }
