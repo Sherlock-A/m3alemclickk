@@ -371,11 +371,30 @@ export default function ProfessionalDashboardPage() {
   const [copied, setCopied]   = useState(false);
   const [cities, setCities]   = useState<string[]>([]);
 
+  const DRAFT_KEY = `pro_draft_${(token ?? '').slice(-10)}`;
+
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { travel_cities: [], languages: [], portfolio: [], is_available: true },
   });
-  const { formState: { errors } } = form;
+  const { formState: { errors, isDirty } } = form;
+
+  // Warn before unload if unsaved changes
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (isDirty) { e.preventDefault(); e.returnValue = ''; }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
+
+  // Persist draft to localStorage on every form change
+  useEffect(() => {
+    const { unsubscribe } = form.watch((values) => {
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify(values)); } catch {}
+    });
+    return () => unsubscribe();
+  }, [form, DRAFT_KEY]);
 
   useEffect(() => {
     fetch('/api/cities')
@@ -396,7 +415,7 @@ export default function ProfessionalDashboardPage() {
       .then((res) => {
         setData(res.data);
         const p = res.data.professional;
-        form.reset({
+        const apiValues: FormData = {
           name:          p.name ?? '',
           profession:    p.profession ?? '',
           main_city:     p.main_city ?? '',
@@ -407,7 +426,15 @@ export default function ProfessionalDashboardPage() {
           travel_cities: p.travel_cities ?? [],
           languages:     p.languages ?? [],
           portfolio:     p.portfolio ?? [],
-        });
+        };
+        // Restore unsaved draft from localStorage
+        try {
+          const raw = localStorage.getItem(DRAFT_KEY);
+          const draft = raw ? JSON.parse(raw) : null;
+          form.reset(draft ? { ...apiValues, ...draft } : apiValues);
+        } catch {
+          form.reset(apiValues);
+        }
       })
       .catch((err) => {
         if (axios.isCancel(err)) return;
@@ -423,15 +450,23 @@ export default function ProfessionalDashboardPage() {
     return () => controller.abort();
   }, [retries]);
 
-  // Auto-refresh stats every 30s without full reload
+  // Auto-refresh stats every 10s + on tab focus
   useEffect(() => {
     if (!token) return;
-    const interval = setInterval(() => {
+    const fetchStats = () => {
       axios.get('/api/dashboard/professional', { headers: { Authorization: `Bearer ${token}` } })
-        .then((res) => setData((prev: any) => prev ? { ...prev, stats: res.data.stats, weekly: res.data.weekly } : res.data))
+        .then((res) => setData((prev: any) => prev ? {
+          ...prev,
+          stats:   res.data.stats,
+          weekly:  res.data.weekly,
+          reviews: res.data.reviews,
+        } : res.data))
         .catch(() => {});
-    }, 30000);
-    return () => clearInterval(interval);
+    };
+    const interval = setInterval(fetchStats, 10000);
+    const onVisible = () => { if (document.visibilityState === 'visible') fetchStats(); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => { clearInterval(interval); document.removeEventListener('visibilitychange', onVisible); };
   }, [token]);
 
   const pro         = data?.professional;
@@ -440,23 +475,15 @@ export default function ProfessionalDashboardPage() {
   const isAvailable = formValues.is_available;
   const photoUrl    = formValues.photo;
 
+  const views    = data?.stats?.views ?? 0;
+  const whatsapp = data?.stats?.whatsappClicks ?? 0;
+  const calls    = data?.stats?.calls ?? 0;
+
   const cards = useMemo(() => [
-    {
-      label: 'Vues du profil', value: data?.stats?.views ?? 0,
-      icon: Eye, color: 'text-blue-600', bg: 'bg-blue-50 dark:bg-blue-900/20',
-      trend: null,
-    },
-    {
-      label: 'Clics WhatsApp', value: data?.stats?.whatsappClicks ?? 0,
-      icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-50 dark:bg-green-900/20',
-      trend: null,
-    },
-    {
-      label: 'Appels reçus', value: data?.stats?.calls ?? 0,
-      icon: Phone, color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-900/20',
-      trend: null,
-    },
-  ], [data]);
+    { label: 'Vues du profil', value: views,    icon: Eye,           color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20' },
+    { label: 'Clics WhatsApp', value: whatsapp, icon: MessageCircle, color: 'text-green-600',  bg: 'bg-green-50 dark:bg-green-900/20' },
+    { label: 'Appels reçus',   value: calls,    icon: Phone,         color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-900/20' },
+  ], [views, whatsapp, calls]);
 
   const logout = () => {
     localStorage.removeItem('pro_token');
@@ -477,18 +504,30 @@ export default function ProfessionalDashboardPage() {
       await axios.put('/api/dashboard/professional', values, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      // Clear draft after successful save
+      try { localStorage.removeItem(DRAFT_KEY); } catch {}
       const res = await axios.get('/api/dashboard/professional', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(res.data);
+      const p = res.data.professional;
+      form.reset({
+        name: p.name ?? '', profession: p.profession ?? '', main_city: p.main_city ?? '',
+        phone: p.phone ?? '', description: p.description ?? '', photo: p.photo ?? '',
+        is_available: !!p.is_available,
+        travel_cities: p.travel_cities ?? [], languages: p.languages ?? [], portfolio: p.portfolio ?? [],
+      });
       setSaved(true);
-      setTimeout(() => setSaved(false), 4000);
+      setTimeout(() => setSaved(false), 5000);
     } catch (err: any) {
-      const msg = err?.response?.data?.message ?? err?.response?.data?.errors
-        ? Object.values(err.response.data.errors).flat().join(', ')
-        : 'Erreur lors de la sauvegarde. Réessayez.';
-      setSaveErr(typeof msg === 'string' ? msg : 'Erreur de sauvegarde.');
-      setTimeout(() => setSaveErr(''), 6000);
+      let msg = 'Erreur lors de la sauvegarde. Réessayez.';
+      if (err?.response?.data?.errors) {
+        msg = (Object.values(err.response.data.errors) as string[][]).flat().join(' — ');
+      } else if (err?.response?.data?.message) {
+        msg = err.response.data.message;
+      }
+      setSaveErr(msg);
+      setTimeout(() => setSaveErr(''), 8000);
     } finally {
       setSaving(false);
     }
