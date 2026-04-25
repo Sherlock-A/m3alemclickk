@@ -61,7 +61,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <a href="/" className="hover:opacity-90 transition-opacity">
-            <M3allemClickLogo size="sm" />
+            <M3allemClickLogo size="md" theme="light" />
           </a>
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -133,7 +133,7 @@ export function Layout({ children }: { children: ReactNode }) {
             {/* Colonne 1 — À propos */}
             <div>
               <a href="/" className="hover:opacity-90 transition-opacity inline-block">
-                <M3allemClickLogo size="sm" className="[&_span:last-child_span:last-child]:!text-white" />
+                <M3allemClickLogo size="md" theme="dark" />
               </a>
               <p className="mt-3 text-sm text-slate-400 leading-relaxed">
                 {settings.footer_about}
