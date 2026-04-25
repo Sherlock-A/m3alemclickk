@@ -17,4 +17,4 @@ cmds = [
 cmds = ["php artisan config:cache"]
 
 [start]
-cmd = "export DB_CONNECTION=sqlite DB_DATABASE=/tmp/m3allem.sqlite; touch /tmp/m3allem.sqlite; php artisan optimize:clear; php artisan storage:link --force; php artisan migrate:fresh --force; php artisan db:seed --force; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+cmd = "touch /tmp/m3allem.sqlite; php artisan optimize:clear; php artisan storage:link --force; php artisan migrate:fresh --force; php artisan db:seed --force; php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
