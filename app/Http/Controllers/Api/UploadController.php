@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class UploadController extends Controller
@@ -15,12 +14,18 @@ class UploadController extends Controller
             'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
 
-        $file      = $request->file('photo');
-        $filename  = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $path      = $file->storeAs('photos', $filename, 'public');
+        $file     = $request->file('photo');
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $dir      = '/tmp/uploads';
+
+        if (! is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $file->move($dir, $filename);
 
         return response()->json([
-            'url' => Storage::disk('public')->url($path),
+            'url' => url('/api/files/' . $filename),
         ]);
     }
 }

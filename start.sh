@@ -4,6 +4,7 @@ export DB_DATABASE=/tmp/db.sqlite
 export VIEW_COMPILED_PATH=/tmp/laravel-views
 
 mkdir -p /tmp/laravel-views
+mkdir -p /tmp/uploads
 touch /tmp/db.sqlite
 
 php artisan config:clear

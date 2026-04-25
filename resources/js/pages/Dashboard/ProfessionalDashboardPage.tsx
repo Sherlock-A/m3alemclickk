@@ -177,40 +177,83 @@ function CardSkeleton() {
   );
 }
 
-// ── Tag input ──────────────────────────────────────────────────────────────────
-function TagInput({
-  label, placeholder, value, onChange,
-}: { label: string; placeholder: string; value: string[]; onChange: (v: string[]) => void }) {
-  const [draft, setDraft] = useState('');
+const LANGUAGES_LIST = ['Arabe', 'Darija', 'Français', 'Amazigh', 'Anglais', 'Espagnol', 'Allemand', 'Italien'];
 
-  const add = () => {
-    const trimmed = draft.trim();
-    if (trimmed && !value.includes(trimmed)) onChange([...value, trimmed]);
-    setDraft('');
+// ── Smart multi-select with autocomplete ───────────────────────────────────────
+function SmartMultiSelect({
+  label, value, onChange, options, placeholder, allowCustom = false,
+}: {
+  label: string; value: string[]; onChange: (v: string[]) => void;
+  options: string[]; placeholder?: string; allowCustom?: boolean;
+}) {
+  const [search, setSearch] = useState('');
+  const [open, setOpen]     = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const filtered = options.filter((o) =>
+    o.toLowerCase().includes(search.toLowerCase()) && !value.includes(o)
+  );
+
+  const toggle = (item: string) => {
+    if (value.includes(item)) onChange(value.filter((v) => v !== item));
+    else onChange([...value, item]);
+  };
+
+  const addCustom = () => {
+    const t = search.trim();
+    if (t && !value.includes(t)) { onChange([...value, t]); setSearch(''); }
   };
 
   return (
-    <div>
+    <div ref={ref} className="relative">
       <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">{label}</label>
-      <div className="min-h-[42px] w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 flex flex-wrap gap-1.5 focus-within:ring-2 focus-within:ring-orange-400 focus-within:border-orange-400">
-        {value.map((tag) => (
-          <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 text-xs px-2.5 py-1 font-medium">
-            {tag}
-            <button type="button" onClick={() => onChange(value.filter((t) => t !== tag))} className="hover:text-orange-900 dark:hover:text-orange-100 transition-colors">
-              <X className="h-3 w-3" />
-            </button>
-          </span>
-        ))}
+      {/* Selected tags */}
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {value.map((tag) => (
+            <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 text-xs px-2.5 py-1 font-medium">
+              {tag}
+              <button type="button" onClick={() => toggle(tag)}>
+                <X className="h-3 w-3 hover:text-red-500" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+      {/* Search input */}
+      <div className="relative">
         <input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); add(); } }}
-          onBlur={add}
-          placeholder={value.length === 0 ? placeholder : ''}
-          className="flex-1 min-w-[120px] bg-transparent text-sm text-slate-800 dark:text-white outline-none placeholder-slate-400"
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setOpen(true); }}
+          onFocus={() => setOpen(true)}
+          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); if (filtered[0]) toggle(filtered[0]); else if (allowCustom) addCustom(); } }}
+          placeholder={placeholder ?? `Rechercher...`}
+          className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors"
         />
       </div>
-      <p className="mt-1 text-xs text-slate-400">Appuyez sur Entrée ou virgule pour ajouter</p>
+      {/* Dropdown */}
+      {open && (filtered.length > 0 || (allowCustom && search.trim())) && (
+        <div className="absolute z-50 mt-1 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg max-h-52 overflow-y-auto">
+          {filtered.slice(0, 8).map((opt) => (
+            <button key={opt} type="button" onClick={() => { toggle(opt); setSearch(''); setOpen(false); }}
+              className="w-full text-left px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 hover:text-orange-600 transition-colors first:rounded-t-xl">
+              {opt}
+            </button>
+          ))}
+          {allowCustom && search.trim() && !options.includes(search.trim()) && (
+            <button type="button" onClick={() => { addCustom(); setOpen(false); }}
+              className="w-full text-left px-4 py-2.5 text-sm text-orange-600 font-medium hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors border-t border-slate-100 dark:border-slate-800">
+              + Ajouter "{search.trim()}"
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -533,20 +576,21 @@ export default function ProfessionalDashboardPage() {
             {/* Profile hero */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
               <div className="flex items-start gap-4">
-                {/* Avatar */}
+                {/* Avatar — temps réel depuis formValues */}
                 <div className="relative shrink-0">
                   {loading ? (
                     <Skeleton className="h-16 w-16 rounded-2xl" />
-                  ) : pro?.photo ? (
-                    <img src={pro.photo} alt={pro.name}
-                      className="h-16 w-16 rounded-2xl object-cover border-2 border-orange-100 dark:border-orange-900/30" />
+                  ) : (photoUrl || pro?.photo) ? (
+                    <img src={photoUrl || pro?.photo} alt={formValues.name || pro?.name}
+                      className="h-16 w-16 rounded-2xl object-cover border-2 border-orange-100 dark:border-orange-900/30"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                   ) : (
                     <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-black text-white">
-                      {pro?.name?.[0] ?? '?'}
+                      {(formValues.name || pro?.name || '?')[0]}
                     </div>
                   )}
                   <span className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white dark:border-slate-900 ${
-                    pro?.is_available ? 'bg-green-500' : 'bg-slate-400'
+                    isAvailable ? 'bg-green-500' : 'bg-slate-400'
                   }`} />
                 </div>
 
@@ -559,9 +603,12 @@ export default function ProfessionalDashboardPage() {
                     </>
                   ) : (
                     <>
-                      <h1 className="text-lg font-black text-slate-800 dark:text-white truncate">{pro?.name}</h1>
-                      <p className="text-sm text-orange-500 font-semibold">{pro?.profession}</p>
-                      <p className="text-xs text-slate-400 mt-0.5">📍 {pro?.main_city}</p>
+                      <h1 className="text-lg font-black text-slate-800 dark:text-white truncate">{formValues.name || pro?.name}</h1>
+                      <p className="text-sm text-orange-500 font-semibold">{formValues.profession || pro?.profession}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">📍 {formValues.main_city || pro?.main_city}</p>
+                      {(formValues.phone || pro?.phone) && (
+                        <p className="text-xs text-slate-400 mt-0.5">📞 {formValues.phone || pro?.phone}</p>
+                      )}
                     </>
                   )}
                 </div>
@@ -932,17 +979,20 @@ export default function ProfessionalDashboardPage() {
             {/* Tags */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
               <h2 className="text-sm font-bold text-slate-800 dark:text-white">Zones & compétences</h2>
-              <TagInput
+              <SmartMultiSelect
                 label="Villes de déplacement"
-                placeholder="Rabat, Salé, Kénitra…"
-                value={form.watch('travel_cities') ?? []}
-                onChange={(v) => form.setValue('travel_cities', v)}
+                placeholder="Tapez une ville marocaine…"
+                options={cities}
+                value={formValues.travel_cities ?? []}
+                onChange={(v) => form.setValue('travel_cities', v, { shouldDirty: true })}
+                allowCustom
               />
-              <TagInput
+              <SmartMultiSelect
                 label="Langues parlées"
-                placeholder="Arabe, Français, Darija…"
-                value={form.watch('languages') ?? []}
-                onChange={(v) => form.setValue('languages', v)}
+                placeholder="Sélectionner une langue…"
+                options={LANGUAGES_LIST}
+                value={formValues.languages ?? []}
+                onChange={(v) => form.setValue('languages', v, { shouldDirty: true })}
               />
             </div>
 

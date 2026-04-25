@@ -78,6 +78,14 @@ Route::prefix('client')->group(function () {
 Route::get('/cities',                [CityController::class, 'publicIndex']);
 Route::get('/cities/autocomplete',   [CityController::class, 'autocomplete']);
 Route::get('/professionals', [ProfessionalController::class, 'index']);
+
+// Serve uploaded files from /tmp/uploads
+Route::get('/files/{filename}', function ($filename) {
+    $path = '/tmp/uploads/' . basename($filename);
+    if (!file_exists($path)) abort(404);
+    $mime = mime_content_type($path) ?: 'application/octet-stream';
+    return response()->file($path, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=86400']);
+});
 Route::post('/track',        [TrackingController::class, 'store'])->middleware('throttle:tracking');
 Route::get('/whatsapp/{id}', [ContactController::class, 'whatsapp']);
 Route::get('/call/{id}',     [ContactController::class, 'call']);
