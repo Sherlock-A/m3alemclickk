@@ -5,6 +5,7 @@ import { Layout } from '../../components/Layout';
 import { ProfessionalCard } from '../../components/ProfessionalCard';
 import { SearchBar } from '../../components/SearchBar';
 import { SkeletonCard } from '../../components/SkeletonCard';
+import { CategoryIcon } from '../../components/CategoryIcon';
 import { Category, Paginated, Professional } from '../../types';
 import { Filter, X, SlidersHorizontal, Star } from 'lucide-react';
 
@@ -189,7 +190,7 @@ export default function ProfessionalsPage({ professionals, filters, categories }
                     : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
                 }`}
               >
-                <span className="text-base">{cat.icon ?? '🛠️'}</span>
+                <CategoryIcon name={cat.name} size={20} />
                 {cat.name}
               </button>
             ))}

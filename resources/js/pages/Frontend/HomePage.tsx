@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Briefcase, MapPin, ShieldCheck, Sparkles, Star, ArrowRight, BadgeCheck } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
+import { CategoryIcon } from '../../components/CategoryIcon';
 import { useTranslation } from 'react-i18next';
 import { Category, Professional } from '../../types';
 
@@ -159,7 +160,9 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
                 onClick={() => handleCategoryClick(category.name)}
                 className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-brand-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-700 text-left"
               >
-                <div className="mb-3 text-2xl">{category.icon ?? '🛠️'}</div>
+                <div className="mb-3">
+                  <CategoryIcon name={category.name} size={48} />
+                </div>
                 <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-brand-600 transition-colors">
                   {category.name}
                 </h3>
