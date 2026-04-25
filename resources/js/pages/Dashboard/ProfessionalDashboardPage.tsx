@@ -133,8 +133,9 @@ const schema = z.object({
   name:           z.string().min(2, 'Minimum 2 caractères'),
   profession:     z.string().min(2, 'Minimum 2 caractères'),
   main_city:      z.string().min(2, 'Requis'),
+  phone:          z.string().optional(),
   description:    z.string().optional(),
-  photo:          z.string().url('URL invalide').optional().or(z.literal('')),
+  photo:          z.string().optional(),
   is_available:   z.boolean().default(true),
   travel_cities:  z.array(z.string()).default([]),
   languages:      z.array(z.string()).default([]),
@@ -148,8 +149,12 @@ type Tab = 'overview' | 'profile' | 'stats' | 'reviews';
 function profileCompletion(pro: any): number {
   if (!pro) return 0;
   const fields = [
-    pro.name, pro.profession, pro.main_city, pro.phone,
-    pro.description, pro.photo,
+    !!(pro.name?.trim()),
+    !!(pro.profession?.trim()),
+    !!(pro.main_city?.trim()),
+    !!(pro.phone?.trim()),
+    !!(pro.description?.trim()),
+    !!(pro.photo?.trim()),
     (pro.travel_cities ?? []).length > 0,
     (pro.languages ?? []).length > 0,
     (pro.portfolio ?? []).length > 0,
@@ -319,6 +324,7 @@ export default function ProfessionalDashboardPage() {
   const [tab, setTab]         = useState<Tab>('overview');
   const [saving, setSaving]   = useState(false);
   const [saved, setSaved]     = useState(false);
+  const [saveErr, setSaveErr] = useState('');
   const [copied, setCopied]   = useState(false);
   const [cities, setCities]   = useState<string[]>([]);
 
@@ -346,13 +352,18 @@ export default function ProfessionalDashboardPage() {
       })
       .then((res) => {
         setData(res.data);
+        const p = res.data.professional;
         form.reset({
-          ...res.data.professional,
-          travel_cities: res.data.professional.travel_cities ?? [],
-          languages:     res.data.professional.languages ?? [],
-          portfolio:     res.data.professional.portfolio ?? [],
-          photo:         res.data.professional.photo ?? '',
-          description:   res.data.professional.description ?? '',
+          name:          p.name ?? '',
+          profession:    p.profession ?? '',
+          main_city:     p.main_city ?? '',
+          phone:         p.phone ?? '',
+          description:   p.description ?? '',
+          photo:         p.photo ?? '',
+          is_available:  !!p.is_available,
+          travel_cities: p.travel_cities ?? [],
+          languages:     p.languages ?? [],
+          portfolio:     p.portfolio ?? [],
         });
       })
       .catch((err) => {
@@ -369,10 +380,22 @@ export default function ProfessionalDashboardPage() {
     return () => controller.abort();
   }, [retries]);
 
-  const pro        = data?.professional;
-  const completion = profileCompletion(pro);
-  const isAvailable = form.watch('is_available');
-  const photoUrl    = form.watch('photo');
+  // Auto-refresh stats every 30s without full reload
+  useEffect(() => {
+    if (!token) return;
+    const interval = setInterval(() => {
+      axios.get('/api/dashboard/professional', { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => setData((prev: any) => prev ? { ...prev, stats: res.data.stats, weekly: res.data.weekly } : res.data))
+        .catch(() => {});
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [token]);
+
+  const pro         = data?.professional;
+  const formValues  = form.watch();
+  const completion  = profileCompletion(Object.keys(formValues).some(k => formValues[k as keyof typeof formValues]) ? formValues : pro);
+  const isAvailable = formValues.is_available;
+  const photoUrl    = formValues.photo;
 
   const cards = useMemo(() => [
     {
@@ -406,17 +429,23 @@ export default function ProfessionalDashboardPage() {
 
   const save = form.handleSubmit(async (values) => {
     setSaving(true);
+    setSaveErr('');
     try {
       await axios.put('/api/dashboard/professional', values, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // Re-fetch to refresh overview with new data
       const res = await axios.get('/api/dashboard/professional', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setData(res.data);
       setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      setTimeout(() => setSaved(false), 4000);
+    } catch (err: any) {
+      const msg = err?.response?.data?.message ?? err?.response?.data?.errors
+        ? Object.values(err.response.data.errors).flat().join(', ')
+        : 'Erreur lors de la sauvegarde. Réessayez.';
+      setSaveErr(typeof msg === 'string' ? msg : 'Erreur de sauvegarde.');
+      setTimeout(() => setSaveErr(''), 6000);
     } finally {
       setSaving(false);
     }
@@ -883,6 +912,11 @@ export default function ProfessionalDashboardPage() {
                   )}
                   <FieldError name="main_city" />
                 </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Téléphone / WhatsApp</label>
+                  <input {...form.register('phone')} placeholder="+212 6XX XXX XXX" className={inputCls('phone')} />
+                  <p className="mt-1 text-xs text-slate-400">Utilisé pour les boutons WhatsApp et Appel</p>
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Description / Présentation</label>
@@ -962,20 +996,32 @@ export default function ProfessionalDashboardPage() {
             </div>
 
             {/* Save */}
-            <div className="flex items-center justify-between rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-4">
-              <p className="text-xs text-slate-400">Les modifications sont visibles immédiatement sur votre profil public.</p>
-              <button
-                type="submit"
-                disabled={saving}
-                className="flex items-center gap-2 rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-60 transition-colors"
-              >
-                {saving
-                  ? <Loader2 className="h-4 w-4 animate-spin" />
-                  : saved
-                  ? <CheckCircle className="h-4 w-4" />
-                  : <Save className="h-4 w-4" />}
-                {saving ? 'Enregistrement...' : saved ? 'Enregistré !' : 'Enregistrer'}
-              </button>
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-4 space-y-3">
+              {saveErr && (
+                <div className="flex items-center gap-2 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+                  <AlertCircle className="h-4 w-4 shrink-0" /> {saveErr}
+                </div>
+              )}
+              {saved && (
+                <div className="flex items-center gap-2 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-700 dark:text-green-300">
+                  <CheckCircle className="h-4 w-4 shrink-0" /> Profil enregistré avec succès ! Visible immédiatement sur votre profil public.
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-slate-400">Les modifications sont visibles immédiatement sur votre profil public.</p>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex items-center gap-2 rounded-lg bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-60 transition-colors"
+                >
+                  {saving
+                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                    : saved
+                    ? <CheckCircle className="h-4 w-4" />
+                    : <Save className="h-4 w-4" />}
+                  {saving ? 'Enregistrement...' : saved ? 'Enregistré !' : 'Enregistrer'}
+                </button>
+              </div>
             </div>
           </form>
         )}

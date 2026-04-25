@@ -54,18 +54,19 @@ class DashboardController extends Controller
         }
 
         $data = $request->validate([
-            'name'          => ['required', 'string'],
-            'profession'    => ['required', 'string'],
-            'main_city'     => ['required', 'string'],
-            'travel_cities' => ['array'],
+            'name'            => ['required', 'string', 'max:100'],
+            'profession'      => ['required', 'string', 'max:100'],
+            'main_city'       => ['required', 'string', 'max:100'],
+            'phone'           => ['nullable', 'string', 'max:20'],
+            'travel_cities'   => ['array'],
             'travel_cities.*' => ['string'],
-            'languages'     => ['array'],
-            'languages.*'   => ['string'],
-            'description'   => ['nullable', 'string'],
-            'photo'         => ['nullable', 'string'],
-            'portfolio'     => ['nullable', 'array'],
-            'portfolio.*'   => ['string'],
-            'is_available'  => ['boolean'],
+            'languages'       => ['array'],
+            'languages.*'     => ['string'],
+            'description'     => ['nullable', 'string', 'max:1000'],
+            'photo'           => ['nullable', 'string'],
+            'portfolio'       => ['nullable', 'array'],
+            'portfolio.*'     => ['string'],
+            'is_available'    => ['boolean'],
         ]);
 
         $professional->update($data);
