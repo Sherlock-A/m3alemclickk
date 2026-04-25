@@ -4,12 +4,13 @@ import {
   LayoutDashboard, Users, Building2, BarChart3, Star,
   Settings, Bell, LogOut, ChevronRight, Check, X, Trash2,
   Plus, Pencil, Save, Download, RefreshCw, Eye, Phone,
-  MessageCircle, TrendingUp, Globe, AlertCircle, Menu, Tag,
+  MessageCircle, TrendingUp, Globe, AlertCircle, Menu, Tag, FileText,
 } from 'lucide-react';
 import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell,
 } from 'recharts';
+import { SentimentDashboard } from '../../components/SentimentDashboard';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 type Section = 'dashboard' | 'professionals' | 'categories' | 'cities' | 'analytics' | 'reviews' | 'settings' | 'notifications';
@@ -20,12 +21,21 @@ const emptyCity: CityForm = { name: '', name_ar: '', name_en: '', region: '', ac
 
 const COLORS = ['#f97316', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#14b8a6'];
 
-// ─── CSV Download helper ─────────────────────────────────────────────────────
-async function downloadCsv(url: string, filename: string) {
+// ─── Excel CSV export (UTF-8 BOM pour Excel) ─────────────────────────────────
+async function downloadExcel(url: string, filename: string, buildCsv?: (data: any) => string) {
   const token = localStorage.getItem('m3allemclick_token');
   const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
   if (!r.ok) return;
-  const blob = await r.blob();
+  let content: string;
+  if (buildCsv) {
+    const json = await r.json().catch(() => null);
+    content = json ? buildCsv(json) : await r.text();
+  } else {
+    content = await r.text();
+  }
+  // BOM UTF-8 pour que Excel ouvre correctement les accents
+  const bom = '﻿';
+  const blob = new Blob([bom + content], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
   link.download = filename;
@@ -33,6 +43,83 @@ async function downloadCsv(url: string, filename: string) {
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(link.href);
+}
+
+// ─── PDF professionnel style ERP ─────────────────────────────────────────────
+function generatePDF(title: string, rows: string[][], columns: string[], subtitle = '') {
+  const date = new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+  const tableRows = rows.map(row =>
+    `<tr>${row.map((cell, i) => `<td style="padding:8px 12px;border-bottom:1px solid #f0f0f0;font-size:12px;color:${i === 0 ? '#1e293b' : '#475569'}">${cell}</td>`).join('')}</tr>`
+  ).join('');
+
+  const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>${title}</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b}
+    .page{max-width:900px;margin:0 auto;background:#fff;min-height:100vh;padding:0}
+    .header{background:linear-gradient(135deg,#f97316 0%,#ea580c 100%);padding:32px 40px;color:#fff}
+    .header-top{display:flex;justify-content:space-between;align-items:flex-start}
+    .logo{font-size:22px;font-weight:900;letter-spacing:-0.5px}
+    .logo span{color:#fed7aa}
+    .company-info{text-align:right;font-size:11px;opacity:0.85;line-height:1.6}
+    .doc-title{margin-top:24px}
+    .doc-title h1{font-size:26px;font-weight:800;margin-bottom:4px}
+    .doc-title p{font-size:13px;opacity:0.85}
+    .meta-bar{background:#fff7ed;border-bottom:2px solid #fed7aa;padding:14px 40px;display:flex;gap:40px}
+    .meta-item{font-size:11px;color:#92400e}
+    .meta-item strong{display:block;font-size:13px;color:#c2410c;font-weight:700}
+    .content{padding:32px 40px}
+    .section-title{font-size:14px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #fed7aa}
+    table{width:100%;border-collapse:collapse;margin-bottom:24px}
+    thead tr{background:#f97316}
+    thead td{padding:10px 12px;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+    tbody tr:nth-child(even){background:#fff7ed}
+    tbody tr:hover{background:#fef3c7}
+    .footer{border-top:1px solid #e2e8f0;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;background:#f8fafc}
+    .footer-left{font-size:10px;color:#94a3b8}
+    .footer-right{font-size:10px;color:#94a3b8;text-align:right}
+    .badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600}
+    .badge-green{background:#d1fae5;color:#065f46}
+    .badge-orange{background:#ffedd5;color:#9a3412}
+    @media print{body{background:#fff}.page{box-shadow:none}}
+  </style></head>
+  <body><div class="page">
+    <div class="header">
+      <div class="header-top">
+        <div class="logo">M3allem<span>Click</span></div>
+        <div class="company-info">
+          Plateforme des artisans du Maroc<br>
+          contact@m3allemclick.ma<br>
+          www.m3allemclick.ma
+        </div>
+      </div>
+      <div class="doc-title">
+        <h1>${title}</h1>
+        <p>${subtitle || 'Rapport généré automatiquement par le système'}</p>
+      </div>
+    </div>
+    <div class="meta-bar">
+      <div class="meta-item"><strong>${date}</strong>Date d'émission</div>
+      <div class="meta-item"><strong>${rows.length}</strong>Enregistrements</div>
+      <div class="meta-item"><strong>CONFIDENTIEL</strong>Usage interne</div>
+    </div>
+    <div class="content">
+      <div class="section-title">${title}</div>
+      <table>
+        <thead><tr>${columns.map(c => `<td>${c}</td>`).join('')}</tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+    <div class="footer">
+      <div class="footer-left">M3allemClick — Plateforme des artisans marocains<br>Document généré le ${date}</div>
+      <div class="footer-right">Ce document est confidentiel.<br>Toute reproduction est interdite sans autorisation.</div>
+    </div>
+  </div>
+  <script>window.onload=()=>window.print()</script>
+  </body></html>`;
+
+  const w = window.open('', '_blank');
+  if (w) { w.document.write(html); w.document.close(); }
 }
 
 // ─── Nav items ──────────────────────────────────────────────────────────────
@@ -327,9 +414,9 @@ function SectionProfessionals({ headers }: { headers: any }) {
           <option value="refused">Refusés</option>
           <option value="suspended">Suspendus</option>
         </select>
-        <button onClick={() => downloadCsv('/api/admin/export/professionals', 'professionnels.csv')}
-          className="ml-auto flex items-center gap-1.5 rounded-lg border border-slate-300 px-3 py-2 text-sm hover:bg-slate-50 transition-colors">
-          <Download className="h-4 w-4" /> Export CSV
+        <button onClick={() => downloadExcel('/api/admin/export/professionals', 'M3allemClick_Professionnels.csv')}
+          className="ml-auto flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700 hover:bg-emerald-100 transition-colors font-semibold">
+          <Download className="h-4 w-4" /> Excel
         </button>
       </div>
 
@@ -741,13 +828,23 @@ function SectionAnalytics({ headers }: { headers: any }) {
           </button>
         ))}
         <div className="ml-auto flex gap-2">
-          <button onClick={() => downloadCsv('/api/admin/export/professionals', 'professionnels.csv')}
-            className="flex items-center gap-1.5 rounded-xl border border-slate-300 px-3 py-2 text-xs hover:bg-slate-50 transition-colors">
-            <Download className="h-3.5 w-3.5" /> Pros CSV
+          <button onClick={() => downloadExcel('/api/admin/export/professionals', 'M3allemClick_Professionnels.csv')}
+            className="flex items-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 hover:bg-emerald-100 transition-colors font-semibold">
+            <Download className="h-3.5 w-3.5" /> Excel Pros
           </button>
-          <button onClick={() => downloadCsv('/api/admin/export/trackings', 'analytics.csv')}
-            className="flex items-center gap-1.5 rounded-xl border border-slate-300 px-3 py-2 text-xs hover:bg-slate-50 transition-colors">
-            <Download className="h-3.5 w-3.5" /> Analytics CSV
+          <button onClick={async () => {
+            const token = localStorage.getItem('m3allemclick_token');
+            const r = await fetch('/api/admin/export/professionals', { headers: { Authorization: `Bearer ${token}` } });
+            const text = await r.text();
+            const lines = text.trim().split('\n').slice(1).map(l => l.split(',').map(c => c.replace(/"/g,'')));
+            generatePDF(
+              'Rapport Professionnels',
+              lines,
+              ['Nom', 'Profession', 'Ville', 'Telephone', 'Note', 'Verifie'],
+              `Export complet des professionnels inscrits sur M3allemClick`
+            );
+          }} className="flex items-center gap-1.5 rounded-xl border border-orange-300 bg-orange-50 px-3 py-2 text-xs text-orange-700 hover:bg-orange-100 transition-colors font-semibold">
+            <FileText className="h-3.5 w-3.5" /> PDF Pros
           </button>
         </div>
       </div>
@@ -886,7 +983,7 @@ function SectionReviews({ headers }: { headers: any }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {[['false','En attente'],['true','Approuvés'],['','Tous']].map(([v, l]) => (
           <button key={v} onClick={() => { setFilter(v); setPage(1); }}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${filter === v ? 'bg-orange-500 text-white' : 'bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 hover:bg-slate-50'}`}>
@@ -897,6 +994,16 @@ function SectionReviews({ headers }: { headers: any }) {
           <RefreshCw className="h-4 w-4" />
         </button>
       </div>
+
+      {/* Analyse de sentiment IA sur les avis approuvés */}
+      {(data?.data ?? []).length > 0 && (filter === 'true' || filter === '') && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <h3 className="font-bold text-sm mb-4 flex items-center gap-2">
+            <TrendingUp className="h-4 w-4 text-orange-500" /> Analyse de sentiment IA
+          </h3>
+          <SentimentDashboard reviews={(data?.data ?? []).filter((r: any) => r.approved)} />
+        </div>
+      )}
 
       <div className="space-y-3">
         {(data?.data ?? []).map((r: any) => (
