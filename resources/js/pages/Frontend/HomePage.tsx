@@ -202,37 +202,69 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         <div className="mx-auto max-w-7xl px-4">
           <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-10 text-center">Comment ça marche ?</h2>
           <div className="grid gap-8 sm:grid-cols-3">
-            {[
-              {
-                step: '1',
-                title: 'Cherchez',
-                desc: 'Recherchez par ville, métier ou compétence. Filtrez selon vos besoins.',
-                icon: '🔍',
-              },
-              {
-                step: '2',
-                title: 'Comparez',
-                desc: 'Consultez les profils, avis clients et portfolio photo de chaque artisan.',
-                icon: '⭐',
-              },
-              {
-                step: '3',
-                title: 'Contactez',
-                desc: 'Appelez ou envoyez un message WhatsApp directement depuis la plateforme.',
-                icon: '📱',
-              },
-            ].map(({ step, title, desc, icon }) => (
-              <div key={step} className="flex flex-col items-center text-center">
-                <div className="mb-4 h-16 w-16 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-3xl shadow-soft">
-                  {icon}
-                </div>
-                <div className="h-6 w-6 rounded-full bg-brand-600 text-white text-xs font-black flex items-center justify-center mb-3">
-                  {step}
-                </div>
-                <h3 className="font-bold text-slate-900 dark:text-white mb-2">{title}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">{desc}</p>
+
+            {/* ── Étape 1 : Chercher ── */}
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4 relative">
+                <svg viewBox="0 0 48 48" width="64" height="64" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
+                  <rect width="48" height="48" rx="12" fill="#3b82f6"/>
+                  <circle cx="20" cy="20" r="11" fill="none" stroke="white" strokeWidth="4"/>
+                  <circle cx="17" cy="17" r="4" fill="white" opacity="0.2"/>
+                  <line x1="28" y1="28" x2="40" y2="40" stroke="white" strokeWidth="5" strokeLinecap="round"/>
+                  <circle cx="36" cy="10" r="2" fill="white" opacity="0.5"/>
+                  <line x1="36" y1="6" x2="36" y2="8" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                  <line x1="39" y1="7" x2="38" y2="8.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                </svg>
+                <div className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shadow">1</div>
               </div>
-            ))}
+              <h3 className="font-bold text-slate-900 dark:text-white mb-2 mt-3">Cherchez</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Recherchez par ville, métier ou compétence. Filtrez selon vos besoins.</p>
+            </div>
+
+            {/* ── Étape 2 : Comparer ── */}
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4 relative">
+                <svg viewBox="0 0 48 48" width="64" height="64" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
+                  <rect width="48" height="48" rx="12" fill="#f59e0b"/>
+                  <rect x="5" y="12" width="16" height="24" rx="4" fill="white" opacity="0.95"/>
+                  <rect x="8" y="17" width="10" height="2" rx="1" fill="#f59e0b" opacity="0.5"/>
+                  <rect x="8" y="21" width="7" height="2" rx="1" fill="#f59e0b" opacity="0.35"/>
+                  <rect x="8" y="25" width="9" height="2" rx="1" fill="#f59e0b" opacity="0.35"/>
+                  <path d="M10 30 L11 28 L12 30 L14 30 L12.5 31.5 L13 33.5 L11 32 L9 33.5 L9.5 31.5 L8 30 Z" fill="#f59e0b" opacity="0.7"/>
+                  <rect x="27" y="12" width="16" height="24" rx="4" fill="white"/>
+                  <rect x="30" y="17" width="10" height="2" rx="1" fill="#f59e0b" opacity="0.5"/>
+                  <rect x="30" y="21" width="6" height="2" rx="1" fill="#f59e0b" opacity="0.35"/>
+                  <rect x="30" y="25" width="8" height="2" rx="1" fill="#f59e0b" opacity="0.35"/>
+                  <path d="M32 30 L33 28 L34 30 L36 30 L34.5 31.5 L35 33.5 L33 32 L31 33.5 L31.5 31.5 L30 30 Z" fill="#f59e0b"/>
+                  <circle cx="24" cy="24" r="6" fill="#0f172a"/>
+                  <text x="24" y="27.5" fontFamily="Outfit,sans-serif" fontWeight="800" fontSize="7" fill="white" textAnchor="middle">VS</text>
+                  <circle cx="38" cy="14" r="5" fill="#22c55e"/>
+                  <path d="M35.5 14 L37.5 16 L40.5 12" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <div className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center shadow">2</div>
+              </div>
+              <h3 className="font-bold text-slate-900 dark:text-white mb-2 mt-3">Comparez</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Consultez les profils, avis clients et portfolio photo de chaque artisan.</p>
+            </div>
+
+            {/* ── Étape 3 : Contacter ── */}
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-4 relative">
+                <svg viewBox="0 0 48 48" width="64" height="64" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
+                  <rect width="48" height="48" rx="12" fill="#25d366"/>
+                  <path d="M8 10 Q8 6 12 6 L36 6 Q40 6 40 10 L40 28 Q40 32 36 32 L20 32 L12 40 L14 32 L12 32 Q8 32 8 28 Z" fill="white" opacity="0.95"/>
+                  <circle cx="18" cy="20" r="3" fill="#25d366" opacity="0.7"/>
+                  <circle cx="26" cy="20" r="3" fill="#25d366"/>
+                  <circle cx="34" cy="20" r="3" fill="#25d366" opacity="0.7"/>
+                  <circle cx="38" cy="38" r="8" fill="#0f172a"/>
+                  <path d="M34.5 35.5 C34.5 35.5 35.5 34.5 36.5 34.5 C37 34.5 37.5 35 37.5 35 L38.5 36.5 C38.5 37 38 37.5 38 37.5 C38 37.5 39 39 40 39.5 C40 39.5 40.5 39 41 39 L42 39.5 C42.5 40 42.5 41 42 41.5 C41.5 42 40.5 42.5 39.5 42 C37.5 41 35 38.5 34.5 36.5 C34.5 36 34.5 35.5 34.5 35.5 Z" fill="white"/>
+                </svg>
+                <div className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-green-600 text-white text-xs font-black flex items-center justify-center shadow">3</div>
+              </div>
+              <h3 className="font-bold text-slate-900 dark:text-white mb-2 mt-3">Contactez</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Appelez ou envoyez un message WhatsApp directement depuis la plateforme.</p>
+            </div>
+
           </div>
         </div>
       </section>
