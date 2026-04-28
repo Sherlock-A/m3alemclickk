@@ -1,6 +1,8 @@
 [variables]
 VIEW_COMPILED_PATH = "/tmp/laravel-views"
 JWT_SECRET = "560UT27Gv5UXwlAv8L6FsXyjvMU+Scex9XAtSEP6H6WT/JDj/zDmytANwculIGy+d6d0c1iZToVQf2lyM/6/ew=="
+CACHE_STORE = "file"
+CACHE_PREFIX = "m3c"
 
 [phases.setup]
 nixPkgs = ["php82", "php82Packages.composer", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.openssl", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.bcmath", "php82Extensions.fileinfo", "php82Extensions.curl", "php82Extensions.zip", "nodejs_20", "nodePackages.npm"]
@@ -17,4 +19,4 @@ cmds = [
 cmds = ["php artisan config:cache"]
 
 [start]
-cmd = "mkdir -p /tmp/laravel-views /tmp/uploads && touch /tmp/db.sqlite && export DB_CONNECTION=sqlite DB_DATABASE=/tmp/db.sqlite VIEW_COMPILED_PATH=/tmp/laravel-views && php artisan optimize:clear && php artisan storage:link --force 2>/dev/null || true && php artisan migrate --force && CATS=$(php artisan tinker --execute=\"echo \\App\\Models\\Category::count();\" 2>/dev/null | tr -d '[:space:]') && if [ \"$CATS\" = \"0\" ] || [ -z \"$CATS\" ]; then php artisan db:seed --force; fi && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+cmd = "mkdir -p /tmp/laravel-views /tmp/uploads storage/framework/cache/data storage/framework/sessions storage/logs && touch /tmp/db.sqlite && export DB_CONNECTION=sqlite DB_DATABASE=/tmp/db.sqlite VIEW_COMPILED_PATH=/tmp/laravel-views CACHE_STORE=file CACHE_PREFIX=m3c && php artisan optimize:clear && php artisan storage:link --force 2>/dev/null || true && php artisan migrate --force && CATS=$(php artisan tinker --execute=\"echo \\App\\Models\\Category::count();\" 2>/dev/null | tr -d '[:space:]') && if [ \"$CATS\" = \"0\" ] || [ -z \"$CATS\" ]; then php artisan db:seed --force; fi && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
