@@ -5,7 +5,6 @@ import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star,
 import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
 import { CategoryIcon } from '../../components/CategoryIcon';
-import { useTranslation } from 'react-i18next';
 import { Category, Professional } from '../../types';
 
 type Props = {
@@ -61,69 +60,6 @@ function StatCard({
         className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 transition-all"
         style={{ width: started ? '100%' : '0%', transitionDuration: '1.8s', transitionTimingFunction: 'cubic-bezier(0.33,1,0.68,1)' }}
       />
-    </div>
-  );
-}
-
-// ── Mini profile card for marquee ─────────────────────────────────────────
-function MarqueeCard({ pro }: { pro: Professional }) {
-  return (
-    <a
-      href={`/professionals/${pro.slug}`}
-      className="group flex-shrink-0 w-52 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 overflow-hidden shadow-soft hover:shadow-md hover:-translate-y-1 transition-all"
-      tabIndex={-1}
-    >
-      {/* photo or gradient avatar */}
-      <div className="relative h-32 bg-gradient-to-br from-orange-100 to-slate-100 dark:from-slate-800 dark:to-slate-700">
-        {pro.photo ? (
-          <img src={pro.photo} alt={pro.name} className="h-full w-full object-cover" loading="lazy" />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <span className="h-16 w-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-black text-white shadow-lg">
-              {pro.name[0]}
-            </span>
-          </div>
-        )}
-        {/* availability dot */}
-        <span className={`absolute top-2 right-2 h-2.5 w-2.5 rounded-full ring-2 ring-white dark:ring-slate-900 ${pro.is_available ? 'bg-green-500' : 'bg-slate-400'}`} />
-      </div>
-      <div className="p-3">
-        <div className="flex items-center gap-1">
-          <p className="font-bold text-sm text-slate-900 dark:text-white truncate">{pro.name}</p>
-          {pro.verified && <BadgeCheck className="h-3.5 w-3.5 text-orange-500 shrink-0" />}
-        </div>
-        <p className="text-xs text-orange-600 font-medium truncate">{pro.profession}</p>
-        <div className="flex items-center justify-between mt-2">
-          <span className="flex items-center gap-0.5 text-xs text-amber-500 font-semibold">
-            <Star className="h-3 w-3 fill-amber-400" />
-            {pro.rating > 0 ? pro.rating.toFixed(1) : 'Nouveau'}
-          </span>
-          <span className="flex items-center gap-0.5 text-xs text-slate-400">
-            <MapPin className="h-3 w-3 shrink-0" /> {pro.main_city}
-          </span>
-        </div>
-      </div>
-    </a>
-  );
-}
-
-// ── Infinite scrolling marquee ────────────────────────────────────────────
-function ProfessionalMarquee({ pros }: { pros: Professional[] }) {
-  if (pros.length === 0) return null;
-  // duplicate items to fill and loop
-  const items = pros.length < 5 ? [...pros, ...pros, ...pros] : [...pros, ...pros];
-
-  return (
-    <div className="relative overflow-hidden py-4" aria-hidden="true">
-      {/* fade edges */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-gradient-to-r from-slate-50 to-transparent dark:from-slate-950" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-slate-50 to-transparent dark:from-slate-950" />
-
-      <div className="flex gap-4 animate-marquee" style={{ width: 'max-content' }}>
-        {items.map((pro, i) => (
-          <MarqueeCard key={`${pro.id}-${i}`} pro={pro} />
-        ))}
-      </div>
     </div>
   );
 }
@@ -199,7 +135,6 @@ function FeaturedCard({ pro }: { pro: Professional }) {
 
 // ── Main page ─────────────────────────────────────────────────────────────
 export default function HomePage({ categories, featured, stats, geo }: Props) {
-  const { t } = useTranslation();
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
 
@@ -244,7 +179,7 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           )}
 
           <h1 className="text-4xl font-black tracking-tight text-slate-950 dark:text-white md:text-6xl leading-tight">
-            {t('hero')}
+            Trouvez un professionnel en moins de 30 secondes
           </h1>
 
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
@@ -273,25 +208,10 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         </div>
       </section>
 
-      {/* ── Professional marquee strip ───────────────────────────────────── */}
-      {featured.length > 0 && (
-        <div className="bg-slate-50 dark:bg-slate-900/40 py-6 border-y border-slate-100 dark:border-slate-800">
-          <div className="mb-3 px-4 flex items-center justify-between max-w-7xl mx-auto">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Professionnels en vedette
-            </p>
-            <a href="/professionals" className="text-xs font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
-              Voir tous <ArrowRight className="h-3 w-3" />
-            </a>
-          </div>
-          <ProfessionalMarquee pros={featured} />
-        </div>
-      )}
-
       {/* ── Categories ───────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white">{t('categories')}</h2>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white">Catégories</h2>
           <a href="/professionals" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
             Voir tout <ArrowRight className="h-4 w-4" />
           </a>

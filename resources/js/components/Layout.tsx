@@ -1,9 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { LanguageSwitcher } from './LanguageSwitcher';
 import { M3allemClickLogo } from './M3allemClickLogo';
 import { Moon, Sun, Menu, X, LogIn, Search, MapPin, Mail, Phone } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
-import { useTranslation } from 'react-i18next';
 
 type FooterLink = { label: string; url: string };
 type Settings = {
@@ -33,8 +30,6 @@ const defaultSettings: Settings = {
 };
 
 export function Layout({ children }: { children: ReactNode }) {
-  const { language, rtl } = useLanguage();
-  const { t } = useTranslation();
   const [dark, setDark] = useState(() => {
     try { return localStorage.getItem('m3allemclick_dark') === 'true'; } catch { return false; }
   });
@@ -42,11 +37,9 @@ export function Layout({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(defaultSettings);
 
   useEffect(() => {
-    document.documentElement.lang = language;
-    document.documentElement.dir = rtl ? 'rtl' : 'ltr';
     document.documentElement.classList.toggle('dark', dark);
     try { localStorage.setItem('m3allemclick_dark', String(dark)); } catch {}
-  }, [language, rtl, dark]);
+  }, [dark]);
 
   useEffect(() => {
     fetch('/api/settings', { headers: { Accept: 'application/json' } })
@@ -56,12 +49,12 @@ export function Layout({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div className={rtl ? 'rtl' : 'ltr'}>
+    <div>
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <a href="/" className="hover:opacity-90 transition-opacity">
-            <M3allemClickLogo size="md" theme="light" />
+            <M3allemClickLogo size="md" theme={dark ? 'dark' : 'light'} />
           </a>
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -69,12 +62,11 @@ export function Layout({ children }: { children: ReactNode }) {
               Accueil
             </a>
             <a href="/professionals" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
-              {t('professionals')}
+              Professionnels
             </a>
           </nav>
 
           <div className="flex items-center gap-2">
-            <LanguageSwitcher />
             <button
               onClick={() => setDark((v) => !v)}
               className="rounded-full border border-slate-200 p-2 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800 transition-colors"
@@ -94,7 +86,7 @@ export function Layout({ children }: { children: ReactNode }) {
               className="hidden md:inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 transition-colors shadow-sm"
             >
               <LogIn className="h-4 w-4" />
-              {t('pro_login')}
+              Connexion Pro
             </a>
             <button
               className="md:hidden rounded-full border border-slate-200 p-2 dark:border-slate-700"
@@ -110,12 +102,12 @@ export function Layout({ children }: { children: ReactNode }) {
           <div className="border-t border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950 md:hidden">
             <nav className="flex flex-col gap-3 text-sm font-medium">
               <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Accueil</a>
-              <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('professionals')}</a>
+              <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Professionnels</a>
               <a href="/client/login" className="inline-flex items-center gap-2 rounded-lg border border-orange-300 px-4 py-2 text-sm font-semibold text-orange-600" onClick={() => setMobileOpen(false)}>
                 <Search className="h-4 w-4" />Chercher un artisan
               </a>
               <a href="/pro/login" className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-white font-semibold" onClick={() => setMobileOpen(false)}>
-                <LogIn className="h-4 w-4" />{t('pro_login')}
+                <LogIn className="h-4 w-4" />Connexion Pro
               </a>
             </nav>
           </div>

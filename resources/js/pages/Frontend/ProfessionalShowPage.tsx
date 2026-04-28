@@ -140,20 +140,8 @@ export default function ProfessionalShowPage({ professional }: Props) {
 
             {/* Hero card */}
             <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-soft dark:border-slate-800 dark:bg-slate-900">
-              {/* Cover photo */}
-              <div className="relative h-64 sm:h-80 bg-slate-100 dark:bg-slate-800">
-                {professional.photo ? (
-                  <img
-                    src={professional.photo}
-                    alt={professional.name}
-                    className="h-full w-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center text-6xl font-black text-slate-200 dark:text-slate-700">
-                    {professional.name?.[0]?.toUpperCase()}
-                  </div>
-                )}
+              {/* Avatar section */}
+              <div className="relative flex flex-col items-center pt-8 pb-4 bg-gradient-to-br from-orange-50 to-slate-100 dark:from-slate-800 dark:to-slate-900">
                 {/* Fav button */}
                 <button
                   onClick={toggleFav}
@@ -164,6 +152,18 @@ export default function ProfessionalShowPage({ professional }: Props) {
                 >
                   <Heart className={`h-5 w-5 ${isFav ? 'fill-white' : ''}`} />
                 </button>
+                {professional.photo ? (
+                  <img
+                    src={professional.photo}
+                    alt={professional.name}
+                    className="h-24 w-24 rounded-full object-cover border-4 border-white dark:border-slate-700 shadow-lg"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                ) : (
+                  <div className="h-24 w-24 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-3xl font-black text-white shadow-lg border-4 border-white dark:border-slate-700">
+                    {professional.name?.[0]?.toUpperCase()}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-5 p-6">
