@@ -22,7 +22,16 @@ export default {
       },
       boxShadow: {
         soft: '0 10px 40px rgba(15, 23, 42, 0.08)'
-      }
+      },
+      keyframes: {
+        marquee: {
+          '0%':   { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 30s linear infinite',
+      },
     },
   },
   plugins: [forms],

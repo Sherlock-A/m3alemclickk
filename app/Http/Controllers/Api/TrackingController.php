@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Professional;
 use App\Models\Tracking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
@@ -28,6 +29,16 @@ class TrackingController extends Controller
         ]);
 
         $professional = Professional::findOrFail($data['professional_id']);
+        $ip           = $request->ip();
+
+        // Deduplicate view events: same IP → same pro, once per 30 min
+        if ($data['type'] === 'view') {
+            $dedupKey = "view_{$ip}_{$professional->id}";
+            if (Cache::has($dedupKey)) {
+                return response()->json(['success' => true, 'deduped' => true]);
+            }
+            Cache::put($dedupKey, 1, now()->addMinutes(30));
+        }
 
         match ($data['type']) {
             'view'          => $professional->increment('views'),
@@ -38,7 +49,7 @@ class TrackingController extends Controller
         $tracking = Tracking::create([
             'professional_id' => $professional->id,
             'type' => $data['type'],
-            'ip' => $request->ip(),
+            'ip' => $ip,
             'city' => $request->attributes->get('geo.city', 'Casablanca'),
             'meta' => $data['meta'] ?? [],
         ]);

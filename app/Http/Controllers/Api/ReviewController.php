@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Professional;
 use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ReviewController extends Controller
 {
@@ -17,6 +18,20 @@ class ReviewController extends Controller
             'rating'          => ['required', 'integer', 'min:1', 'max:5'],
             'comment'         => ['nullable', 'string', 'max:1000'],
         ]);
+
+        // IP-based daily limit: max 3 reviews per IP per professional per day
+        $ip      = $request->ip();
+        $proId   = $data['professional_id'];
+        $ipKey   = "review_ip_{$ip}_{$proId}_" . now()->format('Ymd');
+        $ipCount = Cache::get($ipKey, 0);
+
+        if ($ipCount >= 3) {
+            return response()->json([
+                'message' => 'Vous avez déjà soumis plusieurs avis pour ce professionnel aujourd\'hui.',
+            ], 429);
+        }
+
+        Cache::put($ipKey, $ipCount + 1, now()->endOfDay());
 
         // Default approved = false (pending admin validation)
         $data['approved'] = false;

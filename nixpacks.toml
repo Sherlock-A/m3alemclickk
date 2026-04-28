@@ -17,4 +17,4 @@ cmds = [
 cmds = ["php artisan config:cache"]
 
 [start]
-cmd = "touch /tmp/db.sqlite && export DB_CONNECTION=sqlite DB_DATABASE=/tmp/db.sqlite && php artisan optimize:clear && php artisan storage:link --force && php artisan migrate:fresh --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+cmd = "mkdir -p /tmp/laravel-views /tmp/uploads && touch /tmp/db.sqlite && export DB_CONNECTION=sqlite DB_DATABASE=/tmp/db.sqlite VIEW_COMPILED_PATH=/tmp/laravel-views && php artisan optimize:clear && php artisan storage:link --force 2>/dev/null || true && php artisan migrate --force && CATS=$(php artisan tinker --execute=\"echo \\App\\Models\\Category::count();\" 2>/dev/null | tr -d '[:space:]') && if [ \"$CATS\" = \"0\" ] || [ -z \"$CATS\" ]; then php artisan db:seed --force; fi && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"

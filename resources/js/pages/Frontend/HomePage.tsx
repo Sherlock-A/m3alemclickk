@@ -1,7 +1,7 @@
+import { useEffect, useRef, useState, ElementType } from 'react';
 import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
-import { motion } from 'framer-motion';
-import { Briefcase, MapPin, ShieldCheck, Sparkles, Star, ArrowRight, BadgeCheck } from 'lucide-react';
+import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
 import { CategoryIcon } from '../../components/CategoryIcon';
@@ -20,13 +20,121 @@ type Props = {
   geo?: { city?: string; source?: string } | null;
 };
 
+// ── Animated counter hook ──────────────────────────────────────────────────
+function useCountUp(target: number, duration = 1800, start = false) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    let startTime: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(Math.round(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [target, duration, start]);
+  return value;
+}
+
+// ── Stat card with animated counter ───────────────────────────────────────
+function StatCard({
+  label, target, icon: Icon, started,
+}: {
+  label: string;
+  target: number;
+  icon: ElementType;
+  started: boolean;
+}) {
+  const value = useCountUp(target, 1800, started);
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
+      <Icon className="mb-2 h-4 w-4 text-orange-500" />
+      <div className="text-2xl font-black text-slate-900 dark:text-white tabular-nums">
+        {value.toLocaleString('fr-MA')}
+      </div>
+      <div className="text-xs text-slate-500 mt-0.5">{label}</div>
+      {/* animated bottom bar */}
+      <div
+        className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 transition-all"
+        style={{ width: started ? '100%' : '0%', transitionDuration: '1.8s', transitionTimingFunction: 'cubic-bezier(0.33,1,0.68,1)' }}
+      />
+    </div>
+  );
+}
+
+// ── Mini profile card for marquee ─────────────────────────────────────────
+function MarqueeCard({ pro }: { pro: Professional }) {
+  return (
+    <a
+      href={`/professionals/${pro.slug}`}
+      className="group flex-shrink-0 w-52 rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 overflow-hidden shadow-soft hover:shadow-md hover:-translate-y-1 transition-all"
+      tabIndex={-1}
+    >
+      {/* photo or gradient avatar */}
+      <div className="relative h-32 bg-gradient-to-br from-orange-100 to-slate-100 dark:from-slate-800 dark:to-slate-700">
+        {pro.photo ? (
+          <img src={pro.photo} alt={pro.name} className="h-full w-full object-cover" loading="lazy" />
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <span className="h-16 w-16 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-black text-white shadow-lg">
+              {pro.name[0]}
+            </span>
+          </div>
+        )}
+        {/* availability dot */}
+        <span className={`absolute top-2 right-2 h-2.5 w-2.5 rounded-full ring-2 ring-white dark:ring-slate-900 ${pro.is_available ? 'bg-green-500' : 'bg-slate-400'}`} />
+      </div>
+      <div className="p-3">
+        <div className="flex items-center gap-1">
+          <p className="font-bold text-sm text-slate-900 dark:text-white truncate">{pro.name}</p>
+          {pro.verified && <BadgeCheck className="h-3.5 w-3.5 text-orange-500 shrink-0" />}
+        </div>
+        <p className="text-xs text-orange-600 font-medium truncate">{pro.profession}</p>
+        <div className="flex items-center justify-between mt-2">
+          <span className="flex items-center gap-0.5 text-xs text-amber-500 font-semibold">
+            <Star className="h-3 w-3 fill-amber-400" />
+            {pro.rating > 0 ? pro.rating.toFixed(1) : 'Nouveau'}
+          </span>
+          <span className="flex items-center gap-0.5 text-xs text-slate-400">
+            <MapPin className="h-3 w-3 shrink-0" /> {pro.main_city}
+          </span>
+        </div>
+      </div>
+    </a>
+  );
+}
+
+// ── Infinite scrolling marquee ────────────────────────────────────────────
+function ProfessionalMarquee({ pros }: { pros: Professional[] }) {
+  if (pros.length === 0) return null;
+  // duplicate items to fill and loop
+  const items = pros.length < 5 ? [...pros, ...pros, ...pros] : [...pros, ...pros];
+
+  return (
+    <div className="relative overflow-hidden py-4" aria-hidden="true">
+      {/* fade edges */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 z-10 bg-gradient-to-r from-slate-50 to-transparent dark:from-slate-950" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 z-10 bg-gradient-to-l from-slate-50 to-transparent dark:from-slate-950" />
+
+      <div className="flex gap-4 animate-marquee" style={{ width: 'max-content' }}>
+        {items.map((pro, i) => (
+          <MarqueeCard key={`${pro.id}-${i}`} pro={pro} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Featured card (grid section) ──────────────────────────────────────────
 function FeaturedCard({ pro }: { pro: Professional }) {
   return (
     <a
       href={`/professionals/${pro.slug}`}
       className="group relative flex flex-col rounded-3xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
     >
-      {/* Availability dot */}
       <span className={`absolute top-4 right-4 h-2.5 w-2.5 rounded-full ring-2 ring-white dark:ring-slate-900 ${
         pro.is_available ? 'bg-green-500' : 'bg-slate-400'
       }`} />
@@ -34,18 +142,18 @@ function FeaturedCard({ pro }: { pro: Professional }) {
       <div className="flex items-center gap-3 mb-3">
         {pro.photo ? (
           <img src={pro.photo} alt={pro.name}
-            className="h-12 w-12 rounded-2xl object-cover border border-slate-200 dark:border-slate-700" />
+            className="h-12 w-12 rounded-full object-cover border-2 border-orange-200 dark:border-orange-800" />
         ) : (
-          <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-lg font-black text-white">
+          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-lg font-black text-white">
             {pro.name[0]}
           </div>
         )}
         <div className="min-w-0">
           <div className="flex items-center gap-1">
             <p className="font-bold text-slate-900 dark:text-white truncate">{pro.name}</p>
-            {pro.verified && <BadgeCheck className="h-4 w-4 text-brand-600 shrink-0" />}
+            {pro.verified && <BadgeCheck className="h-4 w-4 text-orange-500 shrink-0" />}
           </div>
-          <p className="text-sm text-brand-600 font-medium truncate">{pro.profession}</p>
+          <p className="text-sm text-orange-600 font-medium truncate">{pro.profession}</p>
         </div>
       </div>
 
@@ -66,16 +174,46 @@ function FeaturedCard({ pro }: { pro: Professional }) {
         ) : (
           <span className="text-xs text-slate-400">Nouveau</span>
         )}
-        <span className="text-xs font-semibold text-brand-600 group-hover:underline flex items-center gap-1">
-          Voir le profil <ArrowRight className="h-3 w-3" />
-        </span>
+        <div className="flex items-center gap-2">
+          <a
+            href={`/api/whatsapp/${pro.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1 rounded-lg bg-green-500 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-green-600 transition-colors"
+          >
+            <MessageCircle className="h-3 w-3" />
+            WhatsApp
+          </a>
+          <a
+            href={`/api/call/${pro.id}`}
+            onClick={(e) => e.stopPropagation()}
+            className="flex items-center gap-1 rounded-lg bg-slate-900 px-2.5 py-1.5 text-xs font-semibold text-white dark:bg-slate-700 hover:bg-slate-800 transition-colors"
+          >
+            <Phone className="h-3 w-3" />
+            Appel
+          </a>
+        </div>
       </div>
     </a>
   );
 }
 
+// ── Main page ─────────────────────────────────────────────────────────────
 export default function HomePage({ categories, featured, stats, geo }: Props) {
   const { t } = useTranslation();
+  const statsRef = useRef<HTMLDivElement>(null);
+  const [statsVisible, setStatsVisible] = useState(false);
+
+  // Trigger counter animation when stats section enters viewport
+  useEffect(() => {
+    const el = statsRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true); },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const handleCategoryClick = (categoryName: string) => {
     router.get('/professionals', { profession: categoryName });
@@ -90,64 +228,71 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         <meta property="og:description" content="Plombiers, électriciens, menuisiers et plus — contact direct en 30 secondes." />
         <meta property="og:type" content="website" />
       </Head>
-      {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      <section className="mx-auto grid max-w-7xl gap-8 px-4 py-16 md:grid-cols-[1.2fr_.8fr] md:py-24">
-        <div className="space-y-6">
-          <span className="inline-flex rounded-full bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 dark:bg-brand-900/20 dark:text-brand-300">
+
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <section className="mx-auto max-w-7xl px-4 pt-16 pb-10 md:pt-24 md:pb-14">
+        <div className="space-y-6 text-center max-w-3xl mx-auto">
+          <span className="inline-flex rounded-full bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-700 dark:bg-orange-900/20 dark:text-orange-300">
             Maroc • WhatsApp • Appel immédiat
           </span>
+
           {geo?.city && (
-            <p className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
-              <MapPin className="h-4 w-4 text-brand-500" />
+            <p className="flex items-center justify-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
+              <MapPin className="h-4 w-4 text-orange-500" />
               Votre ville détectée : <strong className="text-slate-800 dark:text-white">{geo.city}</strong>
             </p>
           )}
-          <h1 className="max-w-3xl text-4xl font-black tracking-tight text-slate-950 dark:text-white md:text-6xl">
+
+          <h1 className="text-4xl font-black tracking-tight text-slate-950 dark:text-white md:text-6xl leading-tight">
             {t('hero')}
           </h1>
-          <p className="max-w-2xl text-lg text-slate-600 dark:text-slate-300">
+
+          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
             Trouvez rapidement un artisan ou un professionnel vérifié, proche de chez vous — contact WhatsApp instantané et avis clients authentiques.
           </p>
-          <SearchBar initialCity={geo?.city} />
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              { label: 'Professionnels', value: stats.professionals, icon: Briefcase },
-              { label: 'Vérifiés',       value: stats.verified,      icon: ShieldCheck },
-              { label: 'Missions',       value: stats.missions,      icon: Sparkles },
-              { label: 'Villes',         value: stats.cities,        icon: MapPin },
-            ].map((item) => (
-              <div key={item.label}
-                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
-                <item.icon className="mb-2 h-4 w-4 text-brand-600" />
-                <div className="text-xl font-black text-slate-900 dark:text-white tabular-nums">
-                  {item.value.toLocaleString('fr-MA')}
-                </div>
-                <div className="text-xs text-slate-500">{item.label}</div>
-              </div>
-            ))}
-          </div>
+          <SearchBar initialCity={geo?.city} />
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="glass rounded-[2rem] p-4 shadow-soft hidden md:block"
-        >
-          <img
-            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop"
-            alt="Artisans professionnels au Maroc"
-            className="h-full min-h-[380px] w-full rounded-[1.5rem] object-cover"
-          />
-        </motion.div>
+        {/* ── Animated Stats ─────────────────────────────────────────────── */}
+        <div ref={statsRef} className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 max-w-3xl mx-auto">
+          {[
+            { label: 'Professionnels', value: stats.professionals, icon: Briefcase as ElementType },
+            { label: 'Vérifiés',       value: stats.verified,      icon: ShieldCheck as ElementType },
+            { label: 'Missions',       value: stats.missions,      icon: Sparkles as ElementType },
+            { label: 'Villes',         value: stats.cities,        icon: MapPin as ElementType },
+          ].map((item) => (
+            <StatCard
+              key={item.label}
+              label={item.label}
+              target={item.value}
+              icon={item.icon}
+              started={statsVisible}
+            />
+          ))}
+        </div>
       </section>
 
-      {/* ── Categories ───────────────────────────────────────────────────────── */}
+      {/* ── Professional marquee strip ───────────────────────────────────── */}
+      {featured.length > 0 && (
+        <div className="bg-slate-50 dark:bg-slate-900/40 py-6 border-y border-slate-100 dark:border-slate-800">
+          <div className="mb-3 px-4 flex items-center justify-between max-w-7xl mx-auto">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Professionnels en vedette
+            </p>
+            <a href="/professionals" className="text-xs font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+              Voir tous <ArrowRight className="h-3 w-3" />
+            </a>
+          </div>
+          <ProfessionalMarquee pros={featured} />
+        </div>
+      )}
+
+      {/* ── Categories ───────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-2xl font-black text-slate-900 dark:text-white">{t('categories')}</h2>
-          <a href="/professionals" className="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+          <a href="/professionals" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
             Voir tout <ArrowRight className="h-4 w-4" />
           </a>
         </div>
@@ -158,12 +303,12 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
                 key={category.id}
                 type="button"
                 onClick={() => handleCategoryClick(category.name)}
-                className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-brand-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-brand-700 text-left"
+                className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-orange-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-orange-700 text-left"
               >
                 <div className="mb-3">
                   <CategoryIcon name={category.name} size={48} />
                 </div>
-                <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-brand-600 transition-colors">
+                <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors">
                   {category.name}
                 </h3>
                 {category.description && (
@@ -177,7 +322,7 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         )}
       </section>
 
-      {/* ── Featured Professionals ────────────────────────────────────────────── */}
+      {/* ── Featured Professionals grid ───────────────────────────────────── */}
       {featured.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-12">
           <div className="mb-8 flex items-center justify-between">
@@ -185,7 +330,7 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
               <h2 className="text-2xl font-black text-slate-900 dark:text-white">Professionnels recommandés</h2>
               <p className="text-sm text-slate-500 mt-1">Vérifiés, disponibles et les mieux notés</p>
             </div>
-            <a href="/professionals" className="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1">
+            <a href="/professionals" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
               Tous les pros <ArrowRight className="h-4 w-4" />
             </a>
           </div>
@@ -197,13 +342,12 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         </section>
       )}
 
-      {/* ── How it works ─────────────────────────────────────────────────────── */}
+      {/* ── How it works ─────────────────────────────────────────────────── */}
       <section className="bg-slate-50 dark:bg-slate-900/50 py-16 mt-8">
         <div className="mx-auto max-w-7xl px-4">
           <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-10 text-center">Comment ça marche ?</h2>
           <div className="grid gap-8 sm:grid-cols-3">
 
-            {/* ── Étape 1 : Chercher ── */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4 relative">
                 <svg viewBox="0 0 48 48" width="64" height="64" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
@@ -211,9 +355,6 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
                   <circle cx="20" cy="20" r="11" fill="none" stroke="white" strokeWidth="4"/>
                   <circle cx="17" cy="17" r="4" fill="white" opacity="0.2"/>
                   <line x1="28" y1="28" x2="40" y2="40" stroke="white" strokeWidth="5" strokeLinecap="round"/>
-                  <circle cx="36" cy="10" r="2" fill="white" opacity="0.5"/>
-                  <line x1="36" y1="6" x2="36" y2="8" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
-                  <line x1="39" y1="7" x2="38" y2="8.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
                 </svg>
                 <div className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shadow">1</div>
               </div>
@@ -221,7 +362,6 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
               <p className="text-sm text-slate-500 dark:text-slate-400">Recherchez par ville, métier ou compétence. Filtrez selon vos besoins.</p>
             </div>
 
-            {/* ── Étape 2 : Comparer ── */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4 relative">
                 <svg viewBox="0 0 48 48" width="64" height="64" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
@@ -229,17 +369,11 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
                   <rect x="5" y="12" width="16" height="24" rx="4" fill="white" opacity="0.95"/>
                   <rect x="8" y="17" width="10" height="2" rx="1" fill="#f59e0b" opacity="0.5"/>
                   <rect x="8" y="21" width="7" height="2" rx="1" fill="#f59e0b" opacity="0.35"/>
-                  <rect x="8" y="25" width="9" height="2" rx="1" fill="#f59e0b" opacity="0.35"/>
-                  <path d="M10 30 L11 28 L12 30 L14 30 L12.5 31.5 L13 33.5 L11 32 L9 33.5 L9.5 31.5 L8 30 Z" fill="#f59e0b" opacity="0.7"/>
                   <rect x="27" y="12" width="16" height="24" rx="4" fill="white"/>
                   <rect x="30" y="17" width="10" height="2" rx="1" fill="#f59e0b" opacity="0.5"/>
-                  <rect x="30" y="21" width="6" height="2" rx="1" fill="#f59e0b" opacity="0.35"/>
-                  <rect x="30" y="25" width="8" height="2" rx="1" fill="#f59e0b" opacity="0.35"/>
                   <path d="M32 30 L33 28 L34 30 L36 30 L34.5 31.5 L35 33.5 L33 32 L31 33.5 L31.5 31.5 L30 30 Z" fill="#f59e0b"/>
                   <circle cx="24" cy="24" r="6" fill="#0f172a"/>
                   <text x="24" y="27.5" fontFamily="Outfit,sans-serif" fontWeight="800" fontSize="7" fill="white" textAnchor="middle">VS</text>
-                  <circle cx="38" cy="14" r="5" fill="#22c55e"/>
-                  <path d="M35.5 14 L37.5 16 L40.5 12" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 <div className="absolute -bottom-2 -right-2 h-6 w-6 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center shadow">2</div>
               </div>
@@ -247,7 +381,6 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
               <p className="text-sm text-slate-500 dark:text-slate-400">Consultez les profils, avis clients et portfolio photo de chaque artisan.</p>
             </div>
 
-            {/* ── Étape 3 : Contacter ── */}
             <div className="flex flex-col items-center text-center">
               <div className="mb-4 relative">
                 <svg viewBox="0 0 48 48" width="64" height="64" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-md">
