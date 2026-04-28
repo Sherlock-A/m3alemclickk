@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { M3allemClickLogo } from './M3allemClickLogo';
-import { Moon, Sun, Menu, X, LogIn, Search, MapPin, Mail, Phone } from 'lucide-react';
+import { Moon, Sun, Menu, X, LogIn, Search, MapPin, Mail, Phone, LayoutDashboard, LogOut, ShieldCheck, User } from 'lucide-react';
 
 type FooterLink = { label: string; url: string };
 type Settings = {
@@ -29,12 +29,49 @@ const defaultSettings: Settings = {
   footer_copyright: '© 2026 M3allemClick. Tous droits réservés.',
 };
 
+// Detect which actor is currently logged in via localStorage tokens
+type AuthState = { role: 'admin' | 'professional' | 'client'; dashboardUrl: string; label: string } | null;
+
+function detectAuth(): AuthState {
+  try {
+    if (localStorage.getItem('m3allemclick_token')) {
+      return { role: 'admin', dashboardUrl: '/dashboard/admin', label: 'Dashboard Admin' };
+    }
+    if (localStorage.getItem('pro_token')) {
+      return { role: 'professional', dashboardUrl: '/dashboard/professional', label: 'Mon Dashboard' };
+    }
+    if (localStorage.getItem('client_token')) {
+      return { role: 'client', dashboardUrl: '/dashboard/client', label: 'Mon Espace' };
+    }
+  } catch {}
+  return null;
+}
+
+function logout(role: 'admin' | 'professional' | 'client') {
+  try {
+    if (role === 'admin')        localStorage.removeItem('m3allemclick_token');
+    if (role === 'professional') localStorage.removeItem('pro_token');
+    if (role === 'client')       localStorage.removeItem('client_token');
+    // Also clear any cached user data
+    localStorage.removeItem('pro_draft');
+  } catch {}
+
+  // Inform the API (fire-and-forget)
+  const logoutUrl = role === 'admin' ? '/api/admin/logout'
+    : role === 'professional' ? '/api/pro/logout'
+    : '/api/client/logout';
+  fetch(logoutUrl, { method: 'POST' }).catch(() => {});
+
+  window.location.href = '/';
+}
+
 export function Layout({ children }: { children: ReactNode }) {
   const [dark, setDark] = useState(() => {
     try { return localStorage.getItem('m3allemclick_dark') === 'true'; } catch { return false; }
   });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [auth, setAuth] = useState<AuthState>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
@@ -42,11 +79,72 @@ export function Layout({ children }: { children: ReactNode }) {
   }, [dark]);
 
   useEffect(() => {
+    setAuth(detectAuth());
+  }, []);
+
+  useEffect(() => {
     fetch('/api/settings', { headers: { Accept: 'application/json' } })
       .then((r) => r.ok ? r.json() : null)
       .then((data) => { if (data) setSettings({ ...defaultSettings, ...data }); })
       .catch(() => {});
   }, []);
+
+  const AuthButtons = ({ mobile = false }: { mobile?: boolean }) => {
+    if (auth) {
+      const roleIcon = auth.role === 'admin'
+        ? <ShieldCheck className="h-4 w-4" />
+        : auth.role === 'professional'
+        ? <LayoutDashboard className="h-4 w-4" />
+        : <User className="h-4 w-4" />;
+
+      const roleColor = auth.role === 'admin'
+        ? 'bg-purple-600 hover:bg-purple-700'
+        : auth.role === 'professional'
+        ? 'bg-orange-500 hover:bg-orange-600'
+        : 'bg-blue-600 hover:bg-blue-700';
+
+      return (
+        <div className={`flex ${mobile ? 'flex-col' : 'items-center'} gap-2`}>
+          <a
+            href={auth.dashboardUrl}
+            className={`inline-flex items-center gap-2 rounded-lg ${roleColor} px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm`}
+            onClick={() => setMobileOpen(false)}
+          >
+            {roleIcon}
+            {auth.label}
+          </a>
+          <button
+            onClick={() => logout(auth.role)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-50 hover:text-red-500 dark:border-slate-700 dark:hover:bg-slate-800 transition-colors"
+          >
+            <LogOut className="h-3.5 w-3.5" />
+            Déconnexion
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className={`flex ${mobile ? 'flex-col' : 'items-center'} gap-2`}>
+        <a
+          href="/client/login"
+          className={`${mobile ? 'inline-flex' : 'hidden md:inline-flex'} items-center gap-2 rounded-lg border border-orange-300 px-4 py-2 text-sm font-semibold text-orange-600 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-900/20 transition-colors`}
+          onClick={() => setMobileOpen(false)}
+        >
+          <Search className="h-4 w-4" />
+          Chercher un artisan
+        </a>
+        <a
+          href="/pro/login"
+          className={`${mobile ? 'inline-flex' : 'hidden md:inline-flex'} items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 transition-colors shadow-sm`}
+          onClick={() => setMobileOpen(false)}
+        >
+          <LogIn className="h-4 w-4" />
+          Connexion Pro
+        </a>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -74,20 +172,12 @@ export function Layout({ children }: { children: ReactNode }) {
             >
               {dark ? <Sun className="h-4 w-4 text-yellow-400" /> : <Moon className="h-4 w-4 text-slate-500" />}
             </button>
-            <a
-              href="/client/login"
-              className="hidden md:inline-flex items-center gap-2 rounded-lg border border-orange-300 px-4 py-2 text-sm font-semibold text-orange-600 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-900/20 transition-colors"
-            >
-              <Search className="h-4 w-4" />
-              Chercher un artisan
-            </a>
-            <a
-              href="/pro/login"
-              className="hidden md:inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 transition-colors shadow-sm"
-            >
-              <LogIn className="h-4 w-4" />
-              Connexion Pro
-            </a>
+
+            {/* Desktop auth buttons */}
+            <div className="hidden md:flex items-center gap-2">
+              <AuthButtons />
+            </div>
+
             <button
               className="md:hidden rounded-full border border-slate-200 p-2 dark:border-slate-700"
               onClick={() => setMobileOpen((v) => !v)}
@@ -103,12 +193,7 @@ export function Layout({ children }: { children: ReactNode }) {
             <nav className="flex flex-col gap-3 text-sm font-medium">
               <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Accueil</a>
               <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Professionnels</a>
-              <a href="/client/login" className="inline-flex items-center gap-2 rounded-lg border border-orange-300 px-4 py-2 text-sm font-semibold text-orange-600" onClick={() => setMobileOpen(false)}>
-                <Search className="h-4 w-4" />Chercher un artisan
-              </a>
-              <a href="/pro/login" className="inline-flex items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-white font-semibold" onClick={() => setMobileOpen(false)}>
-                <LogIn className="h-4 w-4" />Connexion Pro
-              </a>
+              <AuthButtons mobile />
             </nav>
           </div>
         )}

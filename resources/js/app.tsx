@@ -2,7 +2,6 @@ import '../css/app.css';
 import { createInertiaApp } from '@inertiajs/react';
 import { createRoot } from 'react-dom/client';
 import { FavoritesProvider } from './contexts/FavoritesContext';
-import { LanguageProvider } from './contexts/LanguageContext';
 import './i18n';
 
 createInertiaApp({
@@ -12,11 +11,9 @@ createInertiaApp({
   },
   setup({ el, App, props }) {
     createRoot(el).render(
-      <LanguageProvider>
-        <FavoritesProvider>
-          <App {...props} />
-        </FavoritesProvider>
-      </LanguageProvider>
+      <FavoritesProvider>
+        <App {...props} />
+      </FavoritesProvider>
     );
   },
 });

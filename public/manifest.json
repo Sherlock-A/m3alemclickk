@@ -1,0 +1,49 @@
+{
+  "name": "M3allemClick — Artisans Maroc",
+  "short_name": "M3allemClick",
+  "description": "Trouvez rapidement un artisan vérifié au Maroc — contact WhatsApp instantané",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#f97316",
+  "orientation": "portrait-primary",
+  "lang": "fr-MA",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Page d'accueil M3allemClick"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Rechercher un artisan",
+      "url": "/professionals",
+      "description": "Accéder à l'annuaire des professionnels"
+    },
+    {
+      "name": "Devenir professionnel",
+      "url": "/pro/register",
+      "description": "Créer votre profil professionnel"
+    }
+  ],
+  "categories": ["business", "lifestyle", "utilities"],
+  "prefer_related_applications": false
+}

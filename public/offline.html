@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>M3allemClick — Hors ligne</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #f8fafc; color: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 24px; }
+    .card { background: white; border-radius: 24px; padding: 40px 32px; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,.08); }
+    .icon { font-size: 48px; margin-bottom: 16px; }
+    h1 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    p { color: #64748b; font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    a { display: inline-block; background: #f97316; color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; }
+    a:hover { background: #ea6d0c; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📡</div>
+    <h1>Vous êtes hors ligne</h1>
+    <p>Vérifiez votre connexion internet et réessayez. Les pages visitées récemment sont disponibles en mode hors ligne.</p>
+    <a href="/" onclick="location.reload()">Réessayer</a>
+  </div>
+</body>
+</html>
