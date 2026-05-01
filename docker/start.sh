@@ -3,6 +3,17 @@ set -e
 
 cd /app
 
+# ── Secrets auto-génération si absents ──────────────────────────────────────
+if [ -z "$APP_KEY" ]; then
+    echo "[start] APP_KEY manquant — génération..."
+    export APP_KEY=$(php artisan key:generate --show --no-ansi 2>/dev/null | tr -d '\r\n')
+fi
+
+if [ -z "$JWT_SECRET" ]; then
+    echo "[start] JWT_SECRET manquant — génération..."
+    export JWT_SECRET=$(openssl rand -base64 48 | tr -d '\n\r')
+fi
+
 # ── Storage dirs ────────────────────────────────────────────────────────────
 mkdir -p /tmp/laravel-views /tmp/uploads \
     storage/framework/cache/data \
