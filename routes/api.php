@@ -54,26 +54,26 @@ Route::prefix('verify')->group(function () {
 Route::get('/professions/autocomplete', [ProfessionController::class, 'autocomplete'])->middleware('throttle:120,1');
 
 // ─── Auth mock (legacy, à conserver) ──────────────────────────────────────────
-Route::post('/auth/mock-login', [AuthController::class, 'mockLogin'])->middleware('throttle:10,1');
+Route::post('/auth/mock-login', [AuthController::class, 'mockLogin'])->middleware('throttle:30,1');
 
 // ─── Auth status (cookie-based, no JS token needed) ──────────────────────────
-Route::get('/auth/status', [AuthController::class, 'status'])->middleware('throttle:60,1');
+Route::get('/auth/status', [AuthController::class, 'status'])->middleware('throttle:120,1');
 
 // ─── Auth unifié (email+password, détection auto du rôle) ─────────────────────
-Route::post('/auth/login', [SocialAuthController::class, 'unifiedLogin'])->middleware('throttle:10,1');
+Route::post('/auth/login', [SocialAuthController::class, 'unifiedLogin'])->middleware('throttle:30,1');
 
 // ─── Google OAuth (redirect URL) ──────────────────────────────────────────────
-Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->middleware('throttle:20,1');
+Route::get('/auth/google', [SocialAuthController::class, 'redirectToGoogle'])->middleware('throttle:30,1');
 
 // ─── Auth Admin ────────────────────────────────────────────────────────────────
-Route::post('/admin/login',       [AuthController::class, 'adminLogin'])->middleware('throttle:10,1');
+Route::post('/admin/login',       [AuthController::class, 'adminLogin'])->middleware('throttle:30,1');
 Route::post('/admin/logout',      [AuthController::class, 'adminLogout'])->middleware('jwt:admin');
-Route::post('/admin/check-email', [AuthController::class, 'checkEmail'])->middleware('throttle:30,1');
+Route::post('/admin/check-email', [AuthController::class, 'checkEmail'])->middleware('throttle:60,1');
 
 // ─── Auth Professionnels (réelle) ─────────────────────────────────────────────
 Route::prefix('pro')->group(function () {
-    Route::post('/register',       [ProAuthController::class, 'register'])->middleware('throttle:10,1');
-    Route::post('/login',          [ProAuthController::class, 'login'])->middleware('throttle:10,1');
+    Route::post('/register',       [ProAuthController::class, 'register'])->middleware('throttle:20,1');
+    Route::post('/login',          [ProAuthController::class, 'login'])->middleware('throttle:30,1');
     Route::post('/logout',         [ProAuthController::class, 'logout'])->middleware('throttle:30,1');
     Route::post('/forgot-password',[ProAuthController::class, 'forgotPassword'])->middleware('throttle:20,1');
     Route::post('/reset-password', [ProAuthController::class, 'resetPassword'])->middleware('throttle:30,1');
@@ -85,8 +85,8 @@ Route::prefix('pro')->group(function () {
 
 // ─── Auth Clients (chercheurs d'artisans) ─────────────────────────────────────
 Route::prefix('client')->group(function () {
-    Route::post('/register',        [ClientAuthController::class, 'register'])->middleware('throttle:10,1');
-    Route::post('/login',           [ClientAuthController::class, 'login'])->middleware('throttle:10,1');
+    Route::post('/register',        [ClientAuthController::class, 'register'])->middleware('throttle:20,1');
+    Route::post('/login',           [ClientAuthController::class, 'login'])->middleware('throttle:30,1');
     Route::post('/logout',          [ClientAuthController::class, 'logout'])->middleware('throttle:30,1');
     Route::post('/forgot-password', [ClientAuthController::class, 'forgotPassword'])->middleware('throttle:20,1');
     Route::post('/reset-password',  [ClientAuthController::class, 'resetPassword'])->middleware('throttle:30,1');
