@@ -102,6 +102,7 @@ class AuthController extends Controller
                         'dashboard'     => $meta['dashboard'],
                         'label'         => $meta['label'],
                         'name'          => $user->name,
+                        'token'         => $token,
                     ]);
                 }
             } catch (\Throwable) {

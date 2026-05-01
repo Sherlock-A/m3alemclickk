@@ -3,6 +3,11 @@ import { createInertiaApp } from '@inertiajs/react';
 import { createRoot } from 'react-dom/client';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import './i18n';
+import axios from 'axios';
+
+// Send cookies (httpOnly JWT) on every request + always expect JSON
+axios.defaults.withCredentials = true;
+axios.defaults.headers.common['Accept'] = 'application/json';
 
 createInertiaApp({
   resolve: async (name) => {

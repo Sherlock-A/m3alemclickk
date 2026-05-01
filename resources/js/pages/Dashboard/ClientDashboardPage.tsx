@@ -31,7 +31,7 @@ function setFavIds(ids: number[]) {
 }
 
 export default function ClientDashboardPage() {
-  const [token] = useState<string | null>(() => localStorage.getItem('client_token'));
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('client_token'));
   const [user, setUser] = useState<ClientUser | null>(null);
   const [favPros, setFavPros] = useState<FavPro[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,9 +39,23 @@ export default function ClientDashboardPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'favorites'>('overview');
 
   useEffect(() => {
-    if (!token) { window.location.href = '/client/login'; return; }
+    if (!token) {
+      // Try to restore from httpOnly cookie
+      fetch('/api/auth/status', { credentials: 'include', headers: { Accept: 'application/json' } })
+        .then(r => r.json())
+        .then(d => {
+          if (d.authenticated && d.role === 'client' && d.token) {
+            localStorage.setItem('client_token', d.token);
+            setToken(d.token);
+          } else {
+            window.location.href = '/login';
+          }
+        }).catch(() => { window.location.href = '/login'; });
+      return;
+    }
     const controller = new AbortController();
     fetch('/api/client/me', {
+      credentials: 'include',
       headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
       signal: controller.signal,
     })

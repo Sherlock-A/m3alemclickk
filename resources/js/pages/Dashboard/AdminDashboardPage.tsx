@@ -146,27 +146,52 @@ const navItems: { id: Section; label: string; icon: any }[] = [
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('jobly_token') : null;
-
+  const [token, setToken]       = useState<string | null>(() =>
+    typeof window !== 'undefined' ? localStorage.getItem('jobly_token') : null
+  );
+  const [ready, setReady]       = useState(false);
   const [section, setSection]   = useState<Section>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifCount, setNotifCount]   = useState(0);
 
-  const headers = { Authorization: `Bearer ${token}` };
-
   useEffect(() => {
-    if (!token) { window.location.href = '/admin/login'; return; }
-    // Load notification badge count
-    axios.get('/api/admin/notifications', { headers })
-      .then(r => setNotifCount((r.data.counts?.pending_pros ?? 0) + (r.data.counts?.pending_reviews ?? 0)))
-      .catch(() => {});
+    async function bootstrap() {
+      let t = localStorage.getItem('jobly_token');
+
+      // If localStorage is empty, try to restore from httpOnly cookie via status endpoint
+      if (!t) {
+        try {
+          const res = await axios.get('/api/auth/status');
+          if (res.data.authenticated && res.data.role === 'admin' && res.data.token) {
+            t = res.data.token;
+            localStorage.setItem('jobly_token', t!);
+          }
+        } catch {}
+      }
+
+      if (!t) {
+        window.location.href = '/login';
+        return;
+      }
+
+      setToken(t);
+      setReady(true);
+
+      // Load notification badge count
+      axios.get('/api/admin/notifications', { headers: { Authorization: `Bearer ${t}` } })
+        .then(r => setNotifCount((r.data.counts?.pending_pros ?? 0) + (r.data.counts?.pending_reviews ?? 0)))
+        .catch(() => {});
+    }
+    bootstrap();
   }, []);
 
-  if (!token) return null;
+  if (!ready || !token) return null;
+
+  const headers = { Authorization: `Bearer ${token}` };
 
   const logout = () => {
     localStorage.removeItem('jobly_token');
-    window.location.href = '/admin/login';
+    window.location.href = '/login';
   };
 
   return (

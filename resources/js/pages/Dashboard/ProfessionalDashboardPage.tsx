@@ -361,7 +361,7 @@ const ACHIEVEMENTS = [
 ];
 
 export default function ProfessionalDashboardPage() {
-  const [token] = useState<string | null>(() => localStorage.getItem('pro_token'));
+  const [token, setToken] = useState<string | null>(() => localStorage.getItem('pro_token'));
   const [data, setData]       = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [retries, setRetries] = useState(0);
@@ -405,7 +405,18 @@ export default function ProfessionalDashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (!token) { window.location.href = '/pro/login'; return; }
+    if (!token) {
+      // Try to restore from httpOnly cookie via status endpoint
+      axios.get('/api/auth/status').then(res => {
+        if (res.data.authenticated && res.data.role === 'professional' && res.data.token) {
+          localStorage.setItem('pro_token', res.data.token);
+          setToken(res.data.token);
+        } else {
+          window.location.href = '/login';
+        }
+      }).catch(() => { window.location.href = '/login'; });
+      return;
+    }
     const controller = new AbortController();
     setLoading(true);
     axios
