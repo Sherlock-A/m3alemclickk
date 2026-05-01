@@ -1,91 +1,108 @@
-// Jobly Logo — implémentation exacte du design Jobly Logo Minimal
-// Pin orange #f97316 · J blanc · wordmark "jobly" Plus Jakarta Sans 900
+// Jobly Logo — implémentation exacte du design officiel
+// Pin bleu #1B3A6B · cercle orange #F26B2A · j blanc · wordmark Plus Jakarta Sans 800
 
 type LogoProps = {
-  size?     : 'xs' | 'sm' | 'md' | 'lg' | 'xl';
-  variant?  : 'full' | 'icon' | 'stacked';
-  theme?    : 'light' | 'dark';
+  size?    : 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  variant? : 'full' | 'icon' | 'stacked' | 'appicon';
+  theme?   : 'light' | 'dark';
   className?: string;
 };
 
-const ICON_PX  = { xs: 20, sm: 28, md: 40, lg: 56, xl: 80 } as const;
-const NAME_PX  = { xs: 13, sm: 16, md: 22, lg: 30, xl: 42 } as const;
+// Tailles icon (px) et wordmark (px)
+const ICON_W = { xs: 22,  sm: 30,  md: 42,  lg: 56,  xl: 80  } as const;
+const TEXT_S = { xs: 13,  sm: 17,  md: 24,  lg: 32,  xl: 46  } as const;
+const GAP_S  = { xs: 7,   sm: 9,   md: 12,  lg: 16,  xl: 22  } as const;
 
-// ── Pin mark — viewBox 72×100, proportions exactes du design ─────────────────
-function PinMark({ px }: { px: number }) {
-  const h = Math.round(px * 100 / 72);
+// Couleurs de la charte
+const BLUE   = '#1B3A6B';
+const ORANGE = '#F26B2A';
+
+// ── SVG Pin officiel (viewBox 0 0 56 68) ────────────────────────────────────
+function PinSvg({ w, theme }: { w: number; theme: 'light' | 'dark' }) {
+  const h = Math.round(w * 68 / 56);
+  const pinFill  = theme === 'dark' ? 'white' : BLUE;
+  const pinOpacity = theme === 'dark' ? 0.15 : 1;
   return (
     <svg
-      viewBox="0 0 72 100"
-      width={px}
-      height={h}
+      width={w} height={h}
+      viewBox="0 0 56 68"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
       style={{ flexShrink: 0, display: 'block' }}
     >
-      {/* Corps du pin — orange pur, pas de gradient */}
+      {/* Corps du pin */}
       <path
-        d="M 36 3 A 28 28 0 1 1 8 52 Q 20 66 36 88 Q 52 66 64 52 A 28 28 0 0 1 36 3 Z"
-        fill="#f97316"
+        d="M28 2C15.85 2 6 11.85 6 24C6 39.5 28 66 28 66C28 66 50 39.5 50 24C50 11.85 40.15 2 28 2Z"
+        fill={pinFill}
+        fillOpacity={pinOpacity}
       />
-      {/* Lettre J — barre verticale */}
-      <rect x="32" y="14" width="8" height="24" rx="3.5" fill="white" />
-      {/* Lettre J — courbe inférieure */}
-      <path
-        d="M 40 32 Q 40 47 30 47 Q 21 47 20 38"
-        fill="none"
-        stroke="white"
-        strokeWidth="8"
-        strokeLinecap="round"
-      />
-      {/* Point au sommet */}
-      <circle cx="36" cy="10" r="4.5" fill="white" />
+      {/* Cercle orange */}
+      <circle cx="28" cy="24" r="13" fill={ORANGE} />
+      {/* Lettre j blanche */}
+      <text
+        x="28" y="30"
+        textAnchor="middle"
+        fontFamily="'Plus Jakarta Sans', sans-serif"
+        fontSize="17"
+        fontWeight="800"
+        fill="white"
+        letterSpacing="-0.5"
+      >
+        j
+      </text>
     </svg>
   );
 }
 
-// ── Pin mark compact pour la version horizontale ──────────────────────────────
-function PinMarkHorizontal({ px }: { px: number }) {
-  // viewBox 40×52 — version compacte du design
-  const h = Math.round(px * 52 / 40);
+// ── App icon carré arrondi (usage favicon / PWA / 96-32px) ──────────────────
+function AppIconSvg({ size }: { size: number }) {
+  const r = Math.round(size * 0.22);
   return (
     <svg
-      viewBox="0 0 40 52"
-      width={px}
-      height={h}
+      width={size} height={size}
+      viewBox="0 0 96 96"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      style={{ flexShrink: 0, display: 'block' }}
     >
-      <path
-        d="M 20 2 A 16 16 0 1 1 4 30 Q 10 38 20 50 Q 30 38 36 30 A 16 16 0 0 1 20 2 Z"
-        fill="#f97316"
-      />
-      <rect x="17.5" y="8" width="5" height="15" rx="2" fill="white" />
-      <path
-        d="M 22.5 20 Q 22.5 28 17 28 Q 11.5 28 11 23"
-        fill="none"
-        stroke="white"
-        strokeWidth="5"
-        strokeLinecap="round"
-      />
-      <circle cx="20" cy="5.5" r="3" fill="white" />
+      <rect width="96" height="96" rx={r * 96 / size} fill={BLUE} />
+      {/* Pin centré, légèrement agrandi */}
+      <g transform="translate(20, 8) scale(1.01)">
+        <path
+          d="M28 2C15.85 2 6 11.85 6 24C6 39.5 28 66 28 66C28 66 50 39.5 50 24C50 11.85 40.15 2 28 2Z"
+          fill="white" fillOpacity="0.15"
+        />
+        <circle cx="28" cy="24" r="13" fill={ORANGE} />
+        <text
+          x="28" y="30"
+          textAnchor="middle"
+          fontFamily="'Plus Jakarta Sans', sans-serif"
+          fontSize="17"
+          fontWeight="800"
+          fill="white"
+          letterSpacing="-0.5"
+        >
+          j
+        </text>
+      </g>
     </svg>
   );
 }
 
-// ── Wordmark "jobly" ──────────────────────────────────────────────────────────
+// ── Wordmark "jobly" ─────────────────────────────────────────────────────────
 function Wordmark({ px, color }: { px: number; color: string }) {
   return (
     <span
+      aria-hidden="true"
       style={{
-        fontFamily  : "'Plus Jakarta Sans', system-ui, sans-serif",
-        fontWeight  : 900,
-        fontSize    : px,
+        fontFamily   : "'Plus Jakarta Sans', system-ui, sans-serif",
+        fontWeight   : 800,
+        fontSize     : px,
         color,
-        letterSpacing: '-0.04em',
-        lineHeight  : 1,
-        userSelect  : 'none',
+        letterSpacing: '-0.03em',
+        lineHeight   : 1,
+        userSelect   : 'none',
       }}
     >
       jobly
@@ -93,51 +110,59 @@ function Wordmark({ px, color }: { px: number; color: string }) {
   );
 }
 
-// ── Composant principal ───────────────────────────────────────────────────────
+// ── Composant principal ──────────────────────────────────────────────────────
 export function JoblyLogo({
   size      = 'md',
   variant   = 'full',
   theme     = 'light',
   className = '',
 }: LogoProps) {
-  const iconPx  = ICON_PX[size];
-  const namePx  = NAME_PX[size];
-  const textColor = theme === 'dark' ? '#ffffff' : '#0a0a0a';
+  const iconW  = ICON_W[size];
+  const textSz = TEXT_S[size];
+  const gap    = GAP_S[size];
+  const wordColor = theme === 'dark' ? '#ffffff' : BLUE;
 
-  // ── Icône seule (pin sans texte) ──
-  if (variant === 'icon') {
+  // ── App icon (carré arrondi bleu) ──
+  if (variant === 'appicon') {
     return (
-      <span className={`inline-block ${className}`} style={{ lineHeight: 0 }}>
-        <PinMark px={iconPx} />
+      <span className={`inline-block ${className}`} aria-label="Jobly">
+        <AppIconSvg size={iconW} />
       </span>
     );
   }
 
-  // ── Empilé : pin centré + texte dessous ──
+  // ── Icône seule ──
+  if (variant === 'icon') {
+    return (
+      <span className={`inline-block ${className}`} aria-label="Jobly" style={{ lineHeight: 0 }}>
+        <PinSvg w={iconW} theme={theme} />
+      </span>
+    );
+  }
+
+  // ── Empilé : pin + wordmark en colonne ──
   if (variant === 'stacked') {
     return (
       <span
         className={`inline-flex flex-col items-center ${className}`}
-        style={{ gap: Math.round(iconPx * 0.2) }}
+        style={{ gap: Math.round(gap * 0.6) }}
         aria-label="Jobly"
       >
-        <PinMark px={Math.round(iconPx * 1.3)} />
-        <Wordmark px={namePx} color={textColor} />
+        <PinSvg w={Math.round(iconW * 1.15)} theme={theme} />
+        <Wordmark px={textSz} color={wordColor} />
       </span>
     );
   }
 
-  // ── Full horizontal (défaut) : pin compact + wordmark côte à côte ──
-  const pinPx = Math.round(iconPx * 0.75);
+  // ── Full horizontal (défaut) ──
   return (
     <span
       className={`inline-flex items-center ${className}`}
-      style={{ gap: Math.round(iconPx * 0.3) }}
+      style={{ gap }}
       aria-label="Jobly"
     >
-      <PinMarkHorizontal px={pinPx} />
-      <Wordmark px={namePx} color={textColor} />
+      <PinSvg w={iconW} theme={theme} />
+      <Wordmark px={textSz} color={wordColor} />
     </span>
   );
 }
-

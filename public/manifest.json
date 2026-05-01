@@ -1,11 +1,11 @@
 {
-  "name": "M3allemClick — Artisans Maroc",
-  "short_name": "M3allemClick",
+  "name": "Jobly — Artisans Maroc",
+  "short_name": "Jobly",
   "description": "Trouvez rapidement un artisan vérifié au Maroc — contact WhatsApp instantané",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f8fafc",
-  "theme_color": "#f97316",
+  "background_color": "#1B3A6B",
+  "theme_color": "#1B3A6B",
   "orientation": "portrait-primary",
   "lang": "fr-MA",
   "scope": "/",
@@ -41,7 +41,7 @@
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Page d'accueil M3allemClick"
+      "label": "Page d'accueil Jobly"
     }
   ],
   "shortcuts": [
