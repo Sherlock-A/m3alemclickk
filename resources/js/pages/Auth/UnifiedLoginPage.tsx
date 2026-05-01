@@ -151,6 +151,8 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
                   <div className="relative">
                     <Mail className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <input
+                      id="email"
+                      name="email"
                       type="email"
                       autoComplete="email"
                       required
@@ -175,6 +177,8 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
                   <div className="relative">
                     <Lock className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <input
+                      id="password"
+                      name="password"
                       type={showPwd ? 'text' : 'password'}
                       autoComplete="current-password"
                       required
