@@ -51,7 +51,7 @@ export default function ProLoginPage() {
       });
       const adminData = await adminRes.json();
       if (adminRes.ok) {
-        localStorage.setItem('m3allemclick_token', adminData.token);
+        localStorage.setItem('jobly_token', adminData.token);
         window.location.href = '/dashboard/admin';
         return;
       }
@@ -89,7 +89,7 @@ export default function ProLoginPage() {
       <div className="hidden lg:flex lg:w-2/5 bg-slate-950 flex-col justify-between p-12">
         <a href="/" className="flex items-center gap-2 text-xl font-black text-orange-500">
           <Wrench className="h-6 w-6" />
-          M3allem<span className="text-white">Click</span>
+          Jobly
         </a>
         <div className="space-y-6">
           <div className="h-1 w-12 bg-orange-500 rounded-full" />
@@ -113,7 +113,7 @@ export default function ProLoginPage() {
             ))}
           </div>
         </div>
-        <p className="text-slate-600 text-xs">© {new Date().getFullYear()} M3allemClick</p>
+        <p className="text-slate-600 text-xs">© {new Date().getFullYear()} Jobly</p>
       </div>
 
       {/* Right panel — form */}
@@ -124,7 +124,7 @@ export default function ProLoginPage() {
           <div className="lg:hidden text-center">
             <a href="/" className="inline-flex items-center gap-2 text-xl font-black text-orange-500">
               <Wrench className="h-5 w-5" />
-              M3allem<span className="text-slate-800 dark:text-white">Click</span>
+              Jobly
             </a>
           </div>
 

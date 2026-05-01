@@ -107,7 +107,7 @@ export function SearchBar({ initialCity = '', initialProfession = '' }: { initia
       try {
         const res = await fetch(
           `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=fr`,
-          { headers: { 'User-Agent': 'M3allemClick/1.0' } }
+          { headers: { 'User-Agent': 'Jobly/1.0' } }
         );
         const data = await res.json();
         const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county || '';

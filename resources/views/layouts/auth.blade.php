@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ ($title ?? 'Connexion') . ' — M3allemClick' }}</title>
+    <title>{{ ($title ?? 'Connexion') . ' — Jobly' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
@@ -33,7 +33,7 @@
             <div class="text-center mb-8">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-2xl font-black">
                     <span>🔧</span>
-                    <span class="text-orange-500">M3allem</span><span class="text-slate-800">Click</span>
+                    Jobly
                 </a>
             </div>
 

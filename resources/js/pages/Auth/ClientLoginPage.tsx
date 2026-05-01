@@ -40,7 +40,7 @@ export default function ClientLoginPage() {
         <div className="text-center mb-8">
           <a href="/" className="inline-flex items-center gap-2 text-2xl font-black text-orange-500">
             <Search className="h-7 w-7" />
-            M3allem<span className="text-slate-800 dark:text-white">Click</span>
+            Jobly
           </a>
           <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm">Trouvez le bon artisan rapidement</p>
         </div>

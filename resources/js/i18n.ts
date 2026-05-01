@@ -7,7 +7,7 @@ const resources = {
       // Navigation & Hero
       hero: 'Trouvez un professionnel en moins de 30 secondes',
       hero_sub: 'Plus de 36 artisans vérifiés dans 6+ villes du Maroc',
-      welcome: 'Bienvenue sur M3allemClick',
+      welcome: 'Bienvenue sur Jobly',
       how_it_works: 'Comment ça marche',
 
       // Recherche
@@ -67,7 +67,7 @@ const resources = {
     translation: {
       hero: 'لقا المهني المناسب فأقل من 30 ثانية',
       hero_sub: 'أكثر من 36 حرفيًا موثقًا في أكثر من 6 مدن بالمغرب',
-      welcome: 'مرحباً بكم في M3allemClick',
+      welcome: 'مرحباً بكم في Jobly',
       how_it_works: 'كيف يعمل',
       search: 'بحث',
       search_placeholder: 'ابحث عن حرفي...',
@@ -119,7 +119,7 @@ const resources = {
     translation: {
       hero: 'Find a professional in less than 30 seconds',
       hero_sub: 'Over 36 verified professionals in 6+ cities in Morocco',
-      welcome: 'Welcome to M3allemClick',
+      welcome: 'Welcome to Jobly',
       how_it_works: 'How it works',
       search: 'Search',
       search_placeholder: 'Search for a craftsman...',
@@ -171,7 +171,7 @@ const resources = {
     translation: {
       hero: 'Af amahal di أقل من 30 ثانية',
       hero_sub: 'Ugar n 36 imuhalen yettwassnen di 6+ tmdinin n Lmaɣrib',
-      welcome: 'Ansuf ɣer M3allemClick',
+      welcome: 'Ansuf ɣer Jobly',
       how_it_works: 'Amek itteddu',
       search: 'Nadi',
       search_placeholder: 'Nadi amahal...',

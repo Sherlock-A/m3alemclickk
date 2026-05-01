@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
         setError(data.message || 'Erreur de connexion.');
         return;
       }
-      localStorage.setItem('m3allemclick_token', data.token);
+      localStorage.setItem('jobly_token', data.token);
       window.location.href = '/dashboard/admin';
     } catch {
       setError('Erreur réseau. Veuillez réessayer.');
@@ -38,7 +38,7 @@ export default function AdminLoginPage() {
         <div className="text-center mb-8">
           <a href="/" className="inline-flex items-center gap-2 text-2xl font-black text-orange-500">
             <ShieldCheck className="h-7 w-7" />
-            M3allem<span className="text-white">Click</span>
+            Jobly
           </a>
           <p className="mt-2 text-slate-400 text-sm">Espace Administrateur</p>
         </div>
@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
                 required
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                placeholder="admin@m3allemclick.ma"
+                placeholder="admin@jobly.ma"
                 className="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-900"
               />
             </div>

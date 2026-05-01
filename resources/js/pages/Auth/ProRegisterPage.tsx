@@ -1,16 +1,31 @@
-import { useState, useEffect, FormEvent } from 'react';
-import { Eye, EyeOff, Wrench, Check, ArrowLeft, ArrowRight, User, Lock, Briefcase } from 'lucide-react';
+import { useState, useEffect, useRef, FormEvent } from 'react';
+import { Eye, EyeOff, Wrench, Check, ArrowLeft, ArrowRight, User, Lock, Briefcase, Mail, MessageCircle, RefreshCw, CheckCircle, ShieldCheck } from 'lucide-react';
 
 type City = { id: number; name: string; name_ar?: string | null };
-
+type ProfessionSuggestion = { label: string; category: string };
 type FieldErrors = Record<string, string>;
-type Step = 1 | 2 | 3;
+type Step = 1 | 2 | 3 | 4;
 
 const STEPS = [
-  { id: 1 as Step, label: 'Identité',    icon: User },
-  { id: 2 as Step, label: 'Activité',    icon: Briefcase },
-  { id: 3 as Step, label: 'Sécurité',    icon: Lock },
+  { id: 1 as Step, label: 'Identité',       icon: User },
+  { id: 2 as Step, label: 'Activité',       icon: Briefcase },
+  { id: 3 as Step, label: 'Sécurité',       icon: Lock },
+  { id: 4 as Step, label: 'Vérification',   icon: ShieldCheck },
 ];
+
+function translateError(msg: string): string {
+  if (!msg) return "Une erreur est survenue.";
+  const m = msg.toLowerCase();
+  if (m.includes('too many') || m.includes('throttle') || m.includes('many attempts'))
+    return "Trop de tentatives. Attendez 1 minute avant de réessayer.";
+  if (m.includes('unique') || m.includes('already') || m.includes('taken'))
+    return "Cet email est déjà utilisé. Connectez-vous ou utilisez un autre email.";
+  if (m.includes('password') && m.includes('confirm'))
+    return "Les mots de passe ne correspondent pas.";
+  if (m.includes('min') && m.includes('8'))
+    return "Le mot de passe doit contenir au moins 8 caractères.";
+  return msg;
+}
 
 export default function ProRegisterPage() {
   const [step, setStep]           = useState<Step>(1);
@@ -18,13 +33,28 @@ export default function ProRegisterPage() {
     name: '', email: '', password: '', password_confirmation: '',
     phone: '', profession: '', main_city: '',
   });
-  const [showPwd, setShowPwd]     = useState(false);
-  const [loading, setLoading]     = useState(false);
+  const [showPwd, setShowPwd]         = useState(false);
+  const [loading, setLoading]         = useState(false);
   const [globalError, setGlobalError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-  const [success, setSuccess]     = useState(false);
-  const [emailTaken, setEmailTaken] = useState(false);
-  const [cities, setCities]         = useState<City[]>([]);
+  const [success, setSuccess]         = useState(false);
+  const [emailTaken, setEmailTaken]   = useState(false);
+  const [cities, setCities]           = useState<City[]>([]);
+
+  // Autocomplete métier
+  const [suggestions, setSuggestions]   = useState<ProfessionSuggestion[]>([]);
+  const [showSug, setShowSug]           = useState(false);
+  const sugRef                          = useRef<HTMLDivElement>(null);
+
+  // Vérification email / WhatsApp
+  const [userId, setUserId]             = useState<number | null>(null);
+  const [verifyMethod, setVerifyMethod] = useState<'email' | 'whatsapp'>('email');
+  const [codeSent, setCodeSent]         = useState(false);
+  const [codePreview, setCodePreview]   = useState('');
+  const [code, setCode]                 = useState('');
+  const [verifying, setVerifying]       = useState(false);
+  const [sending, setSending]           = useState(false);
+  const [countdown, setCountdown]       = useState(0);
 
   useEffect(() => {
     fetch('/api/cities')
@@ -33,11 +63,41 @@ export default function ProRegisterPage() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const t = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [countdown]);
+
+  // Fermer dropdown si clic hors
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (sugRef.current && !sugRef.current.contains(e.target as Node)) setShowSug(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setForm({ ...form, [k]: e.target.value });
+    const val = e.target.value;
+    setForm({ ...form, [k]: val });
     if (fieldErrors[k]) setFieldErrors(prev => { const n = { ...prev }; delete n[k]; return n; });
     if (k === 'email') setEmailTaken(false);
     setGlobalError('');
+    if (k === 'profession' && val.length >= 2) {
+      fetch(`/api/professions/autocomplete?q=${encodeURIComponent(val)}`)
+        .then(r => r.ok ? r.json() : [])
+        .then((d: ProfessionSuggestion[]) => { setSuggestions(d); setShowSug(d.length > 0); })
+        .catch(() => {});
+    } else if (k === 'profession') {
+      setSuggestions([]); setShowSug(false);
+    }
+  };
+
+  const pickSuggestion = (label: string) => {
+    setForm(f => ({ ...f, profession: label }));
+    setSuggestions([]); setShowSug(false);
+    if (fieldErrors.profession) setFieldErrors(prev => { const n = { ...prev }; delete n.profession; return n; });
   };
 
   const validateStep = (s: Step): boolean => {
@@ -45,7 +105,7 @@ export default function ProRegisterPage() {
     if (s === 1) {
       if (!form.name.trim())  errs.name  = 'Nom requis.';
       if (!form.email.trim()) errs.email = 'Email requis.';
-      if (form.phone && !/^\+?[0-9\s]{8,15}$/.test(form.phone)) errs.phone = 'Numéro invalide.';
+      if (form.phone && !/^\+?[0-9\s]{8,15}$/.test(form.phone)) errs.phone = 'Numéro invalide (ex: +212 6XX XXX XXX).';
     }
     if (s === 2) {
       if (!form.profession.trim()) errs.profession = 'Métier requis.';
@@ -74,7 +134,17 @@ export default function ProRegisterPage() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (res.ok) { setSuccess(true); return; }
+      if (res.ok) {
+        localStorage.setItem('pro_token', data.token);
+        localStorage.setItem('auth_role', 'professional');
+        setUserId(data.user.id);
+        setStep(4);
+        return;
+      }
+      if (res.status === 429) {
+        setGlobalError(translateError('too many attempts'));
+        return;
+      }
       if (res.status === 422 && data.errors) {
         const errors: FieldErrors = {};
         for (const [field, messages] of Object.entries(data.errors as Record<string, string[]>)) {
@@ -82,16 +152,58 @@ export default function ProRegisterPage() {
         }
         setFieldErrors(errors);
         if (errors.email?.toLowerCase().match(/unique|pris|taken/)) setEmailTaken(true);
-        // jump to the step with the error
         if (errors.name || errors.email || errors.phone) setStep(1);
         else if (errors.profession || errors.main_city) setStep(2);
         return;
       }
-      setGlobalError(data.message || "Erreur lors de l'inscription.");
+      setGlobalError(translateError(data.message || "Erreur lors de l'inscription."));
     } catch {
       setGlobalError('Erreur réseau. Vérifiez votre connexion.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSendCode = async () => {
+    if (!userId || countdown > 0) return;
+    setSending(true);
+    setGlobalError('');
+    try {
+      const res  = await fetch('/api/verify/send-code', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body:    JSON.stringify({ user_id: userId, method: verifyMethod }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setGlobalError(translateError(data.message || '')); return; }
+      setCodeSent(true);
+      setCodePreview(data.preview || '');
+      setCountdown(60);
+    } catch {
+      setGlobalError('Erreur réseau. Réessayez.');
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleVerify = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!userId || code.length !== 6) return;
+    setVerifying(true);
+    setGlobalError('');
+    try {
+      const res  = await fetch('/api/verify/check-code', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body:    JSON.stringify({ user_id: userId, code }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setGlobalError(translateError(data.message || '')); return; }
+      setSuccess(true);
+    } catch {
+      setGlobalError('Erreur réseau. Réessayez.');
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -151,7 +263,7 @@ export default function ProRegisterPage() {
       <div className="hidden lg:flex lg:w-2/5 bg-slate-950 flex-col justify-between p-12">
         <a href="/" className="flex items-center gap-2 text-xl font-black text-orange-500">
           <Wrench className="h-6 w-6" />
-          M3allem<span className="text-white">Click</span>
+          Jobly
         </a>
         <div className="space-y-5">
           <div className="h-1 w-12 bg-orange-500 rounded-full" />
@@ -177,7 +289,7 @@ export default function ProRegisterPage() {
             ))}
           </ul>
         </div>
-        <p className="text-slate-600 text-xs">© {new Date().getFullYear()} M3allemClick</p>
+        <p className="text-slate-600 text-xs">© {new Date().getFullYear()} Jobly</p>
       </div>
 
       {/* Right panel */}
@@ -188,7 +300,7 @@ export default function ProRegisterPage() {
           <div className="lg:hidden text-center">
             <a href="/" className="inline-flex items-center gap-2 text-xl font-black text-orange-500">
               <Wrench className="h-5 w-5" />
-              M3allem<span className="text-slate-800 dark:text-white">Click</span>
+              Jobly
             </a>
           </div>
 
@@ -218,11 +330,13 @@ export default function ProRegisterPage() {
               {step === 1 && 'Vos coordonnées'}
               {step === 2 && 'Votre activité'}
               {step === 3 && 'Mot de passe'}
+              {step === 4 && 'Vérification'}
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
               {step === 1 && 'Comment vous identifier sur la plateforme'}
               {step === 2 && 'Votre métier et zone d\'intervention'}
               {step === 3 && 'Sécurisez votre compte'}
+              {step === 4 && 'Confirmez votre identité'}
             </p>
           </div>
 
@@ -238,7 +352,7 @@ export default function ProRegisterPage() {
             </div>
           )}
 
-          <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); next(); }} className="space-y-4">
+          <form onSubmit={step === 3 ? handleSubmit : step === 4 ? handleVerify : (e) => { e.preventDefault(); next(); }} className="space-y-4">
 
             {/* ── Step 1 ── */}
             {step === 1 && <>
@@ -270,13 +384,25 @@ export default function ProRegisterPage() {
 
             {/* ── Step 2 ── */}
             {step === 2 && <>
-              <div>
+              <div ref={sugRef} className="relative">
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                   Métier / Profession <span className="text-red-400">*</span>
                 </label>
                 <input type="text" required value={form.profession} onChange={set('profession')}
+                  onFocus={() => suggestions.length > 0 && setShowSug(true)}
                   placeholder="Ex : Plombier, Électricien, Menuisier..." autoFocus className={inp('profession')} />
                 <Err f="profession" />
+                {showSug && suggestions.length > 0 && (
+                  <div className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden">
+                    {suggestions.map((s, i) => (
+                      <button key={i} type="button" onMouseDown={() => pickSuggestion(s.label)}
+                        className="w-full text-left px-4 py-2.5 hover:bg-orange-50 dark:hover:bg-orange-900/20 flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors">
+                        <span className="text-sm font-medium text-slate-800 dark:text-white">{s.label}</span>
+                        <span className="text-xs text-slate-400 shrink-0">{s.category}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
@@ -330,23 +456,95 @@ export default function ProRegisterPage() {
               </div>
             </>}
 
+            {/* ── Step 4 — Vérification ── */}
+            {step === 4 && (
+              <div className="space-y-4">
+                {!codeSent && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <button type="button" onClick={() => setVerifyMethod('email')}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
+                        verifyMethod === 'email'
+                          ? 'border-orange-400 bg-orange-50 dark:bg-orange-900/20'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-orange-300'
+                      }`}>
+                      <Mail className="h-5 w-5 text-orange-500" />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">Par email</span>
+                    </button>
+                    <button type="button" onClick={() => setVerifyMethod('whatsapp')}
+                      disabled={!form.phone}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-colors ${
+                        !form.phone
+                          ? 'border-slate-100 bg-slate-50 dark:bg-slate-800/50 opacity-50 cursor-not-allowed'
+                          : verifyMethod === 'whatsapp'
+                            ? 'border-green-400 bg-green-50 dark:bg-green-900/20'
+                            : 'border-slate-200 dark:border-slate-700 hover:border-green-300'
+                      }`}>
+                      <MessageCircle className="h-5 w-5 text-green-500" />
+                      <span className="text-xs font-medium text-slate-700 dark:text-slate-300">WhatsApp</span>
+                    </button>
+                  </div>
+                )}
+                {codeSent && (
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-3 text-sm text-green-700 dark:text-green-400">
+                    ✅ Code envoyé à <strong>{codePreview}</strong> — valable 10 min
+                  </div>
+                )}
+                {codeSent && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Code à 6 chiffres</label>
+                      <input
+                        value={code}
+                        onChange={e => { setCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setGlobalError(''); }}
+                        placeholder="• • • • • •"
+                        maxLength={6}
+                        autoFocus
+                        className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-4 text-center text-2xl font-mono tracking-[10px] bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300" />
+                    </div>
+                    <div className="text-center">
+                      {countdown > 0
+                        ? <p className="text-xs text-slate-400">Renvoyer dans {countdown}s</p>
+                        : <button type="button" onClick={handleSendCode} disabled={sending}
+                            className="text-xs text-orange-500 hover:underline flex items-center gap-1 mx-auto">
+                            <RefreshCw className="h-3 w-3" /> Renvoyer le code
+                          </button>}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
             {/* Navigation */}
             <div className="flex items-center gap-3 pt-1">
-              {step > 1 && (
+              {step > 1 && step < 4 && (
                 <button type="button" onClick={prev}
                   className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                   <ArrowLeft className="h-4 w-4" /> Retour
                 </button>
               )}
-              <button type="submit" disabled={loading}
-                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 active:scale-[.98] disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20">
-                {loading
-                  ? <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                  : step === 3
-                  ? <Check className="h-4 w-4" />
-                  : <ArrowRight className="h-4 w-4" />}
-                {loading ? 'Création...' : step === 3 ? 'Créer mon compte' : 'Continuer'}
-              </button>
+              {step < 3 && (
+                <button type="submit" className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 active:scale-[.98] transition-all shadow-lg shadow-orange-500/20">
+                  <ArrowRight className="h-4 w-4" /> Continuer
+                </button>
+              )}
+              {step === 3 && (
+                <button type="submit" disabled={loading}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 active:scale-[.98] disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20">
+                  {loading ? <><RefreshCw className="h-4 w-4 animate-spin" /> Création…</> : <><Check className="h-4 w-4" /> Créer mon compte</>}
+                </button>
+              )}
+              {step === 4 && !codeSent && (
+                <button type="button" onClick={handleSendCode} disabled={sending}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20">
+                  {sending ? <><RefreshCw className="h-4 w-4 animate-spin" /> Envoi…</> : verifyMethod === 'whatsapp' ? <><MessageCircle className="h-4 w-4" /> Envoyer via WhatsApp</> : <><Mail className="h-4 w-4" /> Envoyer par email</>}
+                </button>
+              )}
+              {step === 4 && codeSent && (
+                <button type="submit" disabled={verifying || code.length !== 6}
+                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20">
+                  {verifying ? <><RefreshCw className="h-4 w-4 animate-spin" /> Vérification…</> : <><CheckCircle className="h-4 w-4" /> Valider</>}
+                </button>
+              )}
             </div>
           </form>
 

@@ -230,6 +230,89 @@ const ICONS: Record<string, JSX.Element> = {
       <path d="M40 3 Q46 8 40 16" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.3"/>
     </svg>
   ),
+  chauff: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#ef4444"/>
+      <rect x="10" y="14" width="28" height="22" rx="5" fill="white" opacity="0.9"/>
+      <circle cx="24" cy="25" r="7" fill="#ef4444" opacity="0.7"/>
+      <circle cx="24" cy="25" r="4" fill="white" opacity="0.9"/>
+      <line x1="24" y1="25" x2="24" y2="20" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
+      <rect x="16" y="36" width="4" height="8" rx="2" fill="white" opacity="0.8"/>
+      <rect x="28" y="36" width="4" height="8" rx="2" fill="white" opacity="0.8"/>
+      <path d="M20 14 Q18 8 24 6 Q22 10 26 8 Q28 12 24 14Z" fill="#f59e0b"/>
+      <circle cx="14" cy="22" r="2" fill="#ef4444" opacity="0.6"/>
+      <circle cx="14" cy="28" r="2" fill="#ef4444" opacity="0.6"/>
+    </svg>
+  ),
+  vitr: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#0ea5e9"/>
+      <rect x="6" y="8" width="36" height="32" rx="3" fill="none" stroke="white" strokeWidth="3"/>
+      <line x1="24" y1="8" x2="24" y2="40" stroke="white" strokeWidth="2.5"/>
+      <line x1="6" y1="24" x2="42" y2="24" stroke="white" strokeWidth="2.5"/>
+      <path d="M10 12 L18 12 L10 20 Z" fill="white" opacity="0.35"/>
+      <line x1="11" y1="20" x2="18" y2="13" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+      <path d="M28 28 L34 34 M31 28 L36 33" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.6"/>
+      <circle cx="38" cy="10" r="5" fill="#f59e0b"/>
+      <circle cx="38" cy="10" r="2.5" fill="white" opacity="0.8"/>
+    </svg>
+  ),
+  coiff: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#7c3aed"/>
+      <path d="M8 8 L28 28" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
+      <path d="M28 8 L8 28" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
+      <circle cx="18" cy="18" r="3.5" fill="#7c3aed"/>
+      <circle cx="18" cy="18" r="2" fill="white"/>
+      <circle cx="6" cy="32" r="6" fill="none" stroke="white" strokeWidth="3"/>
+      <circle cx="30" cy="32" r="6" fill="none" stroke="white" strokeWidth="3"/>
+      <rect x="34" y="10" width="10" height="3" rx="1.5" fill="#f59e0b"/>
+      <line x1="35" y1="13" x2="35" y2="18" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="38" y1="13" x2="38" y2="18" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="41" y1="13" x2="41" y2="18" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  ),
+  photo: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#1e293b"/>
+      <rect x="6" y="16" width="36" height="24" rx="5" fill="white" opacity="0.9"/>
+      <path d="M16 16 L16 10 Q16 8 18 8 L26 8 Q28 8 28 10 L28 16Z" fill="white" opacity="0.75"/>
+      <circle cx="24" cy="28" r="9" fill="#1e293b" opacity="0.8"/>
+      <circle cx="24" cy="28" r="7" fill="#1e293b"/>
+      <circle cx="24" cy="28" r="5" fill="#334155"/>
+      <circle cx="24" cy="28" r="3" fill="#0f172a"/>
+      <circle cx="22" cy="26" r="1.5" fill="white" opacity="0.5"/>
+      <circle cx="11" cy="22" r="2.5" fill="#f59e0b"/>
+    </svg>
+  ),
+  decor: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#ec4899"/>
+      <rect x="6" y="28" width="36" height="10" rx="4" fill="white" opacity="0.9"/>
+      <rect x="8" y="20" width="32" height="10" rx="4" fill="white" opacity="0.75"/>
+      <rect x="5" y="22" width="7" height="14" rx="3" fill="white" opacity="0.85"/>
+      <rect x="36" y="22" width="7" height="14" rx="3" fill="white" opacity="0.85"/>
+      <rect x="11" y="22" width="11" height="8" rx="3" fill="#ec4899" opacity="0.5"/>
+      <rect x="26" y="22" width="11" height="8" rx="3" fill="#ec4899" opacity="0.5"/>
+      <path d="M36 8 Q36 4 40 4 Q44 4 44 8 Q44 14 40 16 Q36 14 36 8Z" fill="#4ade80" opacity="0.9"/>
+      <line x1="24" y1="4" x2="24" y2="12" stroke="white" strokeWidth="1.5" opacity="0.7"/>
+      <path d="M19 12 Q24 20 29 12Z" fill="#f59e0b" opacity="0.8"/>
+    </svg>
+  ),
+  charpen: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#92400e"/>
+      <path d="M6 28 L24 8 L42 28 Z" fill="white" opacity="0.9"/>
+      <line x1="15" y1="18" x2="33" y2="18" stroke="#92400e" strokeWidth="1.5" opacity="0.25"/>
+      <line x1="10" y1="23" x2="38" y2="23" stroke="#92400e" strokeWidth="1.5" opacity="0.25"/>
+      <rect x="22" y="6" width="4" height="4" rx="1" fill="#f59e0b"/>
+      <rect x="10" y="28" width="28" height="14" rx="2" fill="white" opacity="0.7"/>
+      <line x1="24" y1="28" x2="24" y2="42" stroke="#92400e" strokeWidth="2.5" opacity="0.4"/>
+      <line x1="10" y1="35" x2="38" y2="35" stroke="#92400e" strokeWidth="2.5" opacity="0.4"/>
+      <path d="M38 8 L44 14 L42 16 L36 10Z" fill="#f59e0b"/>
+      <rect x="35" y="9" width="3" height="8" rx="1" fill="#f59e0b" transform="rotate(45 36.5 13)"/>
+    </svg>
+  ),
 };
 
 // Fallback generic icon

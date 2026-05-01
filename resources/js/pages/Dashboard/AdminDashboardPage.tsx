@@ -23,7 +23,7 @@ const COLORS = ['#f97316', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#14b8a6'
 
 // ─── Excel CSV export (UTF-8 BOM pour Excel) ─────────────────────────────────
 async function downloadExcel(url: string, filename: string, buildCsv?: (data: any) => string) {
-  const token = localStorage.getItem('m3allemclick_token');
+  const token = localStorage.getItem('jobly_token');
   const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
   if (!r.ok) return;
   let content: string;
@@ -86,11 +86,11 @@ function generatePDF(title: string, rows: string[][], columns: string[], subtitl
   <body><div class="page">
     <div class="header">
       <div class="header-top">
-        <div class="logo">M3allem<span>Click</span></div>
+        <div class="logo">Jobly</div>
         <div class="company-info">
           Plateforme des artisans du Maroc<br>
-          contact@m3allemclick.ma<br>
-          www.m3allemclick.ma
+          contact@jobly.ma<br>
+          www.jobly.ma
         </div>
       </div>
       <div class="doc-title">
@@ -114,13 +114,13 @@ function generatePDF(title: string, rows: string[][], columns: string[], subtitl
       <svg width="90" height="90" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" opacity="0.12">
         <circle cx="45" cy="45" r="43" fill="none" stroke="#f97316" stroke-width="3"/>
         <circle cx="45" cy="45" r="36" fill="none" stroke="#f97316" stroke-width="1"/>
-        <text x="45" y="38" text-anchor="middle" font-family="Arial" font-weight="900" font-size="11" fill="#f97316">M3allem</text>
+        <text x="45" y="38" text-anchor="middle" font-family="Arial" font-weight="900" font-size="11" fill="#f97316">Jobly</text>
         <text x="45" y="52" text-anchor="middle" font-family="Arial" font-weight="900" font-size="11" fill="#f97316">Click</text>
         <text x="45" y="65" text-anchor="middle" font-family="Arial" font-size="7" fill="#f97316">CERTIFIÉ OFFICIEL</text>
       </svg>
     </div>
     <div class="footer">
-      <div class="footer-left">M3allemClick — Plateforme des artisans marocains<br>Document généré le ${date}</div>
+      <div class="footer-left">Jobly — Plateforme des artisans marocains<br>Document généré le ${date}</div>
       <div class="footer-right">Ce document est confidentiel.<br>Toute reproduction est interdite sans autorisation.</div>
     </div>
   </div>
@@ -145,7 +145,7 @@ const navItems: { id: Section; label: string; icon: any }[] = [
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function AdminDashboardPage() {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('m3allemclick_token') : null;
+  const token = typeof window !== 'undefined' ? localStorage.getItem('jobly_token') : null;
 
   const [section, setSection]   = useState<Section>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -164,7 +164,7 @@ export default function AdminDashboardPage() {
   if (!token) return null;
 
   const logout = () => {
-    localStorage.removeItem('m3allemclick_token');
+    localStorage.removeItem('jobly_token');
     window.location.href = '/admin/login';
   };
 
@@ -183,7 +183,7 @@ export default function AdminDashboardPage() {
             <span className="text-xs font-black text-white">M3</span>
           </div>
           <div>
-            <div className="font-black text-orange-400">M3allemClick</div>
+            <div className="font-black text-orange-400">Jobly</div>
             <div className="text-xs text-slate-400">Panneau Admin</div>
           </div>
         </div>
@@ -217,7 +217,7 @@ export default function AdminDashboardPage() {
             <div className="h-8 w-8 rounded-full bg-orange-500 flex items-center justify-center text-sm font-bold">A</div>
             <div>
               <div className="text-sm font-medium">Admin</div>
-              <div className="text-xs text-slate-400">admin@m3allemclick.ma</div>
+              <div className="text-xs text-slate-400">admin@jobly.ma</div>
             </div>
           </div>
           <button onClick={logout} className="flex items-center gap-2 text-xs text-slate-400 hover:text-red-400 transition-colors">
@@ -344,11 +344,11 @@ function SectionDashboard({ headers, setSection }: { headers: any; setSection: (
                   <p className="text-xs text-slate-500 mt-0.5">{r.comment}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => axios.put(`/api/admin/reviews/${r.id}/approve`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('m3allemclick_token')}` } })}
+                  <button onClick={() => axios.put(`/api/admin/reviews/${r.id}/approve`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('jobly_token')}` } })}
                     className="flex items-center gap-1 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-600">
                     <Check className="h-3 w-3" /> Approuver
                   </button>
-                  <button onClick={() => axios.delete(`/api/admin/reviews/${r.id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('m3allemclick_token')}` } })}
+                  <button onClick={() => axios.delete(`/api/admin/reviews/${r.id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('jobly_token')}` } })}
                     className="flex items-center gap-1 rounded-lg bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-600">
                     <X className="h-3 w-3" /> Rejeter
                   </button>
@@ -423,7 +423,7 @@ function SectionProfessionals({ headers }: { headers: any }) {
           <option value="refused">Refusés</option>
           <option value="suspended">Suspendus</option>
         </select>
-        <button onClick={() => downloadExcel('/api/admin/export/professionals', 'M3allemClick_Professionnels.csv')}
+        <button onClick={() => downloadExcel('/api/admin/export/professionals', 'Jobly_Professionnels.csv')}
           className="ml-auto flex items-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700 hover:bg-emerald-100 transition-colors font-semibold">
           <Download className="h-4 w-4" /> Excel
         </button>
@@ -837,12 +837,12 @@ function SectionAnalytics({ headers }: { headers: any }) {
           </button>
         ))}
         <div className="ml-auto flex gap-2">
-          <button onClick={() => downloadExcel('/api/admin/export/professionals', 'M3allemClick_Professionnels.csv')}
+          <button onClick={() => downloadExcel('/api/admin/export/professionals', 'Jobly_Professionnels.csv')}
             className="flex items-center gap-1.5 rounded-xl border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 hover:bg-emerald-100 transition-colors font-semibold">
             <Download className="h-3.5 w-3.5" /> Excel Pros
           </button>
           <button onClick={async () => {
-            const token = localStorage.getItem('m3allemclick_token');
+            const token = localStorage.getItem('jobly_token');
             const r = await fetch('/api/admin/export/professionals', { headers: { Authorization: `Bearer ${token}` } });
             const text = await r.text();
             const lines = text.trim().split('\n').slice(1).map(l => l.split(';').map(c => c.replace(/^"|"$/g, '')));
@@ -850,7 +850,7 @@ function SectionAnalytics({ headers }: { headers: any }) {
               'Rapport Professionnels',
               lines,
               ['Nom', 'Email', 'Statut', 'Métier', 'Ville', 'Téléphone', 'Inscrit le'],
-              `Export complet des professionnels inscrits sur M3allemClick`
+              `Export complet des professionnels inscrits sur Jobly`
             );
           }} className="flex items-center gap-1.5 rounded-xl border border-orange-300 bg-orange-50 px-3 py-2 text-xs text-orange-700 hover:bg-orange-100 transition-colors font-semibold">
             <FileText className="h-3.5 w-3.5" /> PDF Pros
@@ -1110,8 +1110,8 @@ function SectionSettings({ headers }: { headers: any }) {
             <div className="space-y-4">
               <h3 className="font-bold text-lg">Informations générales</h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                {field('Nom de la plateforme', 'platform_name', 'text', 'M3allemClick')}
-                {field('Email de contact', 'contact_email', 'email', 'contact@m3allemclick.ma')}
+                {field('Nom de la plateforme', 'platform_name', 'text', 'Jobly')}
+                {field('Email de contact', 'contact_email', 'email', 'contact@jobly.ma')}
                 {field('Téléphone', 'contact_phone', 'text', '+212 6XX XXX XXX')}
                 {field('Adresse', 'address', 'text', 'Casablanca, Maroc')}
               </div>
@@ -1126,7 +1126,7 @@ function SectionSettings({ headers }: { headers: any }) {
                 <label className="block text-xs font-medium text-slate-500 mb-1">Message par défaut</label>
                 <textarea rows={4} value={settings.whatsapp_message ?? ''}
                   onChange={e => setSettings({ ...settings, whatsapp_message: e.target.value })}
-                  placeholder="Bonjour, je vous contacte depuis M3allemClick..."
+                  placeholder="Bonjour, je vous contacte depuis Jobly..."
                   className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none resize-none" />
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -1150,7 +1150,7 @@ function SectionSettings({ headers }: { headers: any }) {
                   onChange={e => setSettings({ ...settings, footer_about: e.target.value })}
                   className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none resize-none" />
               </div>
-              {field('Texte copyright', 'footer_copyright', 'text', '© 2026 M3allemClick. Tous droits réservés.')}
+              {field('Texte copyright', 'footer_copyright', 'text', '© 2026 Jobly. Tous droits réservés.')}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-medium text-slate-500 mb-1">Facebook URL</label>

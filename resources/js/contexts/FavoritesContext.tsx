@@ -9,8 +9,8 @@ type FavoritesContextValue = {
 
 const FavoritesContext = createContext<FavoritesContextValue | null>(null);
 
-const DEVICE_KEY = 'm3allemclick_device_id';
-const FAVORITES_KEY = 'm3allemclick_favorites';
+const DEVICE_KEY = 'jobly_device_id';
+const FAVORITES_KEY = 'jobly_favorites';
 
 function getDeviceId() {
   const existing = localStorage.getItem(DEVICE_KEY);

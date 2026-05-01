@@ -14,7 +14,7 @@ export function ProfessionalCard({ professional }: { professional: Professional 
     >
       <div className="relative">
         <img
-          src={professional.photo || 'https://placehold.co/800x500?text=M3allemClick'}
+          src={professional.photo || 'https://placehold.co/800x500?text=Jobly'}
           alt={professional.name}
           className="h-52 w-full object-cover"
           loading="lazy"

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'M3allemClick' }}</title>
+    <title>{{ $title ?? 'Jobly' }}</title>
     <meta name="description" content="{{ $description ?? __('platform_description') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -20,7 +20,7 @@
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="flex items-center gap-2 text-xl font-black">
                 <span class="text-2xl">🔧</span>
-                <span class="text-orange-500">M3allem</span><span class="text-slate-800">Click</span>
+                Jobly
             </a>
 
             {{-- Desktop nav --}}
@@ -114,7 +114,7 @@
         <div>
             <div class="flex items-center gap-2 mb-3">
                 <span class="text-xl">🔧</span>
-                <span class="text-white font-black text-lg">M3allem<span class="text-orange-400">Click</span></span>
+                <span class="text-white font-black text-lg">Jobly</span>
             </div>
             <p class="text-sm leading-relaxed">{{ __('platform_description') }}</p>
         </div>
@@ -130,14 +130,14 @@
         <div>
             <h3 class="text-white font-semibold mb-3 text-sm uppercase tracking-wide">{{ __('contact') }}</h3>
             <div class="space-y-2 text-sm">
-                <p>📧 contact@m3allemclick.ma</p>
+                <p>📧 contact@jobly.ma</p>
                 <p>📱 +212 6XX XXX XXX</p>
                 <p>🌍 Maroc</p>
             </div>
         </div>
     </div>
     <div class="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-slate-800 text-center text-xs text-slate-600">
-        &copy; {{ date('Y') }} M3allemClick. {{ __('copyright') }}.
+        &copy; {{ date('Y') }} Jobly. {{ __('copyright') }}.
     </div>
 </footer>
 

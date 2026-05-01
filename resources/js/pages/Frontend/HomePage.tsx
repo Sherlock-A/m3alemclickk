@@ -78,7 +78,8 @@ function FeaturedCard({ pro }: { pro: Professional }) {
       <div className="flex items-center gap-3 mb-3">
         {pro.photo ? (
           <img src={pro.photo} alt={pro.name}
-            className="h-12 w-12 rounded-full object-cover border-2 border-orange-200 dark:border-orange-800" />
+            className="h-12 w-12 rounded-full object-cover border-2 border-orange-200 dark:border-orange-800"
+            loading="lazy" decoding="async" />
         ) : (
           <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-lg font-black text-white">
             {pro.name[0]}
@@ -157,9 +158,9 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
   return (
     <Layout>
       <Head>
-        <title>M3allemClick — Trouvez votre artisan au Maroc</title>
+        <title>Jobly — Trouvez votre artisan au Maroc</title>
         <meta name="description" content="Plateforme marocaine pour trouver rapidement des artisans et professionnels vérifiés. Contact WhatsApp instantané, avis clients, géolocalisation." />
-        <meta property="og:title" content="M3allemClick — Trouvez votre artisan au Maroc" />
+        <meta property="og:title" content="Jobly — Trouvez votre artisan au Maroc" />
         <meta property="og:description" content="Plombiers, électriciens, menuisiers et plus — contact direct en 30 secondes." />
         <meta property="og:type" content="website" />
       </Head>

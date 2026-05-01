@@ -10,13 +10,16 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $exists = DB::table('users')->where('email', 'admin@m3allemclick.ma')->exists();
+        $email    = env('ADMIN_EMAIL',    'admin@jobly.ma');
+        $password = env('ADMIN_PASSWORD', 'Jobly@2026!');
+
+        $exists = DB::table('users')->where('email', $email)->exists();
         if ($exists) return;
 
         DB::table('users')->insert([
-            'name'       => 'Admin M3allemClick',
-            'email'      => 'admin@m3allemclick.ma',
-            'password'   => Hash::make('password'),
+            'name'       => 'Admin Jobly',
+            'email'      => $email,
+            'password'   => Hash::make($password),
             'role'       => 'admin',
             'status'     => 'active',
             'created_at' => now(),

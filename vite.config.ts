@@ -23,7 +23,6 @@ export default defineConfig(({ mode }) => ({
           'vendor-ui':      ['lucide-react', 'framer-motion'],
           'vendor-chart':   ['recharts'],
           'vendor-form':    ['react-hook-form', 'zod', '@hookform/resolvers'],
-          'vendor-i18n':    ['i18next', 'react-i18next'],
           'vendor-axios':   ['axios'],
         },
       },

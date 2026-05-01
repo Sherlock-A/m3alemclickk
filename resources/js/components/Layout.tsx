@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { M3allemClickLogo } from './M3allemClickLogo';
+import { JoblyLogo } from './JoblyLogo';
 import { Moon, Sun, Menu, X, LogIn, Search, MapPin, Mail, Phone, LayoutDashboard, LogOut, ShieldCheck, User } from 'lucide-react';
 
 type FooterLink = { label: string; url: string };
@@ -15,7 +15,7 @@ type Settings = {
 };
 
 const defaultSettings: Settings = {
-  platform_name: 'M3allemClick',
+  platform_name: 'Jobly',
   contact_email: 'contact@m3allemclick.ma',
   contact_phone: '+212 6XX XXX XXX',
   address: 'Casablanca, Maroc',
@@ -23,51 +23,59 @@ const defaultSettings: Settings = {
   footer_links: [
     { label: 'Accueil', url: '/' },
     { label: 'Professionnels', url: '/professionals' },
+    { label: 'Comment ça marche', url: '/how-it-works' },
     { label: 'Inscription pro', url: '/pro/register' },
+    { label: 'Contact', url: '/contact' },
   ],
   footer_social: { facebook: '', instagram: '', whatsapp: '' },
-  footer_copyright: '© 2026 M3allemClick. Tous droits réservés.',
+  footer_copyright: '© 2026 Jobly. Tous droits réservés.',
 };
 
-// Detect which actor is currently logged in via localStorage tokens
-type AuthState = { role: 'admin' | 'professional' | 'client'; dashboardUrl: string; label: string } | null;
+type AuthState = {
+  role: 'admin' | 'professional' | 'client';
+  dashboardUrl: string;
+  label: string;
+  name?: string;
+} | null;
 
-function detectAuth(): AuthState {
+// Quick local hint (no token — just the role flag) for instant render before server responds
+function localAuthHint(): AuthState {
   try {
-    if (localStorage.getItem('m3allemclick_token')) {
-      return { role: 'admin', dashboardUrl: '/dashboard/admin', label: 'Dashboard Admin' };
-    }
-    if (localStorage.getItem('pro_token')) {
-      return { role: 'professional', dashboardUrl: '/dashboard/professional', label: 'Mon Dashboard' };
-    }
-    if (localStorage.getItem('client_token')) {
-      return { role: 'client', dashboardUrl: '/dashboard/client', label: 'Mon Espace' };
-    }
+    if (localStorage.getItem('auth_role') === 'admin')        return { role: 'admin',        dashboardUrl: '/dashboard/admin',        label: 'Dashboard Admin' };
+    if (localStorage.getItem('auth_role') === 'professional') return { role: 'professional',  dashboardUrl: '/dashboard/professional', label: 'Mon Dashboard' };
+    if (localStorage.getItem('auth_role') === 'client')       return { role: 'client',        dashboardUrl: '/dashboard/client',       label: 'Mon Espace' };
   } catch {}
   return null;
 }
 
-function logout(role: 'admin' | 'professional' | 'client') {
+async function fetchAuthStatus(): Promise<AuthState> {
   try {
-    if (role === 'admin')        localStorage.removeItem('m3allemclick_token');
-    if (role === 'professional') localStorage.removeItem('pro_token');
-    if (role === 'client')       localStorage.removeItem('client_token');
-    // Also clear any cached user data
-    localStorage.removeItem('pro_draft');
+    const res = await fetch('/api/auth/status', { credentials: 'include', headers: { Accept: 'application/json' } });
+    const data = await res.json();
+    if (data.authenticated) {
+      try { localStorage.setItem('auth_role', data.role); } catch {}
+      return { role: data.role, dashboardUrl: data.dashboard, label: data.label, name: data.name };
+    }
   } catch {}
+  try { localStorage.removeItem('auth_role'); } catch {}
+  return null;
+}
 
-  // Inform the API (fire-and-forget)
+function logout(role: 'admin' | 'professional' | 'client') {
+  try { localStorage.removeItem('auth_role'); } catch {}
+
   const logoutUrl = role === 'admin' ? '/api/admin/logout'
     : role === 'professional' ? '/api/pro/logout'
     : '/api/client/logout';
-  fetch(logoutUrl, { method: 'POST' }).catch(() => {});
 
-  window.location.href = '/';
+  fetch(logoutUrl, { method: 'POST', credentials: 'include' })
+    .catch(() => {})
+    .finally(() => { window.location.href = '/'; });
 }
 
 export function Layout({ children }: { children: ReactNode }) {
   const [dark, setDark] = useState(() => {
-    try { return localStorage.getItem('m3allemclick_dark') === 'true'; } catch { return false; }
+    try { return localStorage.getItem('jobly_dark') === 'true'; } catch { return false; }
   });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
@@ -75,11 +83,12 @@ export function Layout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
-    try { localStorage.setItem('m3allemclick_dark', String(dark)); } catch {}
+    try { localStorage.setItem('jobly_dark', String(dark)); } catch {}
   }, [dark]);
 
   useEffect(() => {
-    setAuth(detectAuth());
+    setAuth(localAuthHint());
+    fetchAuthStatus().then(setAuth);
   }, []);
 
   useEffect(() => {
@@ -127,7 +136,7 @@ export function Layout({ children }: { children: ReactNode }) {
     return (
       <div className={`flex ${mobile ? 'flex-col' : 'items-center'} gap-2`}>
         <a
-          href="/client/login"
+          href="/login"
           className={`${mobile ? 'inline-flex' : 'hidden md:inline-flex'} items-center gap-2 rounded-lg border border-orange-300 px-4 py-2 text-sm font-semibold text-orange-600 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-900/20 transition-colors`}
           onClick={() => setMobileOpen(false)}
         >
@@ -135,12 +144,12 @@ export function Layout({ children }: { children: ReactNode }) {
           Chercher un artisan
         </a>
         <a
-          href="/pro/login"
+          href="/login"
           className={`${mobile ? 'inline-flex' : 'hidden md:inline-flex'} items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 transition-colors shadow-sm`}
           onClick={() => setMobileOpen(false)}
         >
           <LogIn className="h-4 w-4" />
-          Connexion Pro
+          Connexion
         </a>
       </div>
     );
@@ -152,7 +161,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <a href="/" className="hover:opacity-90 transition-opacity">
-            <M3allemClickLogo size="md" theme={dark ? 'dark' : 'light'} />
+            <JoblyLogo size="md" theme={dark ? 'dark' : 'light'} />
           </a>
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -161,6 +170,12 @@ export function Layout({ children }: { children: ReactNode }) {
             </a>
             <a href="/professionals" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               Professionnels
+            </a>
+            <a href="/how-it-works" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+              Comment ça marche
+            </a>
+            <a href="/contact" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+              Contact
             </a>
           </nav>
 
@@ -193,6 +208,8 @@ export function Layout({ children }: { children: ReactNode }) {
             <nav className="flex flex-col gap-3 text-sm font-medium">
               <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Accueil</a>
               <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Professionnels</a>
+              <a href="/how-it-works" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Comment ça marche</a>
+              <a href="/contact" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Contact</a>
               <AuthButtons mobile />
             </nav>
           </div>
@@ -210,7 +227,7 @@ export function Layout({ children }: { children: ReactNode }) {
             {/* Colonne 1 — À propos */}
             <div>
               <a href="/" className="hover:opacity-90 transition-opacity inline-block">
-                <M3allemClickLogo size="md" theme="dark" />
+                <JoblyLogo size="md" theme="dark" />
               </a>
               <p className="mt-3 text-sm text-slate-400 leading-relaxed">
                 {settings.footer_about}

@@ -356,7 +356,7 @@ const ACHIEVEMENTS = [
   { id: 'top_rated',     icon: '🏆', label: 'Top noté',          desc: 'Note ≥ 4.5',               check: (p: any) => (p?.rating ?? 0) >= 4.5 },
   { id: 'complete',      icon: '✅', label: 'Profil complet',    desc: 'Complétion 100%',          check: (_: any, __: any[], c: number) => c >= 100 },
   { id: 'missions',      icon: '🎖️', label: 'Vétéran',           desc: '20+ missions',             check: (p: any) => (p?.completed_missions ?? 0) >= 20 },
-  { id: 'verified',      icon: '🛡️', label: 'Certifié M3allem',  desc: 'Compte vérifié par admin', check: (p: any) => !!p?.verified },
+  { id: 'verified',      icon: '🛡️', label: 'Certifié Jobly',  desc: 'Compte vérifié par admin', check: (p: any) => !!p?.verified },
 ];
 
 export default function ProfessionalDashboardPage() {
@@ -562,7 +562,7 @@ export default function ProfessionalDashboardPage() {
         <div className="mx-auto max-w-5xl px-4 h-14 flex items-center justify-between gap-4">
           <a href="/" className="flex items-center gap-2 text-lg font-black text-orange-500 shrink-0">
             <Wrench className="h-5 w-5" />
-            <span className="hidden sm:inline">M3allem<span className="text-slate-800 dark:text-white">Click</span></span>
+            <span className="hidden sm:inline">Jobly</span>
           </a>
 
           {/* Tab nav */}

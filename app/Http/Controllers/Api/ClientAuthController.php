@@ -4,23 +4,24 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class ClientAuthController extends Controller
 {
+    public function __construct(private MailService $mail) {}
     // ─── Connexion ────────────────────────────────────────────────────────────
 
     public function login(Request $request)
     {
         $data = $request->validate([
-            'email'    => ['required', 'email'],
-            'password' => ['required', 'string'],
+            'email'    => ['required', 'email', 'max:254'],
+            'password' => ['required', 'string', 'max:128'],
         ]);
 
         $user = User::where('email', $data['email'])
@@ -32,11 +33,14 @@ class ClientAuthController extends Controller
         }
 
         $token = JWTAuth::fromUser($user);
+        $ttl   = config('jwt.ttl', 1440);
 
-        return response()->json([
-            'token' => $token,
-            'user'  => $user->only(['id', 'name', 'email', 'role']),
-        ]);
+        return response()
+            ->json([
+                'token' => $token,
+                'user'  => $user->only(['id', 'name', 'email', 'role']),
+            ])
+            ->cookie('jwt_client', $token, $ttl, '/', null, true, true, false, 'Strict');
     }
 
     // ─── Inscription ──────────────────────────────────────────────────────────
@@ -45,8 +49,8 @@ class ClientAuthController extends Controller
     {
         $data = $request->validate([
             'name'     => ['required', 'string', 'max:100'],
-            'email'    => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'email'    => ['required', 'email', 'max:254', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8', 'max:128', 'confirmed'],
             'phone'    => ['nullable', 'string', 'max:20'],
             'city'     => ['nullable', 'string', 'max:100'],
         ]);
@@ -59,23 +63,27 @@ class ClientAuthController extends Controller
         ]);
 
         $token = JWTAuth::fromUser($user);
+        $ttl   = config('jwt.ttl', 1440);
 
-        return response()->json([
-            'token' => $token,
-            'user'  => $user->only(['id', 'name', 'email', 'role']),
-        ], 201);
+        return response()
+            ->json([
+                'token'              => $token,
+                'user'               => $user->only(['id', 'name', 'email', 'role']),
+                'needs_verification' => true,
+                'message'            => 'Compte créé. Vérifiez votre email pour activer votre compte.',
+            ], 201)
+            ->cookie('jwt_client', $token, $ttl, '/', null, true, true, false, 'Strict');
     }
 
     // ─── Déconnexion ──────────────────────────────────────────────────────────
 
     public function logout()
     {
-        try {
-            JWTAuth::parseToken()->invalidate();
-        } catch (\Throwable) {
-        }
+        try { JWTAuth::parseToken()->invalidate(); } catch (\Throwable) {}
 
-        return response()->json(['message' => 'Déconnecté avec succès.']);
+        return response()
+            ->json(['message' => 'Déconnecté avec succès.'])
+            ->cookie('jwt_client', '', -1, '/', null, true, true, false, 'Strict');
     }
 
     // ─── Mot de passe oublié ──────────────────────────────────────────────────
@@ -105,22 +113,12 @@ class ClientAuthController extends Controller
             . '/client/reset-password?token=' . $token
             . '&email=' . urlencode($user->email);
 
-        try {
-            Mail::send(
-                'emails.reset-password',
-                ['user' => $user, 'resetUrl' => $resetUrl, 'expiresIn' => '60 minutes'],
-                function ($message) use ($user) {
-                    $message
-                        ->to($user->email, $user->name)
-                        ->subject('Réinitialisation de votre mot de passe — M3allemClick');
-                }
-            );
-        } catch (\Throwable $e) {
-            \Log::error('Client reset password mail error: ' . $e->getMessage());
-            return response()->json([
-                'message' => "Erreur lors de l'envoi de l'email. Vérifiez la configuration SMTP.",
-            ], 500);
-        }
+        $this->mail->sendPasswordReset(
+            $user->email,
+            $user->name,
+            $resetUrl,
+            'Réinitialisation de votre mot de passe — M3allemClick'
+        );
 
         return response()->json([
             'message' => 'Si cet email est enregistré, un lien de réinitialisation a été envoyé.',

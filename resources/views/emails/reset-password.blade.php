@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Réinitialisation de mot de passe – M3allemClick</title>
+    <title>Réinitialisation de mot de passe – Jobly</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
         .wrapper { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
@@ -24,12 +24,12 @@
 <body>
 <div class="wrapper">
     <div class="header">
-        <h1>🔐 M3allemClick</h1>
+        <h1>🔐 Jobly</h1>
         <p>Plateforme des professionnels au Maroc</p>
     </div>
     <div class="body">
         <p>Bonjour <strong>{{ $user->name }}</strong>,</p>
-        <p>Nous avons reçu une demande de réinitialisation de votre mot de passe pour votre compte professionnel M3allemClick.</p>
+        <p>Nous avons reçu une demande de réinitialisation de votre mot de passe pour votre compte professionnel Jobly.</p>
         <p>Cliquez sur le bouton ci-dessous pour créer un nouveau mot de passe :</p>
 
         <div style="text-align: center;">
@@ -46,7 +46,7 @@
         <div class="url-box">{{ $resetUrl }}</div>
     </div>
     <div class="footer">
-        <p>© {{ date('Y') }} M3allemClick – Plateforme des professionnels au Maroc</p>
+        <p>© {{ date('Y') }} Jobly – Plateforme des professionnels au Maroc</p>
         <p>Cet email a été envoyé à {{ $user->email }}</p>
     </div>
 </div>

@@ -12,12 +12,12 @@ type LanguageContextValue = {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const stored = typeof window !== 'undefined' ? (localStorage.getItem('m3allemclick_lang') as Language | null) : null;
+  const stored = typeof window !== 'undefined' ? (localStorage.getItem('jobly_lang') as Language | null) : null;
   const [language, setLanguageState] = useState<Language>(stored ?? (document.documentElement.lang as Language) ?? 'fr');
 
   useEffect(() => {
     i18n.changeLanguage(language);
-    localStorage.setItem('m3allemclick_lang', language);
+    localStorage.setItem('jobly_lang', language);
   }, [language]);
 
 

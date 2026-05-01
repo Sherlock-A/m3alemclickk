@@ -93,10 +93,10 @@ export default function ProfessionalShowPage({ professional }: Props) {
     }
   };
 
-  const seoTitle = `${professional.name} — ${professional.profession} à ${professional.main_city} | M3allemClick`;
+  const seoTitle = `${professional.name} — ${professional.profession} à ${professional.main_city} | Jobly`;
   const seoDesc  = professional.description
     ? professional.description.slice(0, 155)
-    : `Contactez ${professional.name}, ${professional.profession} à ${professional.main_city}. Profil vérifié sur M3allemClick.`;
+    : `Contactez ${professional.name}, ${professional.profession} à ${professional.main_city}. Profil vérifié sur Jobly.`;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -157,6 +157,8 @@ export default function ProfessionalShowPage({ professional }: Props) {
                     src={professional.photo}
                     alt={professional.name}
                     className="h-24 w-24 rounded-full object-cover border-4 border-white dark:border-slate-700 shadow-lg"
+                    loading="lazy"
+                    decoding="async"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                 ) : (

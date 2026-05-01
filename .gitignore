@@ -50,6 +50,13 @@ desktop.ini
 .copilot/
 .codeium/
 
+# ─── User uploaded files ──────────────────────────────────────────────────────
+/storage/app/public/photos/
+/storage/app/public/settings.json
+
+# ─── Conversation & temp files ────────────────────────────────────────────────
+CONVERSATION_LOG.md
+
 # ─── Deployment artifacts ─────────────────────────────────────────────────────
 railway.json
 .railway/

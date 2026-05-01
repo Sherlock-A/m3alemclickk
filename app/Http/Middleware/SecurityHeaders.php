@@ -44,11 +44,11 @@ class SecurityHeaders
                     "img-src 'self' data: https: blob: https://api.qrserver.com",
                     "worker-src 'self' blob:",
                     "frame-src https://www.openstreetmap.org",
-                    // Nominatim geocoding + self API
-                    "connect-src 'self' https://nominatim.openstreetmap.org",
+                    // Nominatim + Google OAuth
+                    "connect-src 'self' https://nominatim.openstreetmap.org https://accounts.google.com",
                     "object-src 'none'",
                     "base-uri 'self'",
-                    "form-action 'self'",
+                    "form-action 'self' https://accounts.google.com",
                     "upgrade-insecure-requests",
                 ])
             );

@@ -208,7 +208,7 @@ export default function ProfessionalsPage({ professionals, filters, categories }
   return (
     <Layout>
       <Head>
-        <title>{`${pageTitle} | M3allemClick`}</title>
+        <title>{`${pageTitle} | Jobly`}</title>
         <meta name="description" content={`Trouvez les meilleurs ${filters.profession || 'professionnels'} ${filters.city ? `à ${filters.city}` : 'au Maroc'}. Contact WhatsApp direct, avis vérifiés.`} />
       </Head>
       <section className="mx-auto max-w-7xl px-4 py-10">

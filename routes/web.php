@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\ProfessionalPageController;
+use App\Http\Controllers\Api\SocialAuthController;
 use App\Models\Category;
 use App\Models\Professional;
 use Illuminate\Support\Facades\Cache;
@@ -13,19 +14,28 @@ use Inertia\Inertia;
 Route::get('/', HomeController::class)->name('home');
 Route::get('/professionals', [ProfessionalPageController::class, 'index'])->name('professionals.index');
 Route::get('/professionals/{slug}', [ProfessionalPageController::class, 'show'])->name('professionals.show');
+Route::get('/how-it-works', fn () => Inertia::render('Frontend/HowItWorksPage'))->name('how-it-works');
+Route::get('/contact',      fn () => Inertia::render('Frontend/ContactPage'))->name('contact');
 
-// ─── Authentification Professionnels (pages Inertia) ───────────────────────────
-Route::get('/pro/login',           fn () => Inertia::render('Auth/ProLoginPage'))->name('pro.login');
+// ─── Page de connexion unifiée ─────────────────────────────────────────────────
+Route::get('/login', fn () => Inertia::render('Auth/UnifiedLoginPage'))->name('login');
+
+// ─── Anciennes URLs → redirection vers /login ──────────────────────────────────
+Route::redirect('/client/login', '/login', 301)->name('client.login');
+Route::redirect('/admin/login',  '/login', 301)->name('admin.login');
+Route::redirect('/pro/login',    '/login', 301)->name('pro.login');
+
+// ─── Google OAuth callback (web, reçoit le code Google) ───────────────────────
+Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+// ─── Inscription + mot de passe oublié ────────────────────────────────────────
 Route::get('/pro/register',        fn () => Inertia::render('Auth/ProRegisterPage'))->name('pro.register');
+Route::get('/client/register',     fn () => Inertia::render('Auth/ClientRegisterPage'))->name('client.register');
 Route::get('/pro/forgot-password', fn () => Inertia::render('Auth/ForgotPasswordPage'))->name('pro.forgot-password');
 Route::get('/pro/reset-password',  fn () => Inertia::render('Auth/ResetPasswordPage', [
     'token' => request('token'),
     'email' => request('email'),
 ]))->name('pro.reset-password');
-
-// ─── Authentification Clients (chercheurs d'artisans) ─────────────────────────
-Route::get('/client/login',           fn () => Inertia::render('Auth/ClientLoginPage'))->name('client.login');
-Route::get('/client/register',        fn () => Inertia::render('Auth/ClientRegisterPage'))->name('client.register');
 Route::get('/client/forgot-password', fn () => Inertia::render('Auth/ForgotPasswordPage', ['role' => 'client']))->name('client.forgot-password');
 Route::get('/client/reset-password',  fn () => Inertia::render('Auth/ResetPasswordPage', [
     'token' => request('token'),
@@ -37,9 +47,6 @@ Route::get('/client/reset-password',  fn () => Inertia::render('Auth/ResetPasswo
 Route::get('/dashboard/professional', fn () => Inertia::render('Dashboard/ProfessionalDashboardPage'))->name('dashboard.professional');
 Route::get('/dashboard/client',       fn () => Inertia::render('Dashboard/ClientDashboardPage'))->name('dashboard.client');
 Route::get('/dashboard/admin',        fn () => Inertia::render('Dashboard/AdminDashboardPage'))->name('dashboard.admin');
-
-// ─── Admin login ───────────────────────────────────────────────────────────────
-Route::get('/admin/login', fn () => Inertia::render('Auth/AdminLoginPage'))->name('admin.login');
 
 // ─── Sitemap XML ───────────────────────────────────────────────────────────────
 Route::get('/sitemap.xml', function () {

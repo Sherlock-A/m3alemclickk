@@ -46,7 +46,7 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
         <div className="text-center mb-8">
           <a href="/" className="inline-flex items-center gap-2 text-2xl font-black text-orange-500">
             <Wrench className="h-7 w-7" />
-            M3allem<span className="text-slate-800 dark:text-white">Click</span>
+            Jobly
           </a>
         </div>
 

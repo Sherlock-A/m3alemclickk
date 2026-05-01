@@ -98,7 +98,7 @@ export default function ClientDashboardPage() {
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-20">
         <div className="mx-auto max-w-4xl px-4 h-14 flex items-center justify-between">
           <a href="/" className="text-lg font-black text-orange-500">
-            M3allem<span className="text-slate-800 dark:text-white">Click</span>
+            Jobly
           </a>
           <div className="flex items-center gap-2">
             {user && (
