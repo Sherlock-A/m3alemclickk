@@ -13,6 +13,13 @@ class SecurityHeaders
         // Suppress PHP version fingerprinting at the SAPI level
         header_remove('X-Powered-By');
 
+        // Generate nonce BEFORE rendering so Blade can use it via request()->attributes
+        $usesCsp = ! $request->is('api/*') && ! app()->environment('local');
+        if ($usesCsp) {
+            $nonce = base64_encode(random_bytes(16));
+            $request->attributes->set('csp_nonce', $nonce);
+        }
+
         $response = $next($request);
 
         // Remove X-Powered-By set by PHP or framework at response level
@@ -36,23 +43,19 @@ class SecurityHeaders
             );
         }
 
-        // CSP — skipped on local (Vite HMR uses dynamic ports) and on raw API calls
-        if (! $request->is('api/*') && ! app()->environment('local')) {
-            $nonce = base64_encode(random_bytes(16));
-            $request->attributes->set('csp_nonce', $nonce);
-
+        // CSP — nonce was generated before rendering so Blade inline scripts carry it
+        if ($usesCsp) {
             $response->headers->set(
                 'Content-Security-Policy',
                 implode('; ', [
                     "default-src 'self'",
-                    // nonce-based; 'unsafe-inline' is ignored by modern browsers when nonce is present
-                    "script-src 'self' 'nonce-{$nonce}' 'unsafe-inline'",
+                    "script-src 'self' 'nonce-{$nonce}' https://accounts.google.com https://www.gstatic.com",
                     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                     "font-src 'self' https://fonts.gstatic.com data:",
-                    "img-src 'self' data: https: blob: https://api.qrserver.com https://images.unsplash.com",
+                    "img-src 'self' data: https: blob:",
                     "worker-src 'self' blob:",
                     "frame-src https://www.openstreetmap.org",
-                    "connect-src 'self' https://nominatim.openstreetmap.org https://accounts.google.com",
+                    "connect-src 'self' https://nominatim.openstreetmap.org https://accounts.google.com https://oauth2.googleapis.com",
                     "object-src 'none'",
                     "base-uri 'self'",
                     "form-action 'self' https://accounts.google.com",

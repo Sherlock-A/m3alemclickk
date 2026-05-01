@@ -22,7 +22,7 @@
     <meta property="og:locale" content="fr_MA">
 
     {{-- Google OAuth Client ID --}}
-    <script>window.__GOOGLE_CLIENT_ID__ = "{{ config('services.google.client_id', '') }}";</script>
+    <script nonce="{{ request()->attributes->get('csp_nonce', '') }}">window.__GOOGLE_CLIENT_ID__ = "{{ config('services.google.client_id', '') }}";</script>
     {{-- Jobly brand font --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.tsx'])
 
     {{-- PWA Service Worker registration --}}
-    <script>
+    <script nonce="{{ request()->attributes->get('csp_nonce', '') }}">
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
           navigator.serviceWorker.register('/sw.js').catch(function () {});
