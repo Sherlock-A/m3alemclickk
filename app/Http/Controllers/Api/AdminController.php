@@ -8,6 +8,7 @@ use App\Models\Professional;
 use App\Models\Review;
 use App\Models\Tracking;
 use App\Models\User;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -45,8 +46,30 @@ class AdminController extends Controller
             'rejection_reason' => ['nullable', 'string', 'max:500'],
         ]);
 
+        $previousStatus = $user->status;
         $user->update($data);
         Cache::flush();
+
+        // Notify professional by email on status change
+        if ($data['status'] !== $previousStatus) {
+            $mail = app(MailService::class);
+            $pro  = $user->professional;
+
+            if ($data['status'] === 'active') {
+                $mail->sendProApproved(
+                    $user->email,
+                    $user->name,
+                    $pro?->profession ?? '',
+                    $pro?->main_city  ?? ''
+                );
+            } elseif ($data['status'] === 'refused') {
+                $mail->sendProRejected(
+                    $user->email,
+                    $user->name,
+                    $data['rejection_reason'] ?? null
+                );
+            }
+        }
 
         return response()->json(['success' => true, 'user' => $user->fresh()]);
     }

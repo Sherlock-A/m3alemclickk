@@ -103,6 +103,60 @@ class MailService
     }
 
     /**
+     * Notifie le professionnel que son profil est approuvé.
+     */
+    public function sendProApproved(
+        string $toEmail,
+        string $toName,
+        string $proProfession,
+        string $proCity
+    ): void {
+        try {
+            Mail::mailer($this->resolveMailer())->send(
+                'emails.pro-approved',
+                [
+                    'proName'      => $toName,
+                    'proEmail'     => $toEmail,
+                    'proProfession'=> $proProfession,
+                    'proCity'      => $proCity,
+                    'dashboardUrl' => config('app.url') . '/dashboard/professional',
+                ],
+                fn ($m) => $m
+                    ->to($toEmail, $toName)
+                    ->subject('✅ Votre profil Jobly est approuvé ! Bienvenue')
+            );
+        } catch (\Throwable $e) {
+            Log::warning('MailService::sendProApproved failed', ['to' => $toEmail, 'error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Notifie le professionnel que son profil est rejeté.
+     */
+    public function sendProRejected(
+        string $toEmail,
+        string $toName,
+        ?string $rejectionReason = null
+    ): void {
+        try {
+            Mail::mailer($this->resolveMailer())->send(
+                'emails.pro-rejected',
+                [
+                    'proName'         => $toName,
+                    'proEmail'        => $toEmail,
+                    'rejectionReason' => $rejectionReason,
+                    'contactUrl'      => config('app.url') . '/contact',
+                ],
+                fn ($m) => $m
+                    ->to($toEmail, $toName)
+                    ->subject('Jobly — Mise à jour de votre demande d\'inscription')
+            );
+        } catch (\Throwable $e) {
+            Log::warning('MailService::sendProRejected failed', ['to' => $toEmail, 'error' => $e->getMessage()]);
+        }
+    }
+
+    /**
      * Envoie un message de contact (formulaire public → admin).
      */
     public function sendContactMessage(
