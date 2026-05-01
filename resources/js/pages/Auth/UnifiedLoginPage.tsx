@@ -52,8 +52,13 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
         setErrorMsg(data.message ?? 'Identifiants incorrects.');
         return;
       }
-      // Store role hint for instant header render
-      try { localStorage.setItem('auth_role', data.role); } catch {}
+      try {
+        localStorage.setItem('auth_role', data.role);
+        const tokenKey = data.role === 'admin' ? 'jobly_token'
+                       : data.role === 'professional' ? 'pro_token'
+                       : 'client_token';
+        localStorage.setItem(tokenKey, data.token);
+      } catch {}
       window.location.href = data.dashboard;
     } catch {
       setErrorMsg('Erreur réseau. Vérifiez votre connexion.');
