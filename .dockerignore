@@ -15,6 +15,5 @@ tests
 .phpunit.cache
 .idea
 .vscode
-docker
 README.md
 CONVERSATION_LOG.md
