@@ -22,5 +22,11 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('tracking', function (Request $request) {
             return Limit::perMinute(10)->by($request->ip());
         });
+
+        // Login rate limit by email (not IP) — avoids Railway shared-proxy false positives
+        RateLimiter::for('login', function (Request $request) {
+            $key = strtolower(trim($request->input('email', $request->input('identifier', 'unknown'))));
+            return Limit::perMinute(10)->by('login:' . $key);
+        });
     }
 }
