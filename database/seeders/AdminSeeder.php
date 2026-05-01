@@ -13,17 +13,27 @@ class AdminSeeder extends Seeder
         $email    = env('ADMIN_EMAIL',    'admin@jobly.ma');
         $password = env('ADMIN_PASSWORD', 'Jobly@2026!');
 
-        $exists = DB::table('users')->where('email', $email)->exists();
-        if ($exists) return;
+        // Upsert: crée ou met à jour le compte admin (supporte migration d'email)
+        $admin = DB::table('users')->where('role', 'admin')->first();
 
-        DB::table('users')->insert([
-            'name'       => 'Admin Jobly',
-            'email'      => $email,
-            'password'   => Hash::make($password),
-            'role'       => 'admin',
-            'status'     => 'active',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        if ($admin) {
+            DB::table('users')->where('id', $admin->id)->update([
+                'name'       => 'Admin Jobly',
+                'email'      => $email,
+                'password'   => Hash::make($password),
+                'status'     => 'active',
+                'updated_at' => now(),
+            ]);
+        } else {
+            DB::table('users')->insert([
+                'name'       => 'Admin Jobly',
+                'email'      => $email,
+                'password'   => Hash::make($password),
+                'role'       => 'admin',
+                'status'     => 'active',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
     }
 }
