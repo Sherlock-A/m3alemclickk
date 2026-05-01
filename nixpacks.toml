@@ -1,22 +1,43 @@
 [variables]
 VIEW_COMPILED_PATH = "/tmp/laravel-views"
-CACHE_STORE = "file"
-CACHE_PREFIX = "jobly"
-# JWT_SECRET doit être défini dans Railway → Variables (pas ici)
+CACHE_STORE        = "file"
+CACHE_PREFIX       = "jobly"
+COMPOSER_MEMORY_LIMIT = "-1"
 
 [phases.setup]
-nixPkgs = ["php82", "php82Packages.composer", "php82Extensions.pdo", "php82Extensions.pdo_mysql", "php82Extensions.mbstring", "php82Extensions.openssl", "php82Extensions.tokenizer", "php82Extensions.xml", "php82Extensions.ctype", "php82Extensions.bcmath", "php82Extensions.fileinfo", "php82Extensions.curl", "php82Extensions.zip", "nodejs_20", "nodePackages.npm"]
+nixPkgs = [
+  "php82",
+  "php82Packages.composer",
+  "php82Extensions.pdo",
+  "php82Extensions.pdo_mysql",
+  "php82Extensions.mbstring",
+  "php82Extensions.openssl",
+  "php82Extensions.tokenizer",
+  "php82Extensions.xml",
+  "php82Extensions.dom",
+  "php82Extensions.ctype",
+  "php82Extensions.bcmath",
+  "php82Extensions.fileinfo",
+  "php82Extensions.curl",
+  "php82Extensions.zip",
+  "php82Extensions.gd",
+  "php82Extensions.intl",
+  "nodejs_20",
+  "nodePackages.npm"
+]
 
 [phases.install]
 cmds = [
-    "mkdir -p /tmp/laravel-views storage/framework/views storage/framework/cache/data storage/framework/sessions storage/logs bootstrap/cache",
-    "composer install --optimize-autoloader --no-dev --no-interaction",
-    "npm ci",
-    "node --max-old-space-size=512 node_modules/.bin/vite build"
+  "mkdir -p /tmp/laravel-views storage/framework/views storage/framework/cache/data storage/framework/sessions storage/logs bootstrap/cache",
+  "composer install --optimize-autoloader --no-dev --no-scripts --no-interaction",
+  "npm ci --prefer-offline"
 ]
 
 [phases.build]
-cmds = ["php artisan config:cache"]
+cmds = [
+  "node --max-old-space-size=512 node_modules/.bin/vite build",
+  "php artisan config:cache"
+]
 
 [start]
-cmd = "mkdir -p /tmp/laravel-views /tmp/uploads storage/framework/cache/data storage/framework/sessions storage/logs && touch /tmp/db.sqlite && export DB_CONNECTION=sqlite DB_DATABASE=/tmp/db.sqlite VIEW_COMPILED_PATH=/tmp/laravel-views CACHE_STORE=file CACHE_PREFIX=m3c && php artisan optimize:clear && php artisan storage:link --force 2>/dev/null || true && php artisan migrate --force && CATS=$(php artisan tinker --execute=\"echo \\App\\Models\\Category::count();\" 2>/dev/null | tr -d '[:space:]') && if [ \"$CATS\" = \"0\" ] || [ -z \"$CATS\" ]; then php artisan db:seed --force; fi && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
+cmd = "mkdir -p /tmp/laravel-views /tmp/uploads storage/framework/cache/data storage/framework/sessions storage/logs && touch /tmp/db.sqlite && export DB_CONNECTION=sqlite DB_DATABASE=/tmp/db.sqlite VIEW_COMPILED_PATH=/tmp/laravel-views CACHE_STORE=file CACHE_PREFIX=jobly COMPOSER_MEMORY_LIMIT=-1 && php artisan optimize:clear && php artisan storage:link --force 2>/dev/null || true && php artisan migrate --force && CATS=$(php artisan tinker --execute=\"echo \\App\\Models\\Category::count();\" 2>/dev/null | tr -d '[:space:]') && if [ \"$CATS\" = \"0\" ] || [ -z \"$CATS\" ]; then php artisan db:seed --force; fi && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"
