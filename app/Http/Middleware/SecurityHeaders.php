@@ -10,14 +10,23 @@ class SecurityHeaders
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Suppress PHP version fingerprinting at the SAPI level
+        header_remove('X-Powered-By');
+
         $response = $next($request);
+
+        // Remove X-Powered-By set by PHP or framework at response level
+        $response->headers->remove('X-Powered-By');
+        $response->headers->remove('Server');
 
         // Universal headers
         $response->headers->set('X-Content-Type-Options',  'nosniff');
         $response->headers->set('X-Frame-Options',         'SAMEORIGIN');
         $response->headers->set('X-XSS-Protection',        '1; mode=block');
         $response->headers->set('Referrer-Policy',         'strict-origin-when-cross-origin');
-        $response->headers->set('Permissions-Policy',      'camera=(), microphone=(), geolocation=(self), payment=()');
+        $response->headers->set('Permissions-Policy',      'camera=(), microphone=(), geolocation=(self), payment=(), usb=(), bluetooth=()');
+        $response->headers->set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+        $response->headers->set('Cross-Origin-Resource-Policy', 'same-site');
 
         // HSTS (only over HTTPS — Railway/production enforces TLS)
         if ($request->isSecure() || app()->environment('production')) {
@@ -36,15 +45,13 @@ class SecurityHeaders
                 'Content-Security-Policy',
                 implode('; ', [
                     "default-src 'self'",
-                    // allow Vite built assets + inline styles from Inertia
+                    // nonce-based; 'unsafe-inline' is ignored by modern browsers when nonce is present
                     "script-src 'self' 'nonce-{$nonce}' 'unsafe-inline'",
                     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
                     "font-src 'self' https://fonts.gstatic.com data:",
-                    // QR code API + any HTTPS image
-                    "img-src 'self' data: https: blob: https://api.qrserver.com",
+                    "img-src 'self' data: https: blob: https://api.qrserver.com https://images.unsplash.com",
                     "worker-src 'self' blob:",
                     "frame-src https://www.openstreetmap.org",
-                    // Nominatim + Google OAuth
                     "connect-src 'self' https://nominatim.openstreetmap.org https://accounts.google.com",
                     "object-src 'none'",
                     "base-uri 'self'",

@@ -29,9 +29,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'jwt'        => JwtAuthenticate::class,
-            'admin'      => \App\Http\Middleware\EnsureAdmin::class,
-            'role'       => CheckRole::class,
+            'jwt'            => JwtAuthenticate::class,
+            'admin'          => \App\Http\Middleware\EnsureAdmin::class,
+            'role'           => CheckRole::class,
+            'dashboard.auth' => \App\Http\Middleware\EnsureDashboardAuth::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -43,10 +43,18 @@ Route::get('/client/reset-password',  fn () => Inertia::render('Auth/ResetPasswo
     'role'  => 'client',
 ]))->name('client.reset-password');
 
-// ─── Dashboards protégés ───────────────────────────────────────────────────────
-Route::get('/dashboard/professional', fn () => Inertia::render('Dashboard/ProfessionalDashboardPage'))->name('dashboard.professional');
-Route::get('/dashboard/client',       fn () => Inertia::render('Dashboard/ClientDashboardPage'))->name('dashboard.client');
-Route::get('/dashboard/admin',        fn () => Inertia::render('Dashboard/AdminDashboardPage'))->name('dashboard.admin');
+// ─── Dashboards protégés (JWT vérifié côté serveur) ───────────────────────────
+Route::get('/dashboard/professional', fn () => Inertia::render('Dashboard/ProfessionalDashboardPage'))
+    ->middleware('dashboard.auth:professional')
+    ->name('dashboard.professional');
+
+Route::get('/dashboard/client', fn () => Inertia::render('Dashboard/ClientDashboardPage'))
+    ->middleware('dashboard.auth:client')
+    ->name('dashboard.client');
+
+Route::get('/dashboard/admin', fn () => Inertia::render('Dashboard/AdminDashboardPage'))
+    ->middleware('dashboard.auth:admin')
+    ->name('dashboard.admin');
 
 // ─── Sitemap XML ───────────────────────────────────────────────────────────────
 Route::get('/sitemap.xml', function () {
