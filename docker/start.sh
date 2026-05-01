@@ -65,17 +65,9 @@ php artisan optimize:clear
 php artisan storage:link --force 2>/dev/null || true
 php artisan migrate --force
 
-# ── Seeding ─────────────────────────────────────────────────────────────────
-# Always run AdminSeeder (upsert — safe to re-run, fixes credentials after rename)
-echo "[start] Updating admin credentials..."
-php artisan db:seed --class=AdminSeeder --force
-
-# Full seed only if categories table is empty
-CATS=$(php artisan tinker --execute="echo \App\Models\Category::count();" 2>/dev/null | tr -d '[:space:]')
-if [ "${CATS}" = "0" ] || [ -z "${CATS}" ]; then
-    echo "[start] Seeding demo data..."
-    php artisan db:seed --force
-fi
+# ── Seeding (toujours — tous les seeders sont idempotents) ───────────────────
+echo "[start] Seeding database (admin + categories + villes + pros demo)..."
+php artisan db:seed --force
 
 # ── Application cache ───────────────────────────────────────────────────────
 php artisan config:cache
