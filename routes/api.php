@@ -19,6 +19,34 @@ use App\Http\Controllers\Api\TrackingController;
 use App\Http\Controllers\Api\UploadController;
 use Illuminate\Support\Facades\Route;
 
+// ─── Diagnostic public (no auth) — à supprimer après debug ───────────────────
+Route::get('/health', function () {
+    $adminUser = \App\Models\User::where('role', 'admin')->first();
+    $jwtSecret = config('jwt.secret');
+
+    $tokenTest = null;
+    if ($adminUser && $jwtSecret) {
+        try {
+            $token = \PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth::fromUser($adminUser);
+            $tokenTest = $token ? 'OK' : 'FAILED';
+        } catch (\Throwable $e) {
+            $tokenTest = 'ERROR: ' . $e->getMessage();
+        }
+    }
+
+    return response()->json([
+        'status'        => 'ok',
+        'db_driver'     => config('database.default'),
+        'admin_exists'  => (bool) $adminUser,
+        'admin_email'   => $adminUser?->email,
+        'admin_status'  => $adminUser?->status,
+        'jwt_secret'    => $jwtSecret ? 'SET (' . strlen($jwtSecret) . ' chars)' : 'MISSING',
+        'jwt_token_test'=> $tokenTest,
+        'app_env'       => config('app.env'),
+        'users_total'   => \App\Models\User::count(),
+    ]);
+});
+
 // ─── Debug (Railway diagnostics — admin only) ─────────────────────────────────
 Route::middleware('jwt:admin')->get('/debug', function () {
     try {
