@@ -1,7 +1,7 @@
 [variables]
 VIEW_COMPILED_PATH = "/tmp/laravel-views"
 CACHE_STORE = "file"
-CACHE_PREFIX = "m3c"
+CACHE_PREFIX = "jobly"
 # JWT_SECRET doit être défini dans Railway → Variables (pas ici)
 
 [phases.setup]
