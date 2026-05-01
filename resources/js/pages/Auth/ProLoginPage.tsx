@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';
-import { Eye, EyeOff, LogIn, Wrench, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Eye, EyeOff, LogIn, ShieldCheck, ArrowRight } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 
 type Step = 'form' | 'admin_notice';
 
@@ -87,10 +88,7 @@ export default function ProLoginPage() {
     <div className="min-h-screen flex">
       {/* Left panel — brand */}
       <div className="hidden lg:flex lg:w-2/5 bg-slate-950 flex-col justify-between p-12">
-        <a href="/" className="flex items-center gap-2 text-xl font-black text-orange-500">
-          <Wrench className="h-6 w-6" />
-          Jobly
-        </a>
+        <a href="/"><JoblyLogo size="md" theme="dark" /></a>
         <div className="space-y-6">
           <div className="h-1 w-12 bg-orange-500 rounded-full" />
           <h2 className="text-3xl font-black text-white leading-tight">
@@ -122,10 +120,7 @@ export default function ProLoginPage() {
 
           {/* Mobile logo */}
           <div className="lg:hidden text-center">
-            <a href="/" className="inline-flex items-center gap-2 text-xl font-black text-orange-500">
-              <Wrench className="h-5 w-5" />
-              Jobly
-            </a>
+            <a href="/"><JoblyLogo size="md" /></a>
           </div>
 
           <div>

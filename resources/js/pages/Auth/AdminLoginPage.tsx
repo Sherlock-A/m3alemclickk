@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react';
-import { Eye, EyeOff, LogIn, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 
 export default function AdminLoginPage() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -36,10 +37,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <a href="/" className="inline-flex items-center gap-2 text-2xl font-black text-orange-500">
-            <ShieldCheck className="h-7 w-7" />
-            Jobly
-          </a>
+          <a href="/"><JoblyLogo size="lg" /></a>
           <p className="mt-2 text-slate-400 text-sm">Espace Administrateur</p>
         </div>
 

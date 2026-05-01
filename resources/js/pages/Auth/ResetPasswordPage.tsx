@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, KeyRound, Wrench, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, KeyRound, CheckCircle } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 
 interface Props {
   token: string;
@@ -77,10 +78,7 @@ export default function ResetPasswordPage({ token, email }: Props) {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <a href="/" className="inline-flex items-center gap-2 text-2xl font-black text-orange-500">
-            <Wrench className="h-7 w-7" />
-            Jobly
-          </a>
+          <a href="/"><JoblyLogo size="lg" /></a>
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 p-8">

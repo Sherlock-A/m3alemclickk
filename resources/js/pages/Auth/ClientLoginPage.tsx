@@ -1,6 +1,7 @@
 import { useState, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, LogIn, Search } from 'lucide-react';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 
 export default function ClientLoginPage() {
   const { t } = useTranslation();
@@ -38,10 +39,7 @@ export default function ClientLoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <a href="/" className="inline-flex items-center gap-2 text-2xl font-black text-orange-500">
-            <Search className="h-7 w-7" />
-            Jobly
-          </a>
+          <a href="/"><JoblyLogo size="lg" /></a>
           <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm">Trouvez le bon artisan rapidement</p>
         </div>
 
