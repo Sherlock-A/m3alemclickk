@@ -6,6 +6,7 @@ import {
   Plus, Pencil, Save, Download, RefreshCw, Eye, Phone,
   MessageCircle, TrendingUp, Globe, AlertCircle, Menu, Tag, FileText,
 } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell,
@@ -178,14 +179,9 @@ export default function AdminDashboardPage() {
         lg:relative lg:translate-x-0
       `}>
         {/* Logo */}
-        <div className="flex items-center gap-2 px-6 py-5 border-b border-slate-700">
-          <div className="h-8 w-8 rounded-lg bg-orange-500 flex items-center justify-center">
-            <span className="text-xs font-black text-white">M3</span>
-          </div>
-          <div>
-            <div className="font-black text-orange-400">Jobly</div>
-            <div className="text-xs text-slate-400">Panneau Admin</div>
-          </div>
+        <div className="flex flex-col gap-0.5 px-6 py-5 border-b border-slate-700">
+          <JoblyLogo size="md" theme="dark" />
+          <div className="text-xs text-slate-400 mt-1">Panneau Admin</div>
         </div>
 
         {/* Nav */}

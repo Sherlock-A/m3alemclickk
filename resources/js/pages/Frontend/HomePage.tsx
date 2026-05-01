@@ -78,10 +78,10 @@ function FeaturedCard({ pro }: { pro: Professional }) {
       <div className="flex items-center gap-3 mb-3">
         {pro.photo ? (
           <img src={pro.photo} alt={pro.name}
-            className="h-12 w-12 rounded-full object-cover border-2 border-orange-200 dark:border-orange-800"
+            className="h-20 w-20 rounded-full object-cover border-2 border-orange-200 dark:border-orange-800"
             loading="lazy" decoding="async" />
         ) : (
-          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-lg font-black text-white">
+          <div className="h-20 w-20 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-lg font-black text-white">
             {pro.name[0]}
           </div>
         )}

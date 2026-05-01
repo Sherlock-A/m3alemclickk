@@ -13,6 +13,7 @@ import {
   ExternalLink, Copy, Star, CheckCircle, AlertCircle,
   X, Loader2, TrendingUp, Camera, Upload, Trash2, MapPin, Trophy, Zap,
 } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 import { SentimentDashboard } from '../../components/SentimentDashboard';
 import { QRCodeCard } from '../../components/QRCodeCard';
 import { computeBadges } from '../../components/ProfessionalBadges';
@@ -560,9 +561,8 @@ export default function ProfessionalDashboardPage() {
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-30 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
         <div className="mx-auto max-w-5xl px-4 h-14 flex items-center justify-between gap-4">
-          <a href="/" className="flex items-center gap-2 text-lg font-black text-orange-500 shrink-0">
-            <Wrench className="h-5 w-5" />
-            <span className="hidden sm:inline">Jobly</span>
+          <a href="/" className="shrink-0">
+            <JoblyLogo size="md" />
           </a>
 
           {/* Tab nav */}
@@ -618,13 +618,13 @@ export default function ProfessionalDashboardPage() {
                 {/* Avatar — temps réel depuis formValues */}
                 <div className="relative shrink-0">
                   {loading ? (
-                    <Skeleton className="h-16 w-16 rounded-2xl" />
+                    <Skeleton className="h-24 w-24 rounded-2xl" />
                   ) : (photoUrl || pro?.photo) ? (
                     <img src={photoUrl || pro?.photo} alt={formValues.name || pro?.name}
-                      className="h-16 w-16 rounded-2xl object-cover border-2 border-orange-100 dark:border-orange-900/30"
+                      className="h-24 w-24 rounded-2xl object-cover border-2 border-orange-100 dark:border-orange-900/30"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                   ) : (
-                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-black text-white">
+                    <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-black text-white">
                       {(formValues.name || pro?.name || '?')[0]}
                     </div>
                   )}

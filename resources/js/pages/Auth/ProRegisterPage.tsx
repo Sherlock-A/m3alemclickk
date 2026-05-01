@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
-import { Eye, EyeOff, Wrench, Check, ArrowLeft, ArrowRight, User, Lock, Briefcase, Mail, MessageCircle, RefreshCw, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Check, ArrowLeft, ArrowRight, User, Lock, Briefcase, Mail, MessageCircle, RefreshCw, CheckCircle, ShieldCheck } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 
 type City = { id: number; name: string; name_ar?: string | null };
 type ProfessionSuggestion = { label: string; category: string };
@@ -261,9 +262,8 @@ export default function ProRegisterPage() {
 
       {/* Left panel */}
       <div className="hidden lg:flex lg:w-2/5 bg-slate-950 flex-col justify-between p-12">
-        <a href="/" className="flex items-center gap-2 text-xl font-black text-orange-500">
-          <Wrench className="h-6 w-6" />
-          Jobly
+        <a href="/">
+          <JoblyLogo size="md" theme="dark" />
         </a>
         <div className="space-y-5">
           <div className="h-1 w-12 bg-orange-500 rounded-full" />
@@ -298,9 +298,8 @@ export default function ProRegisterPage() {
 
           {/* Mobile logo */}
           <div className="lg:hidden text-center">
-            <a href="/" className="inline-flex items-center gap-2 text-xl font-black text-orange-500">
-              <Wrench className="h-5 w-5" />
-              Jobly
+            <a href="/">
+              <JoblyLogo size="md" />
             </a>
           </div>
 

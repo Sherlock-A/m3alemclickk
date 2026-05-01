@@ -4,6 +4,7 @@ import {
   Heart, LogOut, MapPin, Search, Star, User2,
   Trash2, ExternalLink, ChevronRight,
 } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 
 type ClientUser = { name: string; email: string };
 type FavPro = {
@@ -12,7 +13,7 @@ type FavPro = {
 };
 
 function Avatar({ name, photo, size = 'md' }: { name: string; photo?: string; size?: 'sm' | 'md' | 'lg' }) {
-  const cls = size === 'sm' ? 'h-9 w-9 text-sm' : size === 'lg' ? 'h-16 w-16 text-2xl' : 'h-12 w-12 text-lg';
+  const cls = size === 'sm' ? 'h-9 w-9 text-sm' : size === 'lg' ? 'h-20 w-20 text-2xl' : 'h-16 w-16 text-xl';
   if (photo) return <img src={photo} alt={name} className={`${cls} rounded-full object-cover`} />;
   return (
     <div className={`${cls} rounded-full bg-orange-100 flex items-center justify-center font-black text-orange-600`}>
@@ -97,8 +98,8 @@ export default function ClientDashboardPage() {
       {/* Header */}
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-20">
         <div className="mx-auto max-w-4xl px-4 h-14 flex items-center justify-between">
-          <a href="/" className="text-lg font-black text-orange-500">
-            Jobly
+          <a href="/">
+            <JoblyLogo size="md" />
           </a>
           <div className="flex items-center gap-2">
             {user && (

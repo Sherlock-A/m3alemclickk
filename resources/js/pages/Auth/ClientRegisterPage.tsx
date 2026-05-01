@@ -1,5 +1,6 @@
 import { useState, useEffect, FormEvent } from 'react';
-import { Eye, EyeOff, UserPlus, Search, CheckCircle, Mail, MessageCircle, RefreshCw, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, UserPlus, CheckCircle, Mail, MessageCircle, RefreshCw, ArrowLeft } from 'lucide-react';
+import { JoblyLogo } from '../../components/JoblyLogo';
 
 type City = { id: number; name: string; name_ar?: string | null };
 
@@ -161,9 +162,8 @@ export default function ClientRegisterPage() {
       <div className="w-full max-w-md">
 
         <div className="text-center mb-8">
-          <a href="/" className="inline-flex items-center gap-2 text-2xl font-black text-orange-500">
-            <Search className="h-7 w-7" />
-            Jobly
+          <a href="/">
+            <JoblyLogo size="lg" />
           </a>
           <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm">
             {step === 'form' ? 'Créez votre compte pour trouver un artisan' : 'Vérification de votre identité'}
