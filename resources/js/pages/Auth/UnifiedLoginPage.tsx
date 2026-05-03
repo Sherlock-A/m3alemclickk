@@ -108,6 +108,7 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 Connectez-vous pour accéder à votre espace
               </p>
+              <p className="mt-1 text-[10px] text-slate-300 dark:text-slate-700 font-mono">v2.2 · 2026-05-03</p>
             </div>
 
             <div className="px-8 py-7 space-y-5">

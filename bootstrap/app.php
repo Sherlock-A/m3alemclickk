@@ -18,6 +18,14 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->trustProxies(at: '*', headers: \Illuminate\Http\Request::HEADER_X_FORWARDED_FOR | \Illuminate\Http\Request::HEADER_X_FORWARDED_PROTO | \Illuminate\Http\Request::HEADER_X_FORWARDED_PORT | \Illuminate\Http\Request::HEADER_X_FORWARDED_HOST);
 
+        // JWT cookies are set by API routes (no EncryptCookies) as raw JWT strings.
+        // Exclude them so web-route EncryptCookies doesn't null them out on read.
+        $middleware->encryptCookies(except: [
+            'jwt_admin',
+            'jwt_pro',
+            'jwt_client',
+        ]);
+
         $middleware->web(append: [
             SetLocaleAndGeo::class,
             SecurityHeaders::class,
