@@ -41,6 +41,8 @@ RUN npm ci
 COPY . .
 RUN composer run-script post-autoload-dump 2>/dev/null || true
 
+# BUILD_VERSION changes each commit to bust Docker layer cache
+COPY BUILD_VERSION ./
 # Frontend build — runs fresh whenever source files change
 RUN node --max-old-space-size=512 node_modules/.bin/vite build \
     && rm -rf node_modules
