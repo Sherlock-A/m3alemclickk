@@ -33,14 +33,16 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --optimize-autoloader --no-dev --no-scripts --no-interaction
 
-# Application code
+# Node deps — separate layer, only reinstalls when package.json changes
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Application source code
 COPY . .
 RUN composer run-script post-autoload-dump 2>/dev/null || true
 
-# Frontend build — ARG busts Docker cache so JS always rebuilds on deploy
-ARG BUILD_ID=1
-RUN echo "Build $BUILD_ID" && npm ci \
-    && node --max-old-space-size=512 node_modules/.bin/vite build \
+# Frontend build — runs fresh whenever source files change
+RUN node --max-old-space-size=512 node_modules/.bin/vite build \
     && rm -rf node_modules
 
 # Storage dirs & permissions
