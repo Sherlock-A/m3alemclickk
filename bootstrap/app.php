@@ -28,6 +28,12 @@ return Application::configure(basePath: dirname(__DIR__))
             SecurityHeaders::class,
         ]);
 
+        // Remove the default global throttle:api — it uses IP-based limiting which
+        // blocks all users on Railway (shared proxy IP). Per-route throttles handle limits.
+        $middleware->api(remove: [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        ]);
+
         $middleware->alias([
             'jwt'            => JwtAuthenticate::class,
             'admin'          => \App\Http\Middleware\EnsureAdmin::class,
