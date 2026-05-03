@@ -37,8 +37,9 @@ RUN composer install --optimize-autoloader --no-dev --no-scripts --no-interactio
 COPY . .
 RUN composer run-script post-autoload-dump 2>/dev/null || true
 
-# Frontend build
-RUN npm ci --prefer-offline \
+# Frontend build — ARG busts Docker cache so JS always rebuilds on deploy
+ARG BUILD_ID=1
+RUN echo "Build $BUILD_ID" && npm ci \
     && node --max-old-space-size=512 node_modules/.bin/vite build \
     && rm -rf node_modules
 
