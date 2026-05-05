@@ -80,7 +80,7 @@ class ProfessionalPageController extends Controller
     public function index(Request $request)
     {
         $query = Professional::approved()
-            ->with('category')
+            ->with(['category', 'categories'])
             ->leftJoin('categories', 'professionals.category_id', '=', 'categories.id')
             ->select('professionals.*');
 
@@ -137,16 +137,39 @@ class ProfessionalPageController extends Controller
             $query->whereRaw('JSON_CONTAINS(languages, JSON_QUOTE(?))', [$lang]);
         }
 
-        $sort = $request->string('sort')->toString() ?: 'latest';
-        match ($sort) {
-            'rating'  => $query->orderByDesc('rating'),
-            'popular' => $query->orderByDesc('views'),
-            default   => $query->latest(),
-        };
+        // ── Geo radius "près de moi" ──────────────────────────────────────────
+        $geoApplied = false;
+        if ($request->filled('lat') && $request->filled('lon')) {
+            $lat    = (float) $request->input('lat');
+            $lon    = (float) $request->input('lon');
+            $radius = max(1, min(500, (int) $request->input('radius_km', 50)));
+
+            $haversine = '( 6371 * acos( cos(radians(?)) * cos(radians(professionals.latitude))
+                          * cos(radians(professionals.longitude) - radians(?))
+                          + sin(radians(?)) * sin(radians(professionals.latitude)) ) )';
+
+            $query
+                ->whereNotNull('professionals.latitude')
+                ->whereNotNull('professionals.longitude')
+                ->selectRaw("{$haversine} AS distance", [$lat, $lon, $lat])
+                ->havingRaw("{$haversine} <= ?", [$lat, $lon, $lat, $radius])
+                ->orderByRaw("{$haversine} ASC", [$lat, $lon, $lat]);
+
+            $geoApplied = true;
+        }
+
+        if (! $geoApplied) {
+            $sort = $request->string('sort')->toString() ?: 'latest';
+            match ($sort) {
+                'rating'  => $query->orderByDesc('rating'),
+                'popular' => $query->orderByDesc('views'),
+                default   => $query->latest(),
+            };
+        }
 
         return Inertia::render('Frontend/ProfessionalsPage', [
             'professionals' => $query->paginate(12)->withQueryString(),
-            'filters'       => $request->only(['city', 'profession', 'search', 'sort', 'status', 'rating_min', 'language']),
+            'filters'       => $request->only(['city', 'profession', 'search', 'sort', 'status', 'rating_min', 'language', 'lat', 'lon', 'radius_km']),
             'categories'    => Cache::remember('categories_active', 3600, fn () =>
                 Category::where('active', true)->orderBy('sort_order')->get()
             ),
@@ -157,10 +180,76 @@ class ProfessionalPageController extends Controller
         ]);
     }
 
+    public function byCity(Request $request, string $city, ?string $category = null)
+    {
+        // Merge URL segments into request so the shared index() logic applies
+        $request->merge(array_filter([
+            'city'       => $city,
+            'profession' => $category,
+        ]));
+
+        $query = Professional::approved()
+            ->with(['category', 'categories'])
+            ->leftJoin('categories', 'professionals.category_id', '=', 'categories.id')
+            ->select('professionals.*');
+
+        $cityNorm = self::norm($city);
+        $query->where(function ($q) use ($cityNorm) {
+            $q->whereRaw('LOWER(professionals.main_city) LIKE ?',       ["%{$cityNorm}%"])
+              ->orWhereRaw('LOWER(professionals.travel_cities) LIKE ?', ["%{$cityNorm}%"]);
+        });
+
+        if ($category) {
+            $prof  = self::norm($category);
+            $terms = self::synonyms($prof);
+            $query->where(function ($q) use ($prof, $terms) {
+                $q->whereRaw('LOWER(professionals.profession) LIKE ?', ["%{$prof}%"])
+                  ->orWhereRaw('LOWER(categories.name) LIKE ?',        ["%{$prof}%"]);
+                foreach ($terms as $t) {
+                    if ($t !== $prof) {
+                        $q->orWhereRaw('LOWER(professionals.profession) LIKE ?', ["%{$t}%"])
+                          ->orWhereRaw('LOWER(categories.name) LIKE ?',          ["%{$t}%"]);
+                    }
+                }
+            });
+        }
+
+        $query->orderByDesc('professionals.rating');
+
+        $professionals = $query->paginate(12)->withQueryString();
+        $total         = $professionals->total();
+
+        $cityTitle = ucfirst($city);
+        $catTitle  = $category ? ucfirst($category) . 's' : 'Professionnels';
+        $seoTitle  = "{$catTitle} à {$cityTitle}";
+        $seoDesc   = "Trouvez les meilleurs {$catTitle} à {$cityTitle} au Maroc. {$total} professionnel" . ($total > 1 ? 's' : '') . " disponible" . ($total > 1 ? 's' : '') . ". Contact WhatsApp direct, avis vérifiés.";
+
+        $canonicalPath = '/professionnels/' . rawurlencode($city) . ($category ? '/' . rawurlencode($category) : '');
+
+        return Inertia::render('Frontend/ProfessionalsPage', [
+            'professionals' => $professionals,
+            'filters'       => array_filter(['city' => $city, 'profession' => $category]),
+            'categories'    => Cache::remember('categories_active', 3600, fn () =>
+                Category::where('active', true)->orderBy('sort_order')->get()
+            ),
+            'seo' => [
+                'title'     => $seoTitle,
+                'description' => $seoDesc,
+                'canonical'   => config('app.url') . $canonicalPath,
+                'h1'          => $seoTitle,
+            ],
+        ]);
+    }
+
     public function show(string $slug)
     {
         $professional = Professional::approved()
-            ->with(['reviews' => fn ($q) => $q->where('approved', true)->latest(), 'category'])
+            ->with([
+                'reviews'          => fn ($q) => $q->where('approved', true)->latest(),
+                'category',
+                'categories',
+                'unavailabilities' => fn ($q) => $q->where('to_date', '>=', now()->toDateString())->orderBy('from_date'),
+            ])
             ->where('slug', $slug)
             ->firstOrFail();
 
@@ -174,8 +263,21 @@ class ProfessionalPageController extends Controller
             'meta'            => ['ua' => request()->userAgent()],
         ]);
 
+        // Similar professionals (same category or same city, excluding current)
+        $similar = Professional::approved()
+            ->with('category')
+            ->where('id', '!=', $professional->id)
+            ->where(function ($q) use ($professional) {
+                $q->where('category_id', $professional->category_id)
+                  ->orWhereRaw('LOWER(main_city) = LOWER(?)', [$professional->main_city]);
+            })
+            ->orderByDesc('rating')
+            ->take(3)
+            ->get(['id', 'name', 'slug', 'profession', 'photo', 'main_city', 'rating', 'is_available', 'verified', 'category_id']);
+
         return Inertia::render('Frontend/ProfessionalShowPage', [
             'professional' => $professional,
+            'similar'      => $similar,
             'seo'          => [
                 'title'       => "{$professional->name} - {$professional->profession}",
                 'description' => str($professional->description)->limit(150)->toString(),

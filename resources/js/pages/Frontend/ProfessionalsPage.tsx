@@ -7,12 +7,14 @@ import { SearchBar } from '../../components/SearchBar';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { CategoryIcon } from '../../components/CategoryIcon';
 import { Category, Paginated, Professional } from '../../types';
-import { Filter, X, SlidersHorizontal, Star } from 'lucide-react';
+import { Filter, X, SlidersHorizontal, Star, MapPin, Loader2, GitCompare } from 'lucide-react';
+import { ComparePanel } from '../../components/ComparePanel';
 
 type Props = {
   professionals: Paginated<Professional>;
   filters: Record<string, string>;
   categories: Category[];
+  seo?: { title?: string; description?: string; canonical?: string; h1?: string };
 };
 
 function ActiveFilter({ label, onRemove }: { label: string; onRemove: () => void }) {
@@ -44,14 +46,25 @@ function FilterButton({
   );
 }
 
-export default function ProfessionalsPage({ professionals, filters, categories }: Props) {
+export default function ProfessionalsPage({ professionals, filters, categories, seo }: Props) {
   const [items, setItems]       = useState<Professional[]>(professionals.data);
   const [page, setPage]         = useState(professionals.current_page);
   const [lastPage, setLastPage] = useState(professionals.last_page);
   const [total, setTotal]       = useState(professionals.total);
-  const [loading, setLoading]   = useState(false);
+  const [loading, setLoading]       = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [geoLoading, setGeoLoading]    = useState(false);
+  const [geoError, setGeoError]        = useState<string | null>(null);
+  const [compareList, setCompareList]  = useState<Professional[]>([]);
   const loader = useRef<HTMLDivElement | null>(null);
+
+  const toggleCompare = (p: Professional) => {
+    setCompareList((cur) =>
+      cur.find((x) => x.id === p.id)
+        ? cur.filter((x) => x.id !== p.id)
+        : cur.length < 3 ? [...cur, p] : cur
+    );
+  };
 
   const navigate = (patch: Record<string, string | undefined>) => {
     const next = { ...filters, ...patch };
@@ -61,6 +74,26 @@ export default function ProfessionalsPage({ professionals, filters, categories }
   };
 
   const clearFilter = (key: string) => navigate({ [key]: undefined });
+
+  const locateMe = () => {
+    if (!navigator.geolocation) {
+      setGeoError('Géolocalisation non supportée par votre navigateur.');
+      return;
+    }
+    setGeoLoading(true);
+    setGeoError(null);
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        setGeoLoading(false);
+        navigate({ lat: String(coords.latitude), lon: String(coords.longitude), radius_km: '50', city: undefined });
+      },
+      () => {
+        setGeoLoading(false);
+        setGeoError('Impossible d\'accéder à votre position.');
+      },
+      { timeout: 8000 },
+    );
+  };
 
   // Infinite scroll for subsequent pages
   useEffect(() => {
@@ -91,7 +124,10 @@ export default function ProfessionalsPage({ professionals, filters, categories }
     setTotal(professionals.total);
   }, [professionals]);
 
-  const activeFilterCount = Object.values(filters).filter(Boolean).length;
+  const activeFilterCount = (() => {
+    const { lat, lon, radius_km, ...rest } = filters;
+    return Object.values(rest).filter(Boolean).length + (lat ? 1 : 0);
+  })();
 
   const Sidebar = () => (
     <aside className="space-y-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-soft dark:border-slate-800 dark:bg-slate-900">
@@ -106,6 +142,35 @@ export default function ProfessionalsPage({ professionals, filters, categories }
             Tout effacer
           </button>
         )}
+      </div>
+
+      {/* Geo */}
+      <div>
+        <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">Localisation</p>
+        {filters.lat ? (
+          <div className="flex items-center gap-2">
+            <span className="flex-1 text-sm text-brand-700 dark:text-brand-300 font-medium">
+              <MapPin className="inline h-3.5 w-3.5 mr-1" />
+              Dans un rayon de {filters.radius_km || 50} km
+            </span>
+            <button type="button" onClick={() => navigate({ lat: undefined, lon: undefined, radius_km: undefined })}
+              className="text-slate-400 hover:text-slate-600">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={locateMe}
+            disabled={geoLoading}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-900/20 text-brand-700 dark:text-brand-300 px-3 py-2 text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-900/40 transition-colors disabled:opacity-60"
+          >
+            {geoLoading
+              ? <><Loader2 className="h-4 w-4 animate-spin" /> Localisation...</>
+              : <><MapPin className="h-4 w-4" /> Artisans près de moi</>}
+          </button>
+        )}
+        {geoError && <p className="mt-1.5 text-xs text-red-500">{geoError}</p>}
       </div>
 
       {/* Availability */}
@@ -200,18 +265,27 @@ export default function ProfessionalsPage({ professionals, filters, categories }
     </aside>
   );
 
-  const pageTitle = [
-    filters.profession && `${filters.profession}s`,
-    filters.city && `à ${filters.city}`,
-  ].filter(Boolean).join(' ') || 'Professionnels';
+  const pageTitle = seo?.title ?? (
+    [
+      filters.profession && `${filters.profession}s`,
+      filters.city && `à ${filters.city}`,
+    ].filter(Boolean).join(' ') || 'Professionnels'
+  );
 
   return (
     <Layout>
       <Head>
-        <title>{`${pageTitle} | Jobly`}</title>
-        <meta name="description" content={`Trouvez les meilleurs ${filters.profession || 'professionnels'} ${filters.city ? `à ${filters.city}` : 'au Maroc'}. Contact WhatsApp direct, avis vérifiés.`} />
+        <title>{`${pageTitle} | M3allemClick`}</title>
+        <meta name="description" content={seo?.description ?? `Trouvez les meilleurs ${filters.profession || 'professionnels'} ${filters.city ? `à ${filters.city}` : 'au Maroc'}. Contact WhatsApp direct, avis vérifiés.`} />
+        {seo?.canonical && <link rel="canonical" href={seo.canonical} />}
       </Head>
       <section className="mx-auto max-w-7xl px-4 py-10">
+        {/* SEO h1 for city/category pages */}
+        {seo?.h1 && (
+          <h1 className="text-2xl font-black text-slate-800 dark:text-white mb-4">
+            {seo.h1}
+          </h1>
+        )}
         {/* Search bar */}
         <div className="mb-6">
           <SearchBar initialCity={filters.city} initialProfession={filters.profession} />
@@ -233,6 +307,9 @@ export default function ProfessionalsPage({ professionals, filters, categories }
             )}
             {filters.language && (
               <ActiveFilter label={`Langue : ${filters.language}`} onRemove={() => clearFilter('language')} />
+            )}
+            {filters.lat && (
+              <ActiveFilter label={`Rayon ${filters.radius_km || 50} km`} onRemove={() => navigate({ lat: undefined, lon: undefined, radius_km: undefined })} />
             )}
           </div>
         )}
@@ -301,7 +378,13 @@ export default function ProfessionalsPage({ professionals, filters, categories }
               <>
                 <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                   {items.map((professional) => (
-                    <ProfessionalCard key={professional.id} professional={professional} />
+                    <ProfessionalCard
+                      key={professional.id}
+                      professional={professional}
+                      onCompare={toggleCompare}
+                      inCompare={!!compareList.find((x) => x.id === professional.id)}
+                      compareDisabled={compareList.length >= 3}
+                    />
                   ))}
                   {loading && Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
                 </div>
@@ -311,6 +394,28 @@ export default function ProfessionalsPage({ professionals, filters, categories }
           </div>
         </div>
       </section>
+
+      {/* Floating compare badge (appears when 1 item selected) */}
+      {compareList.length === 1 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-xl px-5 py-3">
+          <GitCompare className="h-4 w-4 text-brand-600" />
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+            Sélectionnez 1 ou 2 pros de plus pour comparer
+          </span>
+          <button type="button" onClick={() => setCompareList([])} className="text-slate-400 hover:text-red-500 ml-1">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Compare panel (2–3 pros) */}
+      {compareList.length >= 2 && (
+        <ComparePanel
+          pros={compareList}
+          onRemove={(id) => setCompareList((cur) => cur.filter((x) => x.id !== id))}
+          onClose={() => setCompareList([])}
+        />
+      )}
     </Layout>
   );
 }

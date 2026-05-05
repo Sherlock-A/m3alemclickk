@@ -146,14 +146,37 @@ class ProfessionalController extends Controller
             $query->whereRaw('LOWER(professionals.languages) LIKE ?', ["%{$lang}%"]);
         }
 
-        $sort = $request->string('sort')->toString() ?: 'latest';
-        match ($sort) {
-            'rating'  => $query->orderByDesc('professionals.rating'),
-            'popular' => $query->orderByDesc('professionals.views'),
-            default   => $query->orderByDesc('professionals.created_at'),
-        };
+        // ── Geo radius "près de moi" ──────────────────────────────────────────
+        $geoApplied = false;
+        if ($request->filled('lat') && $request->filled('lon')) {
+            $lat      = (float) $request->input('lat');
+            $lon      = (float) $request->input('lon');
+            $radius   = max(1, min(500, (int) $request->input('radius_km', 50)));
 
-        $hasFilters = $request->hasAny(['city', 'profession', 'status', 'search', 'language', 'rating_min', 'sort']);
+            $haversine = '( 6371 * acos( cos(radians(?)) * cos(radians(professionals.latitude))
+                          * cos(radians(professionals.longitude) - radians(?))
+                          + sin(radians(?)) * sin(radians(professionals.latitude)) ) )';
+
+            $query
+                ->whereNotNull('professionals.latitude')
+                ->whereNotNull('professionals.longitude')
+                ->selectRaw("{$haversine} AS distance", [$lat, $lon, $lat])
+                ->havingRaw("{$haversine} <= ?", [$lat, $lon, $lat, $radius])
+                ->orderByRaw("{$haversine} ASC", [$lat, $lon, $lat]);
+
+            $geoApplied = true;
+        }
+
+        if (! $geoApplied) {
+            $sort = $request->string('sort')->toString() ?: 'latest';
+            match ($sort) {
+                'rating'  => $query->orderByDesc('professionals.rating'),
+                'popular' => $query->orderByDesc('professionals.views'),
+                default   => $query->orderByDesc('professionals.created_at'),
+            };
+        }
+
+        $hasFilters = $request->hasAny(['city', 'profession', 'status', 'search', 'language', 'rating_min', 'sort', 'lat', 'lon']);
         $perPage    = (int) $request->input('per_page', 12);
         $page       = (int) $request->input('page', 1);
 

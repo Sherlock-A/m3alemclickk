@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
 
         $this->seedProfessionals();
         $this->seedClients();
+
+        // Données de test reproductibles (client/pro/admin @test.com)
+        $this->call(TestDataSeeder::class);
     }
 
     // ── Portraits d'artisans / ouvriers (Unsplash — licence libre) ────────────

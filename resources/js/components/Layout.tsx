@@ -10,7 +10,7 @@ type Settings = {
   address: string;
   footer_about: string;
   footer_links: FooterLink[];
-  footer_social: { facebook: string; instagram: string; whatsapp: string };
+  footer_social: { facebook: string; instagram: string };
   footer_copyright: string;
 };
 
@@ -27,7 +27,7 @@ const defaultSettings: Settings = {
     { label: 'Inscription pro', url: '/pro/register' },
     { label: 'Contact', url: '/contact' },
   ],
-  footer_social: { facebook: '', instagram: '', whatsapp: '' },
+  footer_social: { facebook: '', instagram: '' },
   footer_copyright: '© 2026 Jobly. Tous droits réservés.',
 };
 
@@ -243,12 +243,6 @@ export function Layout({ children }: { children: ReactNode }) {
                   <a href={settings.footer_social.instagram} target="_blank" rel="noopener noreferrer"
                     className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-800 hover:bg-orange-500 transition-colors text-xs font-bold">
                     ig
-                  </a>
-                )}
-                {settings.footer_social.whatsapp && (
-                  <a href={`https://wa.me/${settings.footer_social.whatsapp}`} target="_blank" rel="noopener noreferrer"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-800 hover:bg-green-500 transition-colors text-xs font-bold">
-                    wa
                   </a>
                 )}
               </div>

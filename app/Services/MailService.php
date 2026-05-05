@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\SendMailJob;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -18,6 +19,7 @@ class MailService
         string $sentAt
     ): array {
         try {
+            // OTP codes are time-sensitive — send synchronously so the user gets it immediately
             $mailer = $this->resolveMailer();
 
             Mail::mailer($mailer)->send(
@@ -53,6 +55,7 @@ class MailService
         string $resetUrl,
         string $subject
     ): bool {
+        // Password reset links are time-sensitive — send synchronously
         try {
             Mail::mailer($this->resolveMailer())->send(
                 'emails.reset-password',
@@ -79,27 +82,24 @@ class MailService
         $adminEmail = env('ADMIN_EMAIL');
         if (! $adminEmail) return;
 
-        try {
-            Mail::mailer($this->resolveMailer())->send(
-                'emails.new-professional',
-                [
-                    'pro' => [
-                        'name'          => $proName,
-                        'email'         => $proEmail,
-                        'phone'         => $proPhone,
-                        'profession'    => $proProfession,
-                        'city'          => $proCity,
-                        'registered_at' => now()->setTimezone('Africa/Casablanca')->format('d/m/Y à H:i'),
-                    ],
-                    'adminUrl' => config('app.url') . '/dashboard/admin',
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.new-professional',
+            [
+                'pro' => [
+                    'name'          => $proName,
+                    'email'         => $proEmail,
+                    'phone'         => $proPhone,
+                    'profession'    => $proProfession,
+                    'city'          => $proCity,
+                    'registered_at' => now()->setTimezone('Africa/Casablanca')->format('d/m/Y à H:i'),
                 ],
-                fn ($m) => $m
-                    ->to($adminEmail, 'Admin M3allemClick')
-                    ->subject("🔔 Nouveau professionnel : {$proName} ({$proProfession})")
-            );
-        } catch (\Throwable $e) {
-            Log::warning('Admin notification email failed', ['error' => $e->getMessage()]);
-        }
+                'adminUrl' => config('app.url') . '/dashboard/admin',
+            ],
+            $adminEmail,
+            'Admin M3allemClick',
+            "🔔 Nouveau professionnel : {$proName} ({$proProfession})",
+        );
     }
 
     /**
@@ -111,23 +111,20 @@ class MailService
         string $proProfession,
         string $proCity
     ): void {
-        try {
-            Mail::mailer($this->resolveMailer())->send(
-                'emails.pro-approved',
-                [
-                    'proName'      => $toName,
-                    'proEmail'     => $toEmail,
-                    'proProfession'=> $proProfession,
-                    'proCity'      => $proCity,
-                    'dashboardUrl' => config('app.url') . '/dashboard/professional',
-                ],
-                fn ($m) => $m
-                    ->to($toEmail, $toName)
-                    ->subject('✅ Votre profil Jobly est approuvé ! Bienvenue')
-            );
-        } catch (\Throwable $e) {
-            Log::warning('MailService::sendProApproved failed', ['to' => $toEmail, 'error' => $e->getMessage()]);
-        }
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.pro-approved',
+            [
+                'proName'       => $toName,
+                'proEmail'      => $toEmail,
+                'proProfession' => $proProfession,
+                'proCity'       => $proCity,
+                'dashboardUrl'  => config('app.url') . '/dashboard/professional',
+            ],
+            $toEmail,
+            $toName,
+            '✅ Votre profil M3allemClick est approuvé ! Bienvenue',
+        );
     }
 
     /**
@@ -138,22 +135,45 @@ class MailService
         string $toName,
         ?string $rejectionReason = null
     ): void {
-        try {
-            Mail::mailer($this->resolveMailer())->send(
-                'emails.pro-rejected',
-                [
-                    'proName'         => $toName,
-                    'proEmail'        => $toEmail,
-                    'rejectionReason' => $rejectionReason,
-                    'contactUrl'      => config('app.url') . '/contact',
-                ],
-                fn ($m) => $m
-                    ->to($toEmail, $toName)
-                    ->subject('Jobly — Mise à jour de votre demande d\'inscription')
-            );
-        } catch (\Throwable $e) {
-            Log::warning('MailService::sendProRejected failed', ['to' => $toEmail, 'error' => $e->getMessage()]);
-        }
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.pro-rejected',
+            [
+                'proName'         => $toName,
+                'proEmail'        => $toEmail,
+                'rejectionReason' => $rejectionReason,
+                'contactUrl'      => config('app.url') . '/contact',
+            ],
+            $toEmail,
+            $toName,
+            'M3allemClick — Mise à jour de votre demande d\'inscription',
+        );
+    }
+
+    /**
+     * Notifie un professionnel qu'il a reçu une demande de devis.
+     */
+    public function sendContactRequestNotification(
+        string $proEmail,
+        string $proName,
+        string $clientName,
+        string $clientEmail,
+        string $clientPhone,
+        string $subject,
+        string $message,
+        string $dashboardUrl
+    ): void {
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.contact-request',
+            compact('proName', 'clientName', 'clientEmail', 'clientPhone', 'subject', 'message', 'dashboardUrl'),
+            $proEmail,
+            $proName,
+            "📩 Nouvelle demande de devis — {$subject}",
+            $clientEmail ?: $proEmail,
+            $clientName,
+            true, // isHtml view
+        );
     }
 
     /**
@@ -168,19 +188,19 @@ class MailService
         $contactEmail = env('CONTACT_EMAIL', env('ADMIN_EMAIL'));
         if (! $contactEmail) return false;
 
-        try {
-            Mail::mailer($this->resolveMailer())->html(
-                view('emails.contact-message', compact('fromName', 'fromEmail', 'subject', 'message'))->render(),
-                fn ($m) => $m
-                    ->to($contactEmail, 'Jobly Contact')
-                    ->replyTo($fromEmail, $fromName)
-                    ->subject("📬 Contact Jobly : {$subject}")
-            );
-            return true;
-        } catch (\Throwable $e) {
-            Log::warning('MailService::sendContactMessage failed', ['error' => $e->getMessage()]);
-            return false;
-        }
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.contact-message',
+            compact('fromName', 'fromEmail', 'subject', 'message'),
+            $contactEmail,
+            'M3allemClick Contact',
+            "📬 Contact M3allemClick : {$subject}",
+            $fromEmail,
+            $fromName,
+            true, // isHtml view
+        );
+
+        return true;
     }
 
     /**

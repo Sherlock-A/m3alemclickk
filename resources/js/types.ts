@@ -41,6 +41,8 @@ export type Professional = {
   longitude?: number | null;
   reviews?: Review[];
   category?: Category | null;
+  categories?: Category[];
+  unavailabilities?: { id: number; from_date: string; to_date: string; reason: string | null }[];
 };
 
 export type Paginated<T> = {

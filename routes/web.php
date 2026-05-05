@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\ProfessionalPageController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Models\Category;
+use App\Models\City;
 use App\Models\Professional;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Response;
@@ -14,6 +15,10 @@ use Inertia\Inertia;
 Route::get('/', HomeController::class)->name('home');
 Route::get('/professionals', [ProfessionalPageController::class, 'index'])->name('professionals.index');
 Route::get('/professionals/{slug}', [ProfessionalPageController::class, 'show'])->name('professionals.show');
+
+// ─── Pages SEO ville / catégorie (/professionnels/casablanca/plombier) ─────────
+Route::get('/professionnels/{city}',           [ProfessionalPageController::class, 'byCity'])->name('professionals.city');
+Route::get('/professionnels/{city}/{category}', [ProfessionalPageController::class, 'byCity'])->name('professionals.city.category');
 Route::get('/how-it-works', fn () => Inertia::render('Frontend/HowItWorksPage'))->name('how-it-works');
 Route::get('/contact',      fn () => Inertia::render('Frontend/ContactPage'))->name('contact');
 
@@ -70,10 +75,21 @@ Route::get('/sitemap.xml', function () {
             $urls->push("<url><loc>{$base}{$path}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>");
         }
 
-        // Category pages
+        // SEO city pages + city×category matrix (top 10 cities × all categories)
+        $cities = \App\Models\City::where('active', true)->select('name')->take(10)->get();
+        foreach ($cities as $city) {
+            $citySlug = rawurlencode($city->name);
+            $urls->push("<url><loc>{$base}/professionnels/{$citySlug}</loc><changefreq>daily</changefreq><priority>0.8</priority></url>");
+            foreach ($cats as $cat) {
+                $catSlug = rawurlencode($cat->name);
+                $urls->push("<url><loc>{$base}/professionnels/{$citySlug}/{$catSlug}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>");
+            }
+        }
+
+        // Legacy query-string category pages
         foreach ($cats as $cat) {
             $name = urlencode($cat->name);
-            $urls->push("<url><loc>{$base}/professionals?profession={$name}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>");
+            $urls->push("<url><loc>{$base}/professionals?profession={$name}</loc><changefreq>daily</changefreq><priority>0.6</priority></url>");
         }
 
         // Professional profiles

@@ -1,7 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 import { Layout } from '../../components/Layout';
-import { Mail, Phone, MapPin, Send, CheckCircle, AlertCircle, Loader2, MessageSquare } from 'lucide-react';
+import { Send, CheckCircle, AlertCircle, Loader2, MessageSquare, Clock } from 'lucide-react';
 
 const SUBJECTS = [
   'Question générale',
@@ -77,34 +77,27 @@ export default function ContactPage() {
 
           {/* ── Infos ── */}
           <div className="md:col-span-2 space-y-6">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Nos coordonnées</h2>
-
-            <div className="space-y-4">
-              {[
-                { icon: Mail,    label: 'Email',     value: 'contact@m3allemclick.ma',  href: 'mailto:contact@m3allemclick.ma' },
-                { icon: Phone,   label: 'Téléphone', value: '+212 6XX XXX XXX',         href: null },
-                { icon: MapPin,  label: 'Adresse',   value: 'Casablanca, Maroc', href: null },
-              ].map(({ icon: Icon, label, value, href }) => (
-                <div key={label} className="flex items-start gap-4 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900 shadow-sm">
-                  <div className="shrink-0 flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-900/30">
-                    <Icon className="h-5 w-5 text-orange-500" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-0.5">{label}</p>
-                    {href
-                      ? <a href={href} className="text-sm font-semibold text-slate-800 dark:text-slate-200 hover:text-orange-500 transition-colors">{value}</a>
-                      : <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{value}</p>
-                    }
-                  </div>
+            <div className="rounded-xl border border-orange-200 bg-orange-50 dark:border-orange-900/50 dark:bg-orange-900/20 p-5">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="shrink-0 flex h-9 w-9 items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-900/40">
+                  <Clock className="h-5 w-5 text-orange-500" />
                 </div>
-              ))}
+                <p className="text-sm font-semibold text-orange-700 dark:text-orange-400">Délai de réponse</p>
+              </div>
+              <p className="text-xs text-orange-600 dark:text-orange-300 leading-relaxed">
+                Nous répondons à tous les messages dans un délai de 24h (jours ouvrés).
+              </p>
             </div>
 
-            <div className="rounded-xl border border-orange-200 bg-orange-50 dark:border-orange-900/50 dark:bg-orange-900/20 p-4">
-              <p className="text-sm font-semibold text-orange-700 dark:text-orange-400 mb-1">Délai de réponse</p>
-              <p className="text-xs text-orange-600 dark:text-orange-300 leading-relaxed">
-                Nous répondons à tous les messages dans un délai de 24h (jours ouvrés). Pour les urgences, appelez directement.
-              </p>
+            <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 space-y-3 shadow-sm">
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Pourquoi nous contacter ?</p>
+              <ul className="text-xs text-slate-500 dark:text-slate-400 space-y-2 leading-relaxed">
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Question sur la plateforme</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Problème avec un profil ou un avis</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Demande d'inscription professionnelle</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Proposition de partenariat</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Signalement d'un contenu inapproprié</li>
+              </ul>
             </div>
           </div>
 

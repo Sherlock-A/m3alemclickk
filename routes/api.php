@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClientAuthController;
 use App\Http\Controllers\Api\ProAuthController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CityController;
@@ -17,33 +18,33 @@ use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\TrackingController;
 use App\Http\Controllers\Api\UploadController;
+use App\Http\Controllers\Api\ContactRequestController;
+use App\Http\Controllers\Api\UnavailabilityController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
-// ─── Diagnostic public (no auth) — à supprimer après debug ───────────────────
-Route::get('/health', function () {
-    $adminUser = \App\Models\User::where('role', 'admin')->first();
-    $jwtSecret = config('jwt.secret');
+// ─── Recherche unifiée — alias vers ProfessionalController avec normalisation ──
+Route::get('/search',             [SearchController::class, 'search'])->middleware('throttle:60,1');
+Route::get('/search-suggestions', [SearchController::class, 'suggestions'])->middleware('throttle:120,1');
 
-    $tokenTest = null;
-    if ($adminUser && $jwtSecret) {
-        try {
-            $token = \PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth::fromUser($adminUser);
-            $tokenTest = $token ? 'OK' : 'FAILED';
-        } catch (\Throwable $e) {
-            $tokenTest = 'ERROR: ' . $e->getMessage();
-        }
-    }
+// ─── Catégories publiques ──────────────────────────────────────────────────────
+Route::get('/categories', function () {
+    return response()->json(
+        \App\Models\Category::where('active', true)
+            ->select('id', 'name', 'icon', 'slug')
+            ->orderBy('name')
+            ->get()
+    );
+})->middleware('throttle:120,1');
 
+// ─── Diagnostic (admin only) ──────────────────────────────────────────────────
+Route::middleware('jwt:admin')->get('/health', function () {
     return response()->json([
-        'status'        => 'ok',
-        'db_driver'     => config('database.default'),
-        'admin_exists'  => (bool) $adminUser,
-        'admin_email'   => $adminUser?->email,
-        'admin_status'  => $adminUser?->status,
-        'jwt_secret'    => $jwtSecret ? 'SET (' . strlen($jwtSecret) . ' chars)' : 'MISSING',
-        'jwt_token_test'=> $tokenTest,
-        'app_env'       => config('app.env'),
-        'users_total'   => \App\Models\User::count(),
+        'status'      => 'ok',
+        'db_driver'   => config('database.default'),
+        'app_env'     => config('app.env'),
+        'jwt_secret'  => config('jwt.secret') ? 'SET' : 'MISSING',
+        'users_total' => \App\Models\User::count(),
     ]);
 });
 
@@ -81,8 +82,10 @@ Route::prefix('verify')->group(function () {
 // ─── Autocomplete métiers intelligents ────────────────────────────────────────
 Route::get('/professions/autocomplete', [ProfessionController::class, 'autocomplete'])->middleware('throttle:120,1');
 
-// ─── Auth mock (legacy, à conserver) ──────────────────────────────────────────
-Route::post('/auth/mock-login', [AuthController::class, 'mockLogin'])->middleware('throttle:30,1');
+// ─── Auth mock (debug local uniquement) ──────────────────────────────────────
+if (config('app.debug') && config('app.env') !== 'production') {
+    Route::post('/auth/mock-login', [AuthController::class, 'mockLogin'])->middleware('throttle:30,1');
+}
 
 // ─── Auth status (cookie-based, no JS token needed) ──────────────────────────
 Route::get('/auth/status', [AuthController::class, 'status'])->middleware('throttle:120,1');
@@ -120,7 +123,8 @@ Route::prefix('client')->group(function () {
     Route::post('/reset-password',  [ClientAuthController::class, 'resetPassword'])->middleware('throttle:30,1');
 
     Route::middleware('jwt:client')->group(function () {
-        Route::get('/me', [ClientAuthController::class, 'me']);
+        Route::get('/me',      [ClientAuthController::class, 'me']);
+        Route::put('/profile', [ClientAuthController::class, 'updateProfile']);
     });
 });
 
@@ -129,29 +133,38 @@ Route::get('/cities',              [CityController::class, 'publicIndex'])->midd
 Route::get('/cities/autocomplete', [CityController::class, 'autocomplete'])->middleware('throttle:120,1');
 Route::get('/professionals',       [ProfessionalController::class, 'index'])->middleware('throttle:60,1');
 
-// Serve uploaded files from /tmp/uploads
-Route::get('/files/{filename}', function ($filename) {
-    $path = '/tmp/uploads/' . basename($filename);
-    if (! file_exists($path)) abort(404);
-    $mime = mime_content_type($path) ?: 'application/octet-stream';
-    return response()->file($path, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=86400']);
-})->middleware('throttle:120,1');
-
 Route::post('/track',         [TrackingController::class, 'store'])->middleware('throttle:tracking');
 Route::post('/contact',       [ContactController::class, 'sendMessage'])->middleware('throttle:5,1');
 Route::get('/whatsapp/{id}',  [ContactController::class, 'whatsapp'])->middleware('throttle:30,1');
 Route::get('/call/{id}',      [ContactController::class, 'call'])->middleware('throttle:30,1');
 Route::get('/favorites',      [FavoriteController::class, 'index'])->middleware('throttle:60,1');
 Route::post('/favorites/sync',[FavoriteController::class, 'sync'])->middleware('throttle:30,1');
-Route::post('/reviews',       [ReviewController::class, 'store'])->middleware('throttle:10,1');
+Route::post('/reviews',                        [ReviewController::class, 'store'])->middleware('throttle:10,1');
+Route::post('/reviews/{review}/report',        [ReviewController::class, 'report'])->middleware('throttle:5,1');
+Route::post('/professionals/{professional}/contact', [ContactRequestController::class, 'store'])->middleware('throttle:5,1');
 Route::get('/settings',       [SettingsController::class, 'show'])->middleware('throttle:60,1');
+
+// ─── Demandes de contact client ───────────────────────────────────────────────
+Route::middleware('jwt:client')->group(function () {
+    Route::get('/client/contact-requests', [ContactRequestController::class, 'forClient']);
+});
+
+// ─── Broadcasting auth (private channels via JWT) ────────────────────────────
+Route::middleware('jwt:professional')->post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
+    return Broadcast::auth($request);
+});
 
 // ─── Dashboard Professionnel ───────────────────────────────────────────────────
 Route::middleware('jwt:professional')->group(function () {
     Route::get('/dashboard/professional',              [DashboardController::class, 'professional']);
     Route::put('/dashboard/professional',              [DashboardController::class, 'updateProfessional']);
+    Route::get('/pro/notifications/count',             [DashboardController::class, 'notificationsCount']);
     Route::post('/pro/upload-photo',                   [UploadController::class, 'photo']);
-    // pro response to reviews disabled
+    Route::put('/pro/reviews/{review}/respond',        [ReviewController::class, 'respond']);
+    Route::get('/pro/contact-requests',                [ContactRequestController::class, 'forProfessional']);
+    Route::get('/pro/unavailabilities',                [UnavailabilityController::class, 'index']);
+    Route::post('/pro/unavailabilities',               [UnavailabilityController::class, 'store']);
+    Route::delete('/pro/unavailabilities/{unavailability}', [UnavailabilityController::class, 'destroy']);
 });
 
 // ─── Dashboard Admin ───────────────────────────────────────────────────────────

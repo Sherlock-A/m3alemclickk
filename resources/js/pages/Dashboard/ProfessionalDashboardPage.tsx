@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { getEcho, destroyEcho } from '../../echo';
 import axios from 'axios';
 import {
   BarChart, Bar, CartesianGrid, ResponsiveContainer,
@@ -11,7 +12,7 @@ import {
   LogOut, Wrench, Eye, Phone, MessageCircle, Save,
   ToggleLeft, ToggleRight, LayoutDashboard, User, BarChart3,
   ExternalLink, Copy, Star, CheckCircle, AlertCircle,
-  X, Loader2, TrendingUp, Camera, Upload, Trash2, MapPin, Trophy, Zap,
+  X, Loader2, TrendingUp, Camera, Upload, Trash2, MapPin, Trophy, Zap, Mail,
 } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 import { SentimentDashboard } from '../../components/SentimentDashboard';
@@ -144,7 +145,7 @@ const schema = z.object({
 });
 type FormData = z.infer<typeof schema>;
 
-type Tab = 'overview' | 'profile' | 'stats' | 'reviews';
+type Tab = 'overview' | 'profile' | 'stats' | 'reviews' | 'devis';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function profileCompletion(pro: any): number {
@@ -360,6 +361,100 @@ const ACHIEVEMENTS = [
   { id: 'verified',      icon: '🛡️', label: 'Certifié Jobly',  desc: 'Compte vérifié par admin', check: (p: any) => !!p?.verified },
 ];
 
+// ── Availability Calendar (unavailability periods) ────────────────────────────
+function UnavailabilityCalendar({ token, pro }: { token: string | null; pro: any }) {
+  type Period = { id: number; from_date: string; to_date: string; reason: string | null };
+  const [items, setItems]       = useState<Period[]>((pro?.unavailabilities ?? []) as Period[]);
+  const [from, setFrom]         = useState('');
+  const [to, setTo]             = useState('');
+  const [reason, setReason]     = useState('');
+  const [saving, setSaving]     = useState(false);
+  const [error, setError]       = useState('');
+
+  const headers = { Authorization: `Bearer ${token}` };
+
+  const load = () =>
+    axios.get('/api/pro/unavailabilities', { headers })
+      .then((r) => setItems(r.data.items ?? []))
+      .catch(() => {});
+
+  const add = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!from || !to) { setError('Les deux dates sont requises.'); return; }
+    setSaving(true); setError('');
+    try {
+      await axios.post('/api/pro/unavailabilities', { from_date: from, to_date: to, reason: reason || null }, { headers });
+      setFrom(''); setTo(''); setReason('');
+      load();
+    } catch (err: any) {
+      setError(err?.response?.data?.message ?? 'Erreur.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const remove = async (id: number) => {
+    await axios.delete(`/api/pro/unavailabilities/${id}`, { headers }).catch(() => {});
+    setItems((cur) => cur.filter((x) => x.id !== id));
+  };
+
+  return (
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
+      <h2 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
+        📅 Périodes d'indisponibilité
+      </h2>
+      <p className="text-xs text-slate-500">Indiquez vos congés ou jours de repos. Votre profil affichera "Disponible à partir du..." automatiquement.</p>
+
+      {/* Existing periods */}
+      {items.length > 0 && (
+        <div className="space-y-2">
+          {items.map((item) => (
+            <div key={item.id} className="flex items-center justify-between rounded-xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800 px-3 py-2">
+              <div>
+                <span className="text-xs font-semibold text-amber-800 dark:text-amber-300">
+                  {new Date(item.from_date).toLocaleDateString('fr-MA', { day: '2-digit', month: 'short' })}
+                  {' → '}
+                  {new Date(item.to_date).toLocaleDateString('fr-MA', { day: '2-digit', month: 'short', year: 'numeric' })}
+                </span>
+                {item.reason && <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">{item.reason}</p>}
+              </div>
+              <button type="button" onClick={() => remove(item.id)} className="text-amber-400 hover:text-red-500 transition-colors ml-3">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add period form */}
+      <form onSubmit={add} className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Du</label>
+          <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
+            min={new Date().toISOString().split('T')[0]}
+            className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Au</label>
+          <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
+            min={from || new Date().toISOString().split('T')[0]}
+            className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm" />
+        </div>
+        <div className="col-span-2">
+          <input type="text" value={reason} onChange={(e) => setReason(e.target.value)}
+            placeholder="Raison (optionnel : vacances, formation...)"
+            className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm" />
+        </div>
+        {error && <p className="col-span-2 text-xs text-red-500">{error}</p>}
+        <button type="submit" disabled={saving}
+          className="col-span-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm py-2 transition-colors disabled:opacity-60">
+          {saving ? 'Ajout...' : '+ Ajouter cette période'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
 export default function ProfessionalDashboardPage() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('pro_token'));
   const [data, setData]       = useState<any>(null);
@@ -370,7 +465,10 @@ export default function ProfessionalDashboardPage() {
   const [saved, setSaved]     = useState(false);
   const [saveErr, setSaveErr] = useState('');
   const [copied, setCopied]   = useState(false);
-  const [cities, setCities]   = useState<string[]>([]);
+  const [cities, setCities]           = useState<string[]>([]);
+  const [allCategories, setAllCategories] = useState<{id:number;name:string;icon:string}[]>([]);
+  const [selectedCatIds, setSelectedCatIds] = useState<number[]>([]);
+  const [notifCount, setNotifCount]   = useState(0);
 
   const DRAFT_KEY = `pro_draft_${(token ?? '').slice(-10)}`;
 
@@ -402,7 +500,45 @@ export default function ProfessionalDashboardPage() {
       .then((r) => r.ok ? r.json() : [])
       .then((d: { name: string }[]) => setCities(d.map((c) => c.name)))
       .catch(() => {});
+    fetch('/api/categories')
+      .then((r) => r.ok ? r.json() : [])
+      .then((d: {id:number;name:string;icon:string}[]) => setAllCategories(d))
+      .catch(() => {});
   }, []);
+
+  // Real-time notifications via Pusher Echo (fallback: poll every 5 min)
+  useEffect(() => {
+    const proId = data?.professional?.id as number | undefined;
+    if (!token || !proId) return;
+
+    const fetchCount = () =>
+      axios.get('/api/pro/notifications/count', { headers: { Authorization: `Bearer ${token}` } })
+        .then((r) => setNotifCount(r.data.count ?? 0))
+        .catch(() => {});
+
+    fetchCount();
+
+    // Try Echo (Pusher) first — zero-delay real-time updates
+    const echoClient = getEcho(token);
+    if (echoClient) {
+      echoClient
+        .private(`pro.${proId}`)
+        .listen('.notification.count', (e: { count: number }) => {
+          setNotifCount(e.count);
+        });
+      // Slow fallback poll while Echo is active (catches missed events)
+      const id = setInterval(fetchCount, 300_000);
+      return () => {
+        echoClient.leave(`pro.${proId}`);
+        destroyEcho();
+        clearInterval(id);
+      };
+    }
+
+    // No Pusher configured — standard 60 s poll
+    const id = setInterval(fetchCount, 60_000);
+    return () => clearInterval(id);
+  }, [token, data?.professional?.id]);
 
   useEffect(() => {
     if (!token) {
@@ -427,6 +563,8 @@ export default function ProfessionalDashboardPage() {
       .then((res) => {
         setData(res.data);
         const p = res.data.professional;
+        // Init selected categories from pivot relation
+        setSelectedCatIds((p.categories ?? []).map((c: any) => c.id));
         const apiValues: FormData = {
           name:          p.name ?? '',
           profession:    p.profession ?? '',
@@ -513,7 +651,7 @@ export default function ProfessionalDashboardPage() {
     setSaving(true);
     setSaveErr('');
     try {
-      await axios.put('/api/dashboard/professional', values, {
+      await axios.put('/api/dashboard/professional', { ...values, category_ids: selectedCatIds }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       // Clear draft after successful save
@@ -523,6 +661,7 @@ export default function ProfessionalDashboardPage() {
       });
       setData(res.data);
       const p = res.data.professional;
+      setSelectedCatIds((p.categories ?? []).map((c: any) => c.id));
       form.reset({
         name: p.name ?? '', profession: p.profession ?? '', main_city: p.main_city ?? '',
         phone: p.phone ?? '', description: p.description ?? '', photo: p.photo ?? '',
@@ -564,6 +703,7 @@ export default function ProfessionalDashboardPage() {
     { id: 'profile',  label: 'Mon profil',   icon: User },
     { id: 'stats',    label: 'Statistiques', icon: BarChart3 },
     { id: 'reviews',  label: 'Avis',         icon: Star },
+    { id: 'devis',    label: 'Devis',        icon: Mail },
   ];
 
   return (
@@ -581,8 +721,11 @@ export default function ProfessionalDashboardPage() {
             {navTabs.map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
-                onClick={() => setTab(id)}
-                className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                onClick={() => {
+                  setTab(id);
+                  if (id === 'devis') setNotifCount(0);
+                }}
+                className={`relative flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                   tab === id
                     ? 'bg-orange-500 text-white'
                     : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
@@ -590,6 +733,11 @@ export default function ProfessionalDashboardPage() {
               >
                 <Icon className="h-4 w-4" />
                 <span className="hidden sm:inline">{label}</span>
+                {id === 'devis' && notifCount > 0 && (
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                    {notifCount > 9 ? '9+' : notifCount}
+                  </span>
+                )}
               </button>
             ))}
           </nav>
@@ -986,6 +1134,43 @@ export default function ProfessionalDashboardPage() {
             {/* Basic info */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
               <h2 className="text-sm font-bold text-slate-800 dark:text-white">Informations générales</h2>
+              {/* Catégories multi-sélection */}
+              {allCategories.length > 0 && (
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                    Catégories de travail
+                    <span className="ml-2 text-orange-500 font-semibold">({selectedCatIds.length}/3)</span>
+                  </label>
+                  <p className="text-xs text-slate-400 mb-2">Choisissez 1 à 3 domaines qui décrivent votre activité.</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                    {allCategories.map(cat => {
+                      const selected = selectedCatIds.includes(cat.id);
+                      const maxReached = selectedCatIds.length >= 3 && !selected;
+                      return (
+                        <button key={cat.id} type="button"
+                          disabled={maxReached}
+                          onClick={() => setSelectedCatIds(prev =>
+                            prev.includes(cat.id)
+                              ? prev.filter(x => x !== cat.id)
+                              : prev.length < 3 ? [...prev, cat.id] : prev
+                          )}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-xl border-2 text-xs font-medium transition-all text-left
+                            ${selected
+                              ? 'border-orange-400 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300'
+                              : maxReached
+                                ? 'border-slate-100 dark:border-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed opacity-50'
+                                : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-orange-300 hover:bg-orange-50/50'
+                            }`}>
+                          <span className="text-base leading-none">{cat.icon}</span>
+                          <span className="truncate">{cat.name}</span>
+                          {selected && <span className="ml-auto text-orange-500 shrink-0 font-bold">✓</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Nom complet <span className="text-red-400">*</span></label>
@@ -1126,6 +1311,9 @@ export default function ProfessionalDashboardPage() {
           </form>
         )}
 
+        {/* ── CALENDRIER DISPONIBILITÉ (inline, outside the save form) ─────── */}
+        {tab === 'profile' && <UnavailabilityCalendar token={token} pro={pro} />}
+
         {/* ── STATS ─────────────────────────────────────────────────────────── */}
         {tab === 'stats' && (
           <div className="space-y-5">
@@ -1174,6 +1362,55 @@ export default function ProfessionalDashboardPage() {
               )}
             </div>
 
+            {/* ── Conversion funnel ── */}
+            {!loading && data?.analytics && (
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
+                <h2 className="text-sm font-bold text-slate-800 dark:text-white">📈 Taux de conversion — 30 derniers jours</h2>
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
+                    <div className="text-2xl font-black text-slate-700 dark:text-white">{data.analytics.views30}</div>
+                    <div className="text-xs text-slate-400 mt-1">Vues</div>
+                  </div>
+                  <div className="rounded-xl bg-brand-50 dark:bg-brand-900/20 p-3">
+                    <div className="text-2xl font-black text-brand-700 dark:text-brand-300">{data.analytics.contacts30}</div>
+                    <div className="text-xs text-slate-400 mt-1">Contacts</div>
+                  </div>
+                  <div className={`rounded-xl p-3 ${data.analytics.convRate >= (data.analytics.catAvgConv ?? 0) ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-amber-50 dark:bg-amber-900/20'}`}>
+                    <div className={`text-2xl font-black ${data.analytics.convRate >= (data.analytics.catAvgConv ?? 0) ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-700 dark:text-amber-300'}`}>
+                      {data.analytics.convRate}%
+                    </div>
+                    <div className="text-xs text-slate-400 mt-1">Conversion</div>
+                  </div>
+                </div>
+                {data.analytics.catAvgConv !== null && (
+                  <p className="text-xs text-slate-500">
+                    Moyenne de votre catégorie : <strong>{data.analytics.catAvgConv}%</strong>
+                    {data.analytics.convRate >= data.analytics.catAvgConv
+                      ? ' — 🟢 Vous faites mieux que la moyenne !'
+                      : ' — 💡 Améliorez votre profil pour booster votre conversion.'}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* ── Best days chart ── */}
+            {!loading && data?.analytics?.contactsByDay && (
+              <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
+                <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-4">📅 Contacts par jour de la semaine (30j)</h2>
+                <div className="h-44">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={data.analytics.contactsByDay}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                      <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={24} />
+                      <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,.08)', fontSize: 12 }} />
+                      <Bar dataKey="contacts" fill="#2563eb" radius={[5, 5, 0, 0]} name="Contacts" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+
             {/* Tips */}
             <div className="rounded-2xl border border-orange-100 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 p-5">
               <h3 className="text-sm font-bold text-orange-800 dark:text-orange-300 mb-3">💡 Conseils pour augmenter votre visibilité</h3>
@@ -1191,6 +1428,11 @@ export default function ProfessionalDashboardPage() {
         {tab === 'reviews' && (
           <ReviewsTab token={token} />
         )}
+
+        {/* ── DEVIS ─────────────────────────────────────────────────────────── */}
+        {tab === 'devis' && (
+          <DevisTab token={token} />
+        )}
       </main>
     </div>
   );
@@ -1200,6 +1442,9 @@ export default function ProfessionalDashboardPage() {
 function ReviewsTab({ token }: { token: string | null }) {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (!token) { setLoading(false); return; }
@@ -1208,6 +1453,25 @@ function ReviewsTab({ token }: { token: string | null }) {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [token]);
+
+  const sendReply = async (reviewId: number) => {
+    if (!replyText.trim() || !token) return;
+    setSending(true);
+    try {
+      const { data } = await axios.put(
+        `/api/pro/reviews/${reviewId}/respond`,
+        { pro_response: replyText.trim() },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      setReviews((prev) => prev.map((r) => (r.id === reviewId ? data.review : r)));
+      setReplyingTo(null);
+      setReplyText('');
+    } catch {
+      // silently ignore
+    } finally {
+      setSending(false);
+    }
+  };
 
   if (loading) return (
     <div className="space-y-4">
@@ -1295,10 +1559,162 @@ function ReviewsTab({ token }: { token: string | null }) {
               {review.comment && (
                 <p className="text-sm text-slate-600 dark:text-slate-400">{review.comment}</p>
               )}
+
+              {/* Pro response or reply form */}
+              {review.pro_response ? (
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-3">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Votre réponse :</p>
+                  <p className="text-sm text-slate-700 dark:text-slate-300">{review.pro_response}</p>
+                </div>
+              ) : replyingTo === review.id ? (
+                <div className="space-y-2">
+                  <textarea
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="Écrivez votre réponse..."
+                    rows={3}
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => sendReply(review.id)}
+                      disabled={sending || !replyText.trim()}
+                      className="rounded-xl bg-orange-500 hover:bg-orange-600 disabled:opacity-50 px-4 py-1.5 text-xs font-semibold text-white transition-colors"
+                    >
+                      {sending ? 'Envoi...' : 'Envoyer'}
+                    </button>
+                    <button
+                      onClick={() => { setReplyingTo(null); setReplyText(''); }}
+                      className="rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={() => { setReplyingTo(review.id); setReplyText(''); }}
+                  className="text-xs font-semibold text-orange-600 dark:text-orange-400 hover:underline"
+                >
+                  ↩ Répondre
+                </button>
+              )}
             </div>
           ))}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+// ─── Onglet Devis reçus ────────────────────────────────────────────────────────
+type DevisItem = {
+  id: number;
+  client_name: string;
+  client_email: string | null;
+  client_phone: string | null;
+  subject: string;
+  message: string;
+  status: 'new' | 'read' | 'replied';
+  created_at: string;
+};
+
+function DevisTab({ token }: { token: string | null }) {
+  const [items, setItems]     = useState<DevisItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [expanded, setExpanded] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!token) { setLoading(false); return; }
+    axios.get('/api/pro/contact-requests', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => setItems(r.data.items ?? []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  if (loading) return (
+    <div className="space-y-4">
+      {[0, 1, 2].map(i => (
+        <div key={i} className="h-24 animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-700" />
+      ))}
+    </div>
+  );
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-black text-slate-800 dark:text-white">
+          Demandes de devis <span className="text-sm font-normal text-slate-400">({items.length})</span>
+        </h2>
+        {items.filter(i => i.status === 'new').length > 0 && (
+          <span className="rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-semibold px-2.5 py-1">
+            {items.filter(i => i.status === 'new').length} nouveau{items.filter(i => i.status === 'new').length > 1 ? 'x' : ''}
+          </span>
+        )}
+      </div>
+
+      {items.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 py-14 text-center">
+          <Mail className="h-8 w-8 mx-auto mb-3 text-slate-200 dark:text-slate-700" />
+          <p className="text-sm text-slate-500">Aucune demande de devis reçue.</p>
+          <p className="text-xs text-slate-400 mt-1">Les clients peuvent vous envoyer une demande depuis votre profil public.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {items.map(item => (
+            <div key={item.id} className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden">
+              <button
+                onClick={() => setExpanded(expanded === item.id ? null : item.id)}
+                className="w-full flex items-start justify-between gap-3 p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-sm font-bold text-blue-600 shrink-0">
+                      {item.client_name?.[0]?.toUpperCase()}
+                    </div>
+                    <span className="font-semibold text-sm text-slate-800 dark:text-white">{item.client_name}</span>
+                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold shrink-0 ${
+                      item.status === 'new' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                      : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                    }`}>
+                      {item.status === 'new' ? '● Nouveau' : 'Lu'}
+                    </span>
+                  </div>
+                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">{item.subject}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">{new Date(item.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                </div>
+                <span className="text-slate-400 shrink-0 mt-1">{expanded === item.id ? '▲' : '▼'}</span>
+              </button>
+
+              {expanded === item.id && (
+                <div className="border-t border-slate-100 dark:border-slate-800 px-4 pb-4 pt-3 space-y-3">
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{item.message}</p>
+                  <div className="flex flex-wrap gap-3 pt-1">
+                    {item.client_email && (
+                      <a href={`mailto:${item.client_email}`}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 px-3 py-1.5 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-100 transition-colors">
+                        <Mail className="h-3.5 w-3.5" /> {item.client_email}
+                      </a>
+                    )}
+                    {item.client_phone && (
+                      <a href={`tel:${item.client_phone}`}
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 transition-colors">
+                        <Phone className="h-3.5 w-3.5" /> {item.client_phone}
+                      </a>
+                    )}
+                    {item.client_phone && (
+                      <a href={`https://wa.me/${item.client_phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-3 py-1.5 text-xs font-semibold text-green-700 dark:text-green-300 hover:bg-green-100 transition-colors">
+                        <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

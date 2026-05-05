@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use Carbon\Carbon;
 
 class Professional extends Model
 {
@@ -95,6 +97,11 @@ class Professional extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'professional_categories');
+    }
+
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class);
@@ -103,5 +110,25 @@ class Professional extends Model
     public function trackings(): HasMany
     {
         return $this->hasMany(Tracking::class);
+    }
+
+    public function unavailabilities(): HasMany
+    {
+        return $this->hasMany(ProfessionalUnavailability::class);
+    }
+
+    /**
+     * Returns the next availability date if currently in an unavailability period, or null if available.
+     */
+    public function nextAvailableDate(): ?\Carbon\Carbon
+    {
+        $today = now()->toDateString();
+        $period = $this->unavailabilities()
+            ->where('from_date', '<=', $today)
+            ->where('to_date', '>=', $today)
+            ->orderByDesc('to_date')
+            ->first();
+
+        return $period ? $period->to_date->addDay() : null;
     }
 }
