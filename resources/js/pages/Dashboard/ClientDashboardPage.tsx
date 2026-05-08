@@ -2,14 +2,22 @@ import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
 import {
   Heart, LogOut, MapPin, Search, Star, User2,
-  Trash2, ExternalLink, ChevronRight,
+  Trash2, ExternalLink, ChevronRight, Mail, Save, CheckCircle,
 } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 
-type ClientUser = { name: string; email: string };
+type ClientUser = { name: string; email: string; phone?: string; city?: string };
 type FavPro = {
   id: number; name: string; profession: string; main_city: string;
   photo?: string; rating: number; is_available: boolean; slug: string;
+};
+type ContactReq = {
+  id: number;
+  subject: string;
+  message: string;
+  status: 'new' | 'read' | 'replied';
+  created_at: string;
+  professional: { name: string; profession: string; main_city: string; slug: string } | null;
 };
 
 function Avatar({ name, photo, size = 'md' }: { name: string; photo?: string; size?: 'sm' | 'md' | 'lg' }) {
@@ -36,7 +44,18 @@ export default function ClientDashboardPage() {
   const [favPros, setFavPros] = useState<FavPro[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'overview' | 'favorites'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'favorites' | 'demandes' | 'profil'>('overview');
+
+  // Demandes de contact
+  const [demandes, setDemandes] = useState<ContactReq[]>([]);
+  const [demandesLoading, setDemandesLoading] = useState(false);
+
+  // Profile edit
+  const [profileName, setProfileName]   = useState('');
+  const [profilePhone, setProfilePhone] = useState('');
+  const [profileCity, setProfileCity]   = useState('');
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileSaved, setProfileSaved]   = useState(false);
 
   useEffect(() => {
     if (!token) {
@@ -66,7 +85,13 @@ export default function ClientDashboardPage() {
           return;
         }
         const d = await r.json();
-        setUser(d.user ?? null);
+        const u = d.user ?? null;
+        setUser(u);
+        if (u) {
+          setProfileName(u.name ?? '');
+          setProfilePhone(u.phone ?? '');
+          setProfileCity(u.city ?? '');
+        }
       })
       .catch((err) => {
         if (err.name === 'AbortError') return;
@@ -100,6 +125,42 @@ export default function ClientDashboardPage() {
       localStorage.removeItem('client_token');
       window.location.href = '/';
     });
+  };
+
+  const loadDemandes = () => {
+    if (!token || demandesLoading) return;
+    setDemandesLoading(true);
+    fetch('/api/client/contact-requests', {
+      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+    })
+      .then(r => r.json())
+      .then(d => setDemandes(d.items ?? []))
+      .catch(() => {})
+      .finally(() => setDemandesLoading(false));
+  };
+
+  const saveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token) return;
+    setProfileSaving(true);
+    setProfileSaved(false);
+    try {
+      const r = await fetch('/api/client/profile', {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ name: profileName, phone: profilePhone, city: profileCity }),
+      });
+      if (r.ok) {
+        const d = await r.json();
+        setUser(d.user);
+        setProfileSaved(true);
+        setTimeout(() => setProfileSaved(false), 3000);
+      }
+    } catch {
+      // silently ignore
+    } finally {
+      setProfileSaving(false);
+    }
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -177,15 +238,20 @@ export default function ClientDashboardPage() {
         </form>
 
         {/* Tabs */}
-        <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+        <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1 flex-wrap">
           {[
-            { id: 'overview', label: 'Accès rapide', icon: User2 },
+            { id: 'overview',  label: 'Accès rapide', icon: User2 },
             { id: 'favorites', label: `Favoris (${favPros.length})`, icon: Heart },
+            { id: 'demandes',  label: 'Mes demandes', icon: Mail },
+            { id: 'profil',    label: 'Mon profil', icon: User2 },
           ].map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setActiveTab(id as any)}
-              className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-colors ${
+              onClick={() => {
+                setActiveTab(id as any);
+                if (id === 'demandes') loadDemandes();
+              }}
+              className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs sm:text-sm font-medium transition-colors min-w-[80px] ${
                 activeTab === id
                   ? 'bg-white dark:bg-slate-900 text-orange-500 shadow-sm'
                   : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
@@ -270,6 +336,107 @@ export default function ClientDashboardPage() {
             )}
           </div>
         )}
+        {/* Tab: Mes demandes */}
+        {activeTab === 'demandes' && (
+          <div className="space-y-4">
+            {demandesLoading ? (
+              <div className="text-center py-12 text-slate-400">Chargement...</div>
+            ) : demandes.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 py-16 text-center">
+                <Mail className="h-10 w-10 text-slate-200 dark:text-slate-700 mx-auto mb-3" />
+                <p className="text-slate-500 text-sm font-medium">Aucune demande envoyée</p>
+                <p className="text-slate-400 text-xs mt-1">Vos demandes de devis apparaîtront ici</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {demandes.map((d) => (
+                  <div key={d.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <div>
+                        <p className="font-semibold text-sm text-slate-800 dark:text-white">{d.subject || 'Demande de renseignement'}</p>
+                        {d.professional && (
+                          <a href={`/professionals/${d.professional.slug}`} className="text-xs text-orange-500 font-medium hover:underline">
+                            {d.professional.name} · {d.professional.profession}
+                          </a>
+                        )}
+                      </div>
+                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold ${
+                        d.status === 'replied' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                        : d.status === 'read'  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                        : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+                      }`}>
+                        {d.status === 'replied' ? 'Répondu' : d.status === 'read' ? 'Lu' : 'Nouveau'}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">{d.message}</p>
+                    <p className="text-xs text-slate-400 mt-2">{new Date(d.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab: Mon profil */}
+        {activeTab === 'profil' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
+            <h2 className="text-lg font-black text-slate-800 dark:text-white mb-5">Mes informations</h2>
+            <form onSubmit={saveProfile} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Nom complet</label>
+                <input
+                  value={profileName}
+                  onChange={e => setProfileName(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Email</label>
+                <input
+                  value={user?.email ?? ''}
+                  disabled
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800/50 px-4 py-3 text-sm text-slate-500 cursor-not-allowed"
+                />
+                <p className="text-xs text-slate-400 mt-1">L'email ne peut pas être modifié.</p>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Téléphone</label>
+                <input
+                  value={profilePhone}
+                  onChange={e => setProfilePhone(e.target.value)}
+                  placeholder="+212 6XX XXX XXX"
+                  type="tel"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Ville</label>
+                <input
+                  value={profileCity}
+                  onChange={e => setProfileCity(e.target.value)}
+                  placeholder="Casablanca"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                />
+              </div>
+              <div className="flex items-center gap-3 pt-1">
+                <button
+                  type="submit"
+                  disabled={profileSaving}
+                  className="flex items-center gap-2 rounded-xl bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white px-5 py-2.5 text-sm font-semibold transition-colors"
+                >
+                  <Save className="h-4 w-4" />
+                  {profileSaving ? 'Enregistrement...' : 'Enregistrer'}
+                </button>
+                {profileSaved && (
+                  <span className="flex items-center gap-1.5 text-sm text-emerald-600 font-medium">
+                    <CheckCircle className="h-4 w-4" /> Enregistré !
+                  </span>
+                )}
+              </div>
+            </form>
+          </div>
+        )}
+
       </main>
     </div>
   );

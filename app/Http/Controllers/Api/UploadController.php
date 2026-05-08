@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class UploadController extends Controller
 {
@@ -15,17 +18,19 @@ class UploadController extends Controller
         ]);
 
         $file     = $request->file('photo');
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-        $dir      = '/tmp/uploads';
+        $filename = Str::uuid() . '.webp';
+        $destPath = 'photos/' . $filename;
 
-        if (! is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
+        // Resize to max 1200×1200 (preserving ratio) and convert to WebP
+        $manager = new ImageManager(new Driver());
+        $image   = $manager->read($file->getRealPath());
+        $image->scaleDown(width: 1200, height: 1200);
+        $encoded = $image->toWebp(quality: 82);
 
-        $file->move($dir, $filename);
+        Storage::disk('public')->put($destPath, (string) $encoded);
 
         return response()->json([
-            'url' => url('/api/files/' . $filename),
+            'url' => Storage::disk('public')->url($destPath),
         ]);
     }
 }

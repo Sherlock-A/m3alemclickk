@@ -1228,15 +1228,46 @@ function SectionSettings({ headers }: { headers: any }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 function SectionNotifications({ headers, setNotifCount }: { headers: any; setNotifCount: (n: number) => void }) {
   const [data, setData] = useState<any>(null);
+  const [acting, setActing] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
+  const reload = () => {
     axios.get('/api/admin/notifications', { headers })
       .then(r => {
         setData(r.data);
         setNotifCount((r.data.counts?.pending_pros ?? 0) + (r.data.counts?.pending_reviews ?? 0));
       })
       .catch(() => {});
-  }, []);
+  };
+
+  useEffect(() => { reload(); }, []);
+
+  const actPro = async (userId: number, status: 'approved' | 'rejected') => {
+    setActing(p => ({ ...p, [`pro_${userId}`]: true }));
+    try {
+      await axios.put(`/api/admin/professionals/${userId}/status`, { status }, { headers });
+      reload();
+    } catch {
+      // silently ignore
+    } finally {
+      setActing(p => ({ ...p, [`pro_${userId}`]: false }));
+    }
+  };
+
+  const actReview = async (reviewId: number, approve: boolean) => {
+    setActing(p => ({ ...p, [`rev_${reviewId}`]: true }));
+    try {
+      if (approve) {
+        await axios.put(`/api/admin/reviews/${reviewId}/approve`, {}, { headers });
+      } else {
+        await axios.delete(`/api/admin/reviews/${reviewId}`, { headers });
+      }
+      reload();
+    } catch {
+      // silently ignore
+    } finally {
+      setActing(p => ({ ...p, [`rev_${reviewId}`]: false }));
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -1273,12 +1304,27 @@ function SectionNotifications({ headers, setNotifCount }: { headers: any; setNot
             <div className="px-5 py-6 text-sm text-slate-400 text-center">Aucune inscription en attente.</div>
           ) : (
             (data.pending_pros ?? []).map((u: any) => (
-              <div key={u.id} className="flex items-center justify-between px-5 py-3">
-                <div>
-                  <div className="font-medium text-sm">{u.name}</div>
+              <div key={u.id} className="flex items-center justify-between gap-3 px-5 py-3">
+                <div className="min-w-0">
+                  <div className="font-medium text-sm truncate">{u.name}</div>
                   <div className="text-xs text-slate-400">{u.email} · {new Date(u.created_at).toLocaleDateString('fr-FR')}</div>
                 </div>
-                <span className="inline-flex items-center rounded-full bg-orange-100 text-orange-700 px-2.5 py-0.5 text-xs font-medium">En attente</span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => actPro(u.id, 'approved')}
+                    disabled={acting[`pro_${u.id}`]}
+                    className="rounded-lg bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white px-2.5 py-1 text-xs font-semibold transition-colors"
+                  >
+                    Valider
+                  </button>
+                  <button
+                    onClick={() => actPro(u.id, 'rejected')}
+                    disabled={acting[`pro_${u.id}`]}
+                    className="rounded-lg bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white px-2.5 py-1 text-xs font-semibold transition-colors"
+                  >
+                    Refuser
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -1297,11 +1343,29 @@ function SectionNotifications({ headers, setNotifCount }: { headers: any; setNot
           ) : (
             (data.pending_reviews ?? []).map((r: any) => (
               <div key={r.id} className="px-5 py-3">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-medium text-sm">{r.client_name} → {r.professional?.name}</span>
-                  <span className="text-xs text-slate-400">{'⭐'.repeat(r.rating)}</span>
+                <div className="flex items-start justify-between gap-3 mb-1">
+                  <div className="min-w-0">
+                    <span className="font-medium text-sm">{r.client_name} → {r.professional?.name}</span>
+                    <span className="ml-2 text-xs text-slate-400">{'⭐'.repeat(r.rating)}</span>
+                    {r.comment && <p className="text-xs text-slate-500 truncate mt-0.5">{r.comment}</p>}
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      onClick={() => actReview(r.id, true)}
+                      disabled={acting[`rev_${r.id}`]}
+                      className="rounded-lg bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white px-2.5 py-1 text-xs font-semibold transition-colors"
+                    >
+                      Approuver
+                    </button>
+                    <button
+                      onClick={() => actReview(r.id, false)}
+                      disabled={acting[`rev_${r.id}`]}
+                      className="rounded-lg bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white px-2.5 py-1 text-xs font-semibold transition-colors"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
                 </div>
-                <p className="text-xs text-slate-500 truncate">{r.comment}</p>
               </div>
             ))
           )}

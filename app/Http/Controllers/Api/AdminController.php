@@ -31,7 +31,11 @@ class AdminController extends Controller
         }
 
         if ($status = $request->string('status')->toString()) {
-            $query->where('status', $status);
+            if ($status === 'pending') {
+                $query->whereIn('status', ['pending', 'en_attente']);
+            } else {
+                $query->where('status', $status);
+            }
         }
 
         return response()->json(
@@ -89,6 +93,11 @@ class AdminController extends Controller
 
         if ($request->filled('approved')) {
             $query->where('approved', filter_var($request->input('approved'), FILTER_VALIDATE_BOOLEAN));
+        }
+
+        // Filter by reported status
+        if ($request->boolean('reported')) {
+            $query->whereNotNull('reported_at');
         }
 
         return response()->json($query->paginate(20));
@@ -248,10 +257,10 @@ class AdminController extends Controller
     public function notifications()
     {
         $pendingPros = User::where('role', 'professional')
-            ->where('status', 'pending')
+            ->whereIn('status', ['pending', 'en_attente'])
             ->latest()
             ->take(5)
-            ->get(['id', 'name', 'email', 'created_at']);
+            ->get(['id', 'name', 'email', 'created_at', 'google_id']);
 
         $pendingReviews = Review::with('professional')
             ->where('approved', false)
@@ -269,7 +278,7 @@ class AdminController extends Controller
             'pending_reviews'  => $pendingReviews,
             'recent_trackings' => $recentTrackings,
             'counts' => [
-                'pending_pros'    => User::where('role', 'professional')->where('status', 'pending')->count(),
+                'pending_pros'    => User::where('role', 'professional')->whereIn('status', ['pending', 'en_attente'])->count(),
                 'pending_reviews' => Review::where('approved', false)->count(),
             ],
         ]);

@@ -7,10 +7,10 @@ use App\Models\Professional;
 use App\Models\User;
 use App\Services\MailService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class ProAuthController extends Controller
@@ -70,20 +70,25 @@ class ProAuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name'       => ['required', 'string', 'max:100'],
-            'email'      => ['required', 'email', 'max:254', 'unique:users,email'],
-            'password'   => ['required', 'string', 'min:8', 'max:128', 'confirmed'],
-            'phone'      => ['required', 'string', 'max:20'],
-            'profession' => ['required', 'string', 'max:100'],
-            'main_city'  => ['required', 'string', 'max:100'],
+            'name'         => ['required', 'string', 'max:100', 'regex:/^[^<>{}\/\\\\]+$/u'],
+            'email'        => ['required', 'email', 'max:254', 'unique:users,email'],
+            'password'     => ['required', 'string', 'min:8', 'max:128', 'confirmed'],
+            'phone'        => ['required', 'string', 'max:20'],
+            'profession'   => ['required', 'string', 'max:100'],
+            'main_city'    => ['required', 'string', 'max:100'],
+            'category_ids'   => ['nullable', 'array', 'max:3'],
+            'category_ids.*' => ['integer', 'exists:categories,id'],
         ]);
 
+        $categoryIds = $data['category_ids'] ?? [];
+
         try {
-            [$professional, $user] = DB::transaction(function () use ($data) {
+            [$professional, $user] = DB::transaction(function () use ($data, $categoryIds) {
                 $professional = Professional::create([
                     'name'               => $data['name'],
                     'phone'              => $data['phone'],
                     'profession'         => $data['profession'],
+                    'category_id'        => $categoryIds[0] ?? null,
                     'main_city'          => $data['main_city'],
                     'is_available'       => false,
                     'verified'           => false,
@@ -94,12 +99,16 @@ class ProAuthController extends Controller
                     'completed_missions' => 0,
                 ]);
 
+                if (! empty($categoryIds)) {
+                    $professional->categories()->sync($categoryIds);
+                }
+
                 $user = User::create([
                     'name'            => $data['name'],
                     'email'           => $data['email'],
                     'password'        => $data['password'],
                     'role'            => 'professional',
-                    'status'          => 'pending',  // requires admin approval
+                    'status'          => 'pending',
                     'professional_id' => $professional->id,
                 ]);
 
@@ -118,10 +127,9 @@ class ProAuthController extends Controller
 
         return response()
             ->json([
-                'token'                => $token,
-                'user'                 => $user->only(['id', 'name', 'email', 'role', 'professional_id']),
-                'needs_verification'   => true,
-                'message'              => 'Compte créé. Vérifiez votre email pour activer votre compte.',
+                'token'   => $token,
+                'user'    => $user->only(['id', 'name', 'email', 'role', 'professional_id']),
+                'message' => 'Demande envoyée. Notre équipe examine votre profil sous 24-48h.',
             ], 201)
             ->cookie('jwt_pro', $token, $ttl, '/', null, true, true, false, 'Strict');
     }
@@ -158,36 +166,25 @@ class ProAuthController extends Controller
 
         $user = User::where('email', $data['email'])->where('role', 'professional')->first();
 
-        // Toujours retourner succès (sécurité : ne pas révéler si l'email existe)
         if (! $user) {
-            return response()->json([
-                'message' => 'Si cet email est enregistré, un lien de réinitialisation a été envoyé.',
-            ]);
+            return response()->json(['message' => 'Code envoyé si cet email est enregistré.']);
         }
 
-        // Génère un token sécurisé
-        $token = Str::random(64);
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $user->email],
-            ['token' => Hash::make($token), 'created_at' => now()]
-        );
+        Cache::put('pwd_reset_' . md5($data['email']), [
+            'code'    => $code,
+            'user_id' => $user->id,
+        ], now()->addMinutes(10));
 
-        // URL de réinitialisation
-        $resetUrl = config('app.url')
-            . '/pro/reset-password?token=' . $token
-            . '&email=' . urlencode($user->email);
-
-        $this->mail->sendPasswordReset(
+        $this->mail->sendVerificationCode(
             $user->email,
             $user->name,
-            $resetUrl,
-            'Réinitialisation de votre mot de passe — M3allemClick'
+            $code,
+            now()->setTimezone('Africa/Casablanca')->format('H:i')
         );
 
-        return response()->json([
-            'message' => 'Si cet email est enregistré, un lien de réinitialisation a été envoyé.',
-        ]);
+        return response()->json(['message' => 'Code envoyé si cet email est enregistré.']);
     }
 
     // ─── Réinitialisation du mot de passe ─────────────────────────────────────
@@ -195,26 +192,18 @@ class ProAuthController extends Controller
     public function resetPassword(Request $request)
     {
         $data = $request->validate([
-            'token'                 => ['required', 'string'],
-            'email'                 => ['required', 'email'],
-            'password'              => ['required', 'string', 'min:8', 'confirmed'],
+            'email'    => ['required', 'email'],
+            'code'     => ['required', 'string', 'size:6'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
-        $record = DB::table('password_reset_tokens')
-                    ->where('email', $data['email'])
-                    ->first();
+        $cached = Cache::get('pwd_reset_' . md5($data['email']));
 
-        if (! $record || ! Hash::check($data['token'], $record->token)) {
-            return response()->json(['message' => 'Token invalide ou expiré.'], 422);
+        if (! $cached || $cached['code'] !== $data['code']) {
+            return response()->json(['message' => 'Code invalide ou expiré.'], 422);
         }
 
-        // Vérifie l'expiration (60 minutes)
-        if (Carbon::parse($record->created_at)->addMinutes(60)->isPast()) {
-            DB::table('password_reset_tokens')->where('email', $data['email'])->delete();
-            return response()->json(['message' => 'Le lien de réinitialisation a expiré. Veuillez en demander un nouveau.'], 422);
-        }
-
-        $user = User::where('email', $data['email'])->where('role', 'professional')->first();
+        $user = User::find($cached['user_id']);
 
         if (! $user) {
             return response()->json(['message' => 'Utilisateur introuvable.'], 404);
@@ -222,9 +211,9 @@ class ProAuthController extends Controller
 
         $user->update(['password' => $data['password']]);
 
-        DB::table('password_reset_tokens')->where('email', $data['email'])->delete();
+        Cache::forget('pwd_reset_' . md5($data['email']));
 
-        return response()->json(['message' => 'Mot de passe réinitialisé avec succès. Vous pouvez maintenant vous connecter.']);
+        return response()->json(['message' => 'Mot de passe réinitialisé avec succès.']);
     }
 
     // ─── Utilisateur courant ──────────────────────────────────────────────────
@@ -234,7 +223,7 @@ class ProAuthController extends Controller
         $user = auth()->user();
 
         return response()->json([
-            'user' => $user->only(['id', 'name', 'email', 'role', 'professional_id']),
+            'user' => $user->only(['id', 'name', 'email', 'role', 'professional_id', 'status']),
         ]);
     }
 }

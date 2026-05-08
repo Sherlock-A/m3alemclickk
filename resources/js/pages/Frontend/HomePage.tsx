@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, ElementType } from 'react';
+import { useEffect, useRef, useState, ElementType, useCallback } from 'react';
 import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
+import { motion } from 'framer-motion';
 import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
@@ -38,29 +39,92 @@ function useCountUp(target: number, duration = 1800, start = false) {
   return value;
 }
 
-// ── Stat card with animated counter ───────────────────────────────────────
+// ── Futuristic stat card — glassmorphism + 3-D tilt + cursor glow ─────────
 function StatCard({
-  label, target, icon: Icon, started,
+  label, target, icon: Icon, started, delay,
 }: {
   label: string;
   target: number;
   icon: ElementType;
   started: boolean;
+  delay: number;
 }) {
-  const value = useCountUp(target, 1800, started);
+  const value   = useCountUp(target, 1800, started);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [glow, setGlow] = useState({ x: 50, y: 50 });
+  const [hovered, setHovered] = useState(false);
+
+  const onMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const { left, top, width, height } = el.getBoundingClientRect();
+    const nx = (e.clientX - left) / width;
+    const ny = (e.clientY - top) / height;
+    setTilt({ x: (ny - 0.5) * -12, y: (nx - 0.5) * 12 });
+    setGlow({ x: nx * 100, y: ny * 100 });
+  }, []);
+
+  const onLeave = useCallback(() => {
+    setTilt({ x: 0, y: 0 });
+    setGlow({ x: 50, y: 50 });
+    setHovered(false);
+  }, []);
+
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-soft dark:border-slate-800 dark:bg-slate-900">
-      <Icon className="mb-2 h-4 w-4 text-orange-500" />
-      <div className="text-2xl font-black text-slate-900 dark:text-white tabular-nums">
-        {value.toLocaleString('fr-MA')}
-      </div>
-      <div className="text-xs text-slate-500 mt-0.5">{label}</div>
-      {/* animated bottom bar */}
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, scale: 0.88, y: 24 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.55, delay, ease: [0.33, 1, 0.68, 1] }}
+      onMouseMove={onMove}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={onLeave}
+      style={{
+        transform: `perspective(700px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        transition: hovered ? 'transform 0.1s ease-out' : 'transform 0.5s ease-out',
+      }}
+      className="relative overflow-hidden rounded-2xl border border-white/30 bg-white/70 backdrop-blur-sm p-5 shadow-[0_4px_24px_rgba(249,115,22,0.10)] dark:border-white/10 dark:bg-slate-900/60"
+    >
+      {/* Moving radial glow following cursor */}
       <div
-        className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 transition-all"
-        style={{ width: started ? '100%' : '0%', transitionDuration: '1.8s', transitionTimingFunction: 'cubic-bezier(0.33,1,0.68,1)' }}
+        className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(circle at ${glow.x}% ${glow.y}%, rgba(249,115,22,0.22) 0%, transparent 65%)`,
+          opacity: hovered ? 1 : 0,
+        }}
       />
-    </div>
+
+      {/* Subtle top-left shine */}
+      <div className="pointer-events-none absolute -top-px left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent dark:via-white/20" />
+
+      {/* Content */}
+      <div className="relative z-10">
+        <div className="mb-3 inline-flex rounded-xl bg-orange-500/10 p-2.5 ring-1 ring-orange-500/20">
+          <Icon className="h-5 w-5 text-orange-500" />
+        </div>
+        <div className="text-3xl font-black tabular-nums text-slate-900 dark:text-white leading-none">
+          {value.toLocaleString('fr-MA')}
+          <span className="text-orange-500">+</span>
+        </div>
+        <div className="mt-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</div>
+      </div>
+
+      {/* Animated bottom progress bar */}
+      <div
+        className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-orange-400 to-orange-600 rounded-b-2xl"
+        style={{
+          width: started ? '100%' : '0%',
+          transition: `width 1.8s cubic-bezier(0.33,1,0.68,1) ${delay}s`,
+        }}
+      />
+
+      {/* Orange border glow on hover */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-2xl ring-1 transition-all duration-300"
+        style={{ boxShadow: hovered ? '0 0 20px rgba(249,115,22,0.25), inset 0 0 0 1px rgba(249,115,22,0.3)' : 'none' }}
+      />
+    </motion.div>
   );
 }
 
@@ -190,22 +254,27 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           <SearchBar initialCity={geo?.city} />
         </div>
 
-        {/* ── Animated Stats ─────────────────────────────────────────────── */}
-        <div ref={statsRef} className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 max-w-3xl mx-auto">
-          {[
-            { label: 'Professionnels', value: stats.professionals, icon: Briefcase as ElementType },
-            { label: 'Vérifiés',       value: stats.verified,      icon: ShieldCheck as ElementType },
-            { label: 'Missions',       value: stats.missions,      icon: Sparkles as ElementType },
-            { label: 'Villes',         value: stats.cities,        icon: MapPin as ElementType },
-          ].map((item) => (
-            <StatCard
-              key={item.label}
-              label={item.label}
-              target={item.value}
-              icon={item.icon}
-              started={statsVisible}
-            />
-          ))}
+        {/* ── Futuristic Stats ───────────────────────────────────────────── */}
+        <div className="relative mt-14 max-w-3xl mx-auto">
+          {/* Background glow blob */}
+          <div className="pointer-events-none absolute -inset-6 rounded-3xl bg-gradient-to-r from-orange-500/15 via-amber-400/8 to-orange-500/15 blur-2xl dark:from-orange-500/20 dark:via-amber-400/10 dark:to-orange-500/20" />
+          <div ref={statsRef} className="relative grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {[
+              { label: 'Professionnels', value: stats.professionals, icon: Briefcase as ElementType },
+              { label: 'Vérifiés',       value: stats.verified,      icon: ShieldCheck as ElementType },
+              { label: 'Missions',       value: stats.missions,      icon: Sparkles as ElementType },
+              { label: 'Villes',         value: stats.cities,        icon: MapPin as ElementType },
+            ].map((item, i) => (
+              <StatCard
+                key={item.label}
+                label={item.label}
+                target={item.value}
+                icon={item.icon}
+                started={statsVisible}
+                delay={i * 0.1}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -244,24 +313,38 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
       </section>
 
       {/* ── Featured Professionals grid ───────────────────────────────────── */}
-      {featured.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-12">
-          <div className="mb-8 flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white">Professionnels recommandés</h2>
-              <p className="text-sm text-slate-500 mt-1">Vérifiés, disponibles et les mieux notés</p>
-            </div>
-            <a href="/professionals" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
-              Tous les pros <ArrowRight className="h-4 w-4" />
-            </a>
+      <section className="mx-auto max-w-7xl px-4 py-12">
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white">Professionnels recommandés</h2>
+            <p className="text-sm text-slate-500 mt-1">Vérifiés, disponibles et les mieux notés</p>
           </div>
+          <a href="/professionals" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+            Tous les pros <ArrowRight className="h-4 w-4" />
+          </a>
+        </div>
+        {featured.length > 0 ? (
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((pro) => (
               <FeaturedCard key={pro.id} pro={pro} />
             ))}
           </div>
-        </section>
-      )}
+        ) : (
+          <div className="rounded-3xl border-2 border-dashed border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-900/10 p-10 text-center">
+            <div className="text-4xl mb-3">🔍</div>
+            <h3 className="text-lg font-black text-slate-800 dark:text-white mb-2">Découvrez nos professionnels</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-5 max-w-sm mx-auto">
+              Des centaines d'artisans vérifiés disponibles dans votre ville.
+            </p>
+            <a
+              href="/professionals"
+              className="inline-flex items-center gap-2 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 text-sm font-bold transition-colors shadow-lg shadow-orange-500/20"
+            >
+              Explorer l'annuaire <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        )}
+      </section>
 
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <section className="bg-slate-50 dark:bg-slate-900/50 py-16 mt-8">

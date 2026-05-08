@@ -29,10 +29,15 @@ class SocialAuthController extends Controller
     }
 
     // ─── Google redirect ───────────────────────────────────────────────────────
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
+        $role = in_array($request->query('role'), ['client', 'professional'])
+            ? $request->query('role')
+            : 'client';
+
         $url = Socialite::driver('google')
             ->stateless()
+            ->with(['state' => $role])
             ->redirect()
             ->getTargetUrl();
 
@@ -42,13 +47,18 @@ class SocialAuthController extends Controller
     // ─── Google callback ───────────────────────────────────────────────────────
     public function handleGoogleCallback(Request $request)
     {
+        // Role transmitted via OAuth state param
+        $role = in_array($request->query('state'), ['client', 'professional'])
+            ? $request->query('state')
+            : 'client';
+
         try {
             $googleUser = Socialite::driver('google')->stateless()->user();
         } catch (\Throwable $e) {
             return redirect('/login?error=google_failed');
         }
 
-        // Find by google_id, then by email, then create new client
+        // Find by google_id, then by email
         $user = User::where('google_id', $googleUser->getId())->first()
              ?? User::where('email', $googleUser->getEmail())->first();
 
@@ -61,16 +71,49 @@ class SocialAuthController extends Controller
                 ]);
             }
         } else {
-            // New user — register as client
-            $user = User::create([
-                'name'           => $googleUser->getName(),
-                'email'          => $googleUser->getEmail(),
-                'password'       => Hash::make(str()->random(32)),
-                'role'           => 'client',
-                'google_id'      => $googleUser->getId(),
-                'google_picture' => $googleUser->getAvatar(),
-                'email_verified_at' => now(),
-            ]);
+            // New user — register with the requested role
+            $status = $role === 'professional' ? 'pending' : 'active';
+
+            \DB::transaction(function () use (&$user, $role, $status, $googleUser) {
+                if ($role === 'professional') {
+                    $professional = \App\Models\Professional::create([
+                        'name'               => $googleUser->getName(),
+                        'phone'              => '',
+                        'profession'         => '',
+                        'main_city'          => '',
+                        'is_available'       => false,
+                        'verified'           => false,
+                        'rating'             => 0,
+                        'views'              => 0,
+                        'whatsapp_clicks'    => 0,
+                        'calls'              => 0,
+                        'completed_missions' => 0,
+                    ]);
+
+                    $user = User::create([
+                        'name'              => $googleUser->getName(),
+                        'email'             => $googleUser->getEmail(),
+                        'password'          => Hash::make(str()->random(32)),
+                        'role'              => $role,
+                        'status'            => $status,
+                        'google_id'         => $googleUser->getId(),
+                        'google_picture'    => $googleUser->getAvatar(),
+                        'email_verified_at' => now(),
+                        'professional_id'   => $professional->id,
+                    ]);
+                } else {
+                    $user = User::create([
+                        'name'              => $googleUser->getName(),
+                        'email'             => $googleUser->getEmail(),
+                        'password'          => Hash::make(str()->random(32)),
+                        'role'              => $role,
+                        'status'            => $status,
+                        'google_id'         => $googleUser->getId(),
+                        'google_picture'    => $googleUser->getAvatar(),
+                        'email_verified_at' => now(),
+                    ]);
+                }
+            });
         }
 
         $token = JWTAuth::fromUser($user);

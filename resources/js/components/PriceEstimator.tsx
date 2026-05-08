@@ -16,6 +16,13 @@ const PRICE_DB: Record<string, PriceRange> = {
   Informatique:  { min: 100, max: 400,  unit: 'MAD/intervention', details: ['Depannage PC: 100–200 MAD', 'Installation reseau: 200–400 MAD', 'Recuperation donnees: 300–500 MAD'] },
   Demenageur:    { min: 500, max: 3000, unit: 'MAD/demenagement', details: ['Studio: 500–1000 MAD', 'Appartement F3: 1000–2000 MAD', 'Grande villa: 2000–3000 MAD'] },
   Soudeur:       { min: 200, max: 1200, unit: 'MAD/piece',        details: ['Portail metal: 800–1500 MAD', 'Garde-corps: 400–800 MAD', 'Reparation: 200–400 MAD'] },
+  Carreleur:     { min: 80,  max: 200,  unit: 'MAD/m2',           details: ['Carrelage sol: 80–150 MAD/m2', 'Faience murale: 100–200 MAD/m2', 'Pose incluse avec joint'] },
+  Vitrier:       { min: 150, max: 600,  unit: 'MAD/intervention', details: ['Vitre simple: 150–300 MAD', 'Double vitrage: 400–800 MAD/m2', 'Miroir sur mesure: 200–500 MAD'] },
+  Chauffagiste:  { min: 300, max: 1000, unit: 'MAD/intervention', details: ['Entretien chaudiere: 300–500 MAD', 'Reparation radiateur: 200–400 MAD', 'Installation chauffage: 600–1000 MAD'] },
+  Decorateur:    { min: 2000, max: 10000, unit: 'MAD/projet',     details: ['Decoration salon: 2000–5000 MAD', 'Projet complet: 5000–10000 MAD', 'Consultation: 300–500 MAD'] },
+  Coiffeur:      { min: 50,  max: 300,  unit: 'MAD/seance',       details: ['Coupe homme: 50–100 MAD', 'Coupe femme: 100–200 MAD', 'Coloration: 150–300 MAD'] },
+  Photographe:   { min: 500, max: 3000, unit: 'MAD/seance',       details: ['Portraits: 500–1000 MAD', 'Evenement (mariage): 2000–3000 MAD', 'Photo immobilier: 500–1500 MAD'] },
+  Charpentier:   { min: 200, max: 1500, unit: 'MAD/jour',         details: ['Charpente toiture: 800–1500 MAD/jour', 'Reparation bois: 200–400 MAD', 'Escalier bois: 3000–8000 MAD'] },
 };
 
 export function PriceEstimator({ profession }: { profession: string }) {
