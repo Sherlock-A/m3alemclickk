@@ -393,6 +393,9 @@ function SectionProfessionals({ headers }: { headers: any }) {
   const [page, setPage]       = useState(1);
   const [rejectId, setRejectId]   = useState<number | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editForm, setEditForm]   = useState({ name: '', profession: '', main_city: '' });
+  const [editSaving, setEditSaving] = useState(false);
 
   const load = useCallback(() => {
     const params = new URLSearchParams({ page: String(page) });
@@ -416,6 +419,29 @@ function SectionProfessionals({ headers }: { headers: any }) {
     if (!confirm('Supprimer ce professionnel ?')) return;
     await axios.delete(`/api/admin/professionals/${id}`, { headers });
     load();
+  };
+
+  const startEdit = (u: any) => {
+    setEditingId(u.id);
+    setEditForm({
+      name:       u.name ?? '',
+      profession: u.professional?.profession ?? '',
+      main_city:  u.professional?.main_city  ?? '',
+    });
+  };
+
+  const saveEdit = async () => {
+    if (!editingId) return;
+    setEditSaving(true);
+    try {
+      await axios.patch(`/api/admin/professionals/${editingId}/profile`, editForm, { headers });
+      setEditingId(null);
+      load();
+    } catch {
+      // silently ignore
+    } finally {
+      setEditSaving(false);
+    }
   };
 
   const statusBadge = (s: string) => {
@@ -463,46 +489,83 @@ function SectionProfessionals({ headers }: { headers: any }) {
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {(data?.data ?? []).map((u: any) => (
-                <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                  <td className="px-4 py-3 font-medium">{u.name}</td>
-                  <td className="px-4 py-3 text-slate-500 text-xs">{u.email}</td>
-                  <td className="px-4 py-3 text-slate-500">{u.professional?.profession ?? '—'}</td>
-                  <td className="px-4 py-3 text-slate-500">{u.professional?.main_city ?? '—'}</td>
-                  <td className="px-4 py-3">{statusBadge(u.status)}</td>
-                  <td className="px-4 py-3 text-slate-400 text-xs">{new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-1 flex-wrap">
-                      {u.status === 'pending' && (
-                        <button onClick={() => setStatus(u.id, 'active')}
-                          className="flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-1 text-xs text-white hover:bg-emerald-600">
-                          <Check className="h-3 w-3" /> Valider
+                <>
+                  <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <td className="px-4 py-3 font-medium">{u.name}</td>
+                    <td className="px-4 py-3 text-slate-500 text-xs">{u.email}</td>
+                    <td className="px-4 py-3 text-slate-500">{u.professional?.profession ?? '—'}</td>
+                    <td className="px-4 py-3 text-slate-500">{u.professional?.main_city ?? '—'}</td>
+                    <td className="px-4 py-3">{statusBadge(u.status)}</td>
+                    <td className="px-4 py-3 text-slate-400 text-xs">{new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1 flex-wrap">
+                        {u.status === 'pending' && (
+                          <button onClick={() => setStatus(u.id, 'active')}
+                            className="flex items-center gap-1 rounded-md bg-emerald-500 px-2 py-1 text-xs text-white hover:bg-emerald-600">
+                            <Check className="h-3 w-3" /> Valider
+                          </button>
+                        )}
+                        {u.status === 'pending' && (
+                          <button onClick={() => setRejectId(u.id)}
+                            className="flex items-center gap-1 rounded-md bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600">
+                            <X className="h-3 w-3" /> Rejeter
+                          </button>
+                        )}
+                        {u.status === 'active' && (
+                          <button onClick={() => setStatus(u.id, 'suspended')}
+                            className="flex items-center gap-1 rounded-md border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50">
+                            Suspendre
+                          </button>
+                        )}
+                        {u.status === 'suspended' && (
+                          <button onClick={() => setStatus(u.id, 'active')}
+                            className="flex items-center gap-1 rounded-md border border-emerald-300 px-2 py-1 text-xs text-emerald-600 hover:bg-emerald-50">
+                            Réactiver
+                          </button>
+                        )}
+                        <button onClick={() => editingId === u.id ? setEditingId(null) : startEdit(u)}
+                          className="flex items-center gap-1 rounded-md border border-blue-200 px-2 py-1 text-xs text-blue-600 hover:bg-blue-50">
+                          <Pencil className="h-3 w-3" /> Modifier
                         </button>
-                      )}
-                      {u.status === 'pending' && (
-                        <button onClick={() => setRejectId(u.id)}
-                          className="flex items-center gap-1 rounded-md bg-red-500 px-2 py-1 text-xs text-white hover:bg-red-600">
-                          <X className="h-3 w-3" /> Rejeter
+                        <button onClick={() => deleteUser(u.id)}
+                          className="flex items-center gap-1 rounded-md border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">
+                          <Trash2 className="h-3 w-3" />
                         </button>
-                      )}
-                      {u.status === 'active' && (
-                        <button onClick={() => setStatus(u.id, 'suspended')}
-                          className="flex items-center gap-1 rounded-md border border-slate-300 px-2 py-1 text-xs hover:bg-slate-50">
-                          Suspendre
-                        </button>
-                      )}
-                      {u.status === 'suspended' && (
-                        <button onClick={() => setStatus(u.id, 'active')}
-                          className="flex items-center gap-1 rounded-md border border-emerald-300 px-2 py-1 text-xs text-emerald-600 hover:bg-emerald-50">
-                          Réactiver
-                        </button>
-                      )}
-                      <button onClick={() => deleteUser(u.id)}
-                        className="flex items-center gap-1 rounded-md border border-red-200 px-2 py-1 text-xs text-red-500 hover:bg-red-50">
-                        <Trash2 className="h-3 w-3" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                      </div>
+                    </td>
+                  </tr>
+                  {editingId === u.id && (
+                    <tr key={`edit-${u.id}`} className="bg-blue-50 dark:bg-blue-900/10">
+                      <td colSpan={7} className="px-4 py-3">
+                        <div className="flex flex-wrap gap-3 items-end">
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Nom</label>
+                            <input value={editForm.name} onChange={e => setEditForm(f => ({ ...f, name: e.target.value }))}
+                              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:border-blue-400 focus:outline-none w-40" />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Métier</label>
+                            <input value={editForm.profession} onChange={e => setEditForm(f => ({ ...f, profession: e.target.value }))}
+                              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:border-blue-400 focus:outline-none w-44" />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Ville</label>
+                            <input value={editForm.main_city} onChange={e => setEditForm(f => ({ ...f, main_city: e.target.value }))}
+                              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:border-blue-400 focus:outline-none w-36" />
+                          </div>
+                          <button onClick={saveEdit} disabled={editSaving}
+                            className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs text-white hover:bg-blue-700 disabled:opacity-50">
+                            {editSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Enregistrer
+                          </button>
+                          <button onClick={() => setEditingId(null)}
+                            className="flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100">
+                            Annuler
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
               ))}
               {(data?.data ?? []).length === 0 && (
                 <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-400">Aucun résultat.</td></tr>

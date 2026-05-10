@@ -85,6 +85,26 @@ class AdminController extends Controller
         return response()->json(['success' => true]);
     }
 
+    public function updateProfessionalProfile(Request $request, User $user)
+    {
+        abort_if($user->role !== 'professional', 403, 'Action non autorisée.');
+        $data = $request->validate([
+            'name'       => ['sometimes', 'string', 'max:100'],
+            'profession' => ['sometimes', 'string', 'max:100'],
+            'main_city'  => ['sometimes', 'string', 'max:100'],
+        ]);
+        if (isset($data['name'])) {
+            $user->update(['name' => $data['name']]);
+        }
+        if ($user->professional && (isset($data['profession']) || isset($data['main_city']))) {
+            $user->professional->update(array_filter([
+                'profession' => $data['profession'] ?? null,
+                'main_city'  => $data['main_city']  ?? null,
+            ], fn($v) => $v !== null));
+        }
+        return response()->json(['success' => true, 'user' => $user->load('professional')]);
+    }
+
     // ── Avis ──────────────────────────────────────────────────────────────────
 
     public function reviews(Request $request)

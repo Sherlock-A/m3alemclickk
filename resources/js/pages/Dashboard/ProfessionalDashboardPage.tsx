@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getEcho, destroyEcho } from '../../echo';
 import axios from 'axios';
 import {
@@ -456,6 +457,7 @@ function UnavailabilityCalendar({ token, pro }: { token: string | null; pro: any
 }
 
 export default function ProfessionalDashboardPage() {
+  const { t } = useTranslation();
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('pro_token'));
   const [data, setData]       = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -659,10 +661,10 @@ export default function ProfessionalDashboardPage() {
   const calls    = data?.stats?.calls ?? 0;
 
   const cards = useMemo(() => [
-    { label: 'Vues du profil', value: views,    icon: Eye,           color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20' },
-    { label: 'Clics WhatsApp', value: whatsapp, icon: MessageCircle, color: 'text-green-600',  bg: 'bg-green-50 dark:bg-green-900/20' },
-    { label: 'Appels reçus',   value: calls,    icon: Phone,         color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-900/20' },
-  ], [views, whatsapp, calls]);
+    { label: t('dash_kpi_views'),    value: views,    icon: Eye,           color: 'text-blue-600',   bg: 'bg-blue-50 dark:bg-blue-900/20' },
+    { label: t('dash_kpi_whatsapp'), value: whatsapp, icon: MessageCircle, color: 'text-green-600',  bg: 'bg-green-50 dark:bg-green-900/20' },
+    { label: t('dash_kpi_calls'),    value: calls,    icon: Phone,         color: 'text-orange-600', bg: 'bg-orange-50 dark:bg-orange-900/20' },
+  ], [views, whatsapp, calls, t]);
 
   const logout = () => {
     localStorage.removeItem('pro_token');
@@ -728,11 +730,11 @@ export default function ProfessionalDashboardPage() {
     ) : null;
 
   const navTabs: { id: Tab; label: string; icon: any }[] = [
-    { id: 'overview', label: 'Aperçu',       icon: LayoutDashboard },
-    { id: 'profile',  label: 'Mon profil',   icon: User },
-    { id: 'stats',    label: 'Statistiques', icon: BarChart3 },
-    { id: 'reviews',  label: 'Avis',         icon: Star },
-    { id: 'devis',    label: 'Devis',        icon: Mail },
+    { id: 'overview', label: t('dash_tab_overview'), icon: LayoutDashboard },
+    { id: 'profile',  label: t('dash_tab_profile'),  icon: User },
+    { id: 'stats',    label: t('dash_tab_stats'),    icon: BarChart3 },
+    { id: 'reviews',  label: t('dash_tab_reviews'),  icon: Star },
+    { id: 'devis',    label: t('dash_tab_quotes'),   icon: Mail },
   ];
 
   return (
@@ -775,11 +777,11 @@ export default function ProfessionalDashboardPage() {
             {pro?.slug && (
               <button
                 onClick={copyProfileLink}
-                title="Copier le lien de mon profil"
+                title={t('dash_copy_link_title')}
                 className="hidden sm:flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 {copied ? <CheckCircle className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
-                {copied ? 'Copié !' : 'Mon lien'}
+                {copied ? t('dash_copied_btn') : t('dash_copy_link_btn')}
               </button>
             )}
             <button
@@ -787,7 +789,7 @@ export default function ProfessionalDashboardPage() {
               className="flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               <LogOut className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Déconnexion</span>
+              <span className="hidden sm:inline">{t('dash_logout')}</span>
             </button>
           </div>
         </div>
@@ -851,7 +853,7 @@ export default function ProfessionalDashboardPage() {
                       }`}
                     >
                       {isAvailable ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
-                      {isAvailable ? 'Disponible' : 'Indisponible'}
+                      {isAvailable ? t('dash_available') : t('dash_unavailable')}
                     </button>
                   )}
                   {pro?.rating > 0 && (
@@ -867,7 +869,7 @@ export default function ProfessionalDashboardPage() {
               {!loading && (
                 <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Complétion du profil</span>
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('dash_profile_completion')}</span>
                     <span className={`text-xs font-bold ${completion >= 80 ? 'text-green-600' : completion >= 50 ? 'text-orange-500' : 'text-red-500'}`}>
                       {completion}%
                     </span>
@@ -882,11 +884,9 @@ export default function ProfessionalDashboardPage() {
                   </div>
                   {completion < 80 && (
                     <p className="mt-1.5 text-xs text-slate-400">
-                      {completion < 50
-                        ? 'Profil incomplet — ajoutez une photo et une description pour être mieux référencé.'
-                        : 'Encore quelques infos pour maximiser votre visibilité.'}
+                      {completion < 50 ? t('dash_completion_low') : t('dash_completion_mid')}
                       {' '}
-                      <button onClick={() => setTab('profile')} className="text-orange-500 hover:text-orange-600 font-medium">Compléter →</button>
+                      <button onClick={() => setTab('profile')} className="text-orange-500 hover:text-orange-600 font-medium">{t('dash_complete_btn')}</button>
                     </p>
                   )}
                 </div>
@@ -911,14 +911,14 @@ export default function ProfessionalDashboardPage() {
             {/* Weekly chart */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-slate-800 dark:text-white">Activité — 7 derniers jours</h2>
+                <h2 className="text-sm font-bold text-slate-800 dark:text-white">{t('dash_activity_title')}</h2>
                 <TrendingUp className="h-4 w-4 text-slate-400" />
               </div>
               {loading ? (
                 <Skeleton className="h-48 w-full" />
               ) : (data?.weekly ?? []).length === 0 ? (
                 <div className="h-48 flex items-center justify-center text-sm text-slate-400">
-                  Pas encore de données d'activité.
+                  {t('dash_no_activity')}
                 </div>
               ) : (
                 <div className="h-48">
@@ -950,8 +950,8 @@ export default function ProfessionalDashboardPage() {
                     <ExternalLink className="h-4 w-4 text-blue-500" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-800 dark:text-white group-hover:text-orange-500 transition-colors">Voir mon profil</p>
-                    <p className="text-xs text-slate-400">Tel que les clients le voient</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-white group-hover:text-orange-500 transition-colors">{t('dash_view_profile_btn')}</p>
+                    <p className="text-xs text-slate-400">{t('dash_view_profile_sub')}</p>
                   </div>
                 </a>
               )}
@@ -964,9 +964,9 @@ export default function ProfessionalDashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-slate-800 dark:text-white group-hover:text-orange-500 transition-colors">
-                    {copied ? 'Lien copié !' : 'Partager mon profil'}
+                    {copied ? t('dash_link_copied') : t('dash_share_profile')}
                   </p>
-                  <p className="text-xs text-slate-400">Copier le lien direct</p>
+                  <p className="text-xs text-slate-400">{t('dash_copy_link_direct')}</p>
                 </div>
               </button>
               <button
@@ -977,8 +977,8 @@ export default function ProfessionalDashboardPage() {
                   <User className="h-4 w-4 text-orange-500" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-800 dark:text-white group-hover:text-orange-500 transition-colors">Modifier le profil</p>
-                  <p className="text-xs text-slate-400">Infos, photo, description</p>
+                  <p className="text-sm font-semibold text-slate-800 dark:text-white group-hover:text-orange-500 transition-colors">{t('dash_edit_profile_btn')}</p>
+                  <p className="text-xs text-slate-400">{t('dash_edit_profile_sub')}</p>
                 </div>
               </button>
             </div>
@@ -990,7 +990,7 @@ export default function ProfessionalDashboardPage() {
               return (
                 <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
                   <h2 className="text-sm font-black text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                    🏆 Mes badges
+                    {t('dash_my_badges')}
                   </h2>
                   <div className="flex flex-wrap gap-2">
                     {badges.map((b) => (
@@ -1144,7 +1144,7 @@ export default function ProfessionalDashboardPage() {
                 token={token}
               />
               <div className="flex items-center gap-3 pt-1 border-t border-slate-100 dark:border-slate-800">
-                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Disponibilité</span>
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">{t('dash_availability')}</span>
                 <button
                   type="button"
                   onClick={() => form.setValue('is_available', !isAvailable)}
@@ -1155,22 +1155,22 @@ export default function ProfessionalDashboardPage() {
                   }`}
                 >
                   {isAvailable ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
-                  {isAvailable ? 'Je suis disponible' : 'Indisponible'}
+                  {isAvailable ? t('dash_i_am_available') : t('dash_unavailable')}
                 </button>
               </div>
             </div>
 
             {/* Basic info */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
-              <h2 className="text-sm font-bold text-slate-800 dark:text-white">Informations générales</h2>
+              <h2 className="text-sm font-bold text-slate-800 dark:text-white">{t('dash_general_info')}</h2>
               {/* Catégories multi-sélection */}
               {allCategories.length > 0 && (
                 <div>
                   <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                    Catégories de travail
+                    {t('dash_work_categories')}
                     <span className="ml-2 text-orange-500 font-semibold">({selectedCatIds.length}/3)</span>
                   </label>
-                  <p className="text-xs text-slate-400 mb-2">Choisissez 1 à 3 domaines qui décrivent votre activité.</p>
+                  <p className="text-xs text-slate-400 mb-2">{t('dash_work_categories_hint')}</p>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                     {allCategories.map(cat => {
                       const selected = selectedCatIds.includes(cat.id);
@@ -1202,20 +1202,20 @@ export default function ProfessionalDashboardPage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Nom complet <span className="text-red-400">*</span></label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">{t('name')} <span className="text-red-400">*</span></label>
                   <input {...form.register('name')} placeholder="Mohammed Alaoui" className={inputCls('name')} />
                   <FieldError name="name" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Métier / Profession <span className="text-red-400">*</span></label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">{t('dash_profession_label')} <span className="text-red-400">*</span></label>
                   <input {...form.register('profession')} placeholder="Plombier, Électricien..." className={inputCls('profession')} />
                   <FieldError name="profession" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Ville principale <span className="text-red-400">*</span></label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">{t('dash_main_city_label')} <span className="text-red-400">*</span></label>
                   {cities.length > 0 ? (
                     <select {...form.register('main_city')} className={inputCls('main_city')}>
-                      <option value="">Sélectionner une ville</option>
+                      <option value="">{t('dash_select_city')}</option>
                       {cities.map((c) => <option key={c} value={c}>{c}</option>)}
                     </select>
                   ) : (
@@ -1224,16 +1224,16 @@ export default function ProfessionalDashboardPage() {
                   <FieldError name="main_city" />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Téléphone / WhatsApp</label>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">{t('phone')}</label>
                   <input {...form.register('phone')} placeholder="+212 6XX XXX XXX" className={inputCls('phone')} />
-                  <p className="mt-1 text-xs text-slate-400">Utilisé pour les boutons WhatsApp et Appel</p>
+                  <p className="mt-1 text-xs text-slate-400">{t('dash_phone_hint')}</p>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Description / Présentation</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">{t('dash_description_label')}</label>
                 <textarea
                   {...form.register('description')}
-                  placeholder="Décrivez votre expérience, vos spécialités et vos tarifs indicatifs..."
+                  placeholder={t('dash_description_placeholder')}
                   rows={4}
                   className={`${inputCls()} resize-none`}
                 />
@@ -1242,18 +1242,18 @@ export default function ProfessionalDashboardPage() {
 
             {/* Tags */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
-              <h2 className="text-sm font-bold text-slate-800 dark:text-white">Zones & compétences</h2>
+              <h2 className="text-sm font-bold text-slate-800 dark:text-white">{t('dash_zones_skills')}</h2>
               <SmartMultiSelect
-                label="Villes de déplacement"
-                placeholder="Tapez une ville marocaine…"
+                label={t('dash_travel_cities')}
+                placeholder={t('dash_travel_placeholder')}
                 options={cities}
                 value={formValues.travel_cities ?? []}
                 onChange={(v) => form.setValue('travel_cities', v, { shouldDirty: true })}
                 allowCustom
               />
               <SmartMultiSelect
-                label="Langues parlées"
-                placeholder="Sélectionner une langue…"
+                label={t('dash_languages_label')}
+                placeholder={t('dash_languages_placeholder')}
                 options={LANGUAGES_LIST}
                 value={formValues.languages ?? []}
                 onChange={(v) => form.setValue('languages', v, { shouldDirty: true })}
@@ -1263,7 +1263,7 @@ export default function ProfessionalDashboardPage() {
             {/* Portfolio */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-800 dark:text-white">Portfolio (photos de réalisations)</h2>
+                <h2 className="text-sm font-bold text-slate-800 dark:text-white">{t('dash_portfolio_title')}</h2>
                 <span className="text-xs text-slate-400">{(form.watch('portfolio') ?? []).filter(Boolean).length} / 8 photos</span>
               </div>
 
@@ -1304,9 +1304,7 @@ export default function ProfessionalDashboardPage() {
                 )}
               </div>
 
-              <p className="text-xs text-slate-400">
-                Formats acceptés : JPG, PNG, WebP — max 5 Mo par photo. Jusqu'à 8 photos.
-              </p>
+              <p className="text-xs text-slate-400">{t('dash_portfolio_formats')}</p>
             </div>
 
             {/* Save */}
@@ -1318,11 +1316,11 @@ export default function ProfessionalDashboardPage() {
               )}
               {saved && (
                 <div className="flex items-center gap-2 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-4 py-3 text-sm text-green-700 dark:text-green-300">
-                  <CheckCircle className="h-4 w-4 shrink-0" /> Profil enregistré avec succès ! Visible immédiatement sur votre profil public.
+                  <CheckCircle className="h-4 w-4 shrink-0" /> {t('dash_saved_ok')}
                 </div>
               )}
               <div className="flex items-center justify-between">
-                <p className="text-xs text-slate-400">Les modifications sont visibles immédiatement sur votre profil public.</p>
+                <p className="text-xs text-slate-400">{t('dash_save_hint')}</p>
                 <button
                   type="submit"
                   disabled={saving}
@@ -1333,7 +1331,7 @@ export default function ProfessionalDashboardPage() {
                     : saved
                     ? <CheckCircle className="h-4 w-4" />
                     : <Save className="h-4 w-4" />}
-                  {saving ? 'Enregistrement...' : saved ? 'Enregistré !' : 'Enregistrer'}
+                  {saving ? t('dash_saving') : saved ? t('dash_saved_btn') : t('dash_save_btn')}
                 </button>
               </div>
             </div>
@@ -1358,20 +1356,20 @@ export default function ProfessionalDashboardPage() {
                     </div>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{card.label}</p>
                     <p className="text-3xl font-black text-slate-800 dark:text-white tabular-nums mt-1">{card.value.toLocaleString('fr-MA')}</p>
-                    <p className="text-xs text-slate-400 mt-1">Total depuis inscription</p>
+                    <p className="text-xs text-slate-400 mt-1">{t('dash_total_since')}</p>
                   </div>
                 ))}
             </div>
 
             {/* Activity bar chart */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
-              <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-4">Interactions — 7 derniers jours</h2>
+              <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-4">{t('dash_stats_chart_title')}</h2>
               {loading ? <Skeleton className="h-56 w-full" /> : (
                 (data?.weekly ?? []).length === 0 ? (
                   <div className="h-56 flex flex-col items-center justify-center gap-2 text-slate-400">
                     <BarChart3 className="h-8 w-8" />
-                    <p className="text-sm">Pas encore d'activité enregistrée.</p>
-                    <p className="text-xs">Partagez votre profil pour commencer à recevoir des contacts.</p>
+                    <p className="text-sm">{t('dash_no_activity_registered')}</p>
+                    <p className="text-xs">{t('dash_share_to_start')}</p>
                   </div>
                 ) : (
                   <div className="h-56">
@@ -1394,29 +1392,29 @@ export default function ProfessionalDashboardPage() {
             {/* ── Conversion funnel ── */}
             {!loading && data?.analytics && (
               <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
-                <h2 className="text-sm font-bold text-slate-800 dark:text-white">📈 Taux de conversion — 30 derniers jours</h2>
+                <h2 className="text-sm font-bold text-slate-800 dark:text-white">{t('dash_conversion_title')}</h2>
                 <div className="grid grid-cols-3 gap-3 text-center">
                   <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3">
                     <div className="text-2xl font-black text-slate-700 dark:text-white">{data.analytics.views30}</div>
-                    <div className="text-xs text-slate-400 mt-1">Vues</div>
+                    <div className="text-xs text-slate-400 mt-1">{t('dash_stats_views')}</div>
                   </div>
                   <div className="rounded-xl bg-brand-50 dark:bg-brand-900/20 p-3">
                     <div className="text-2xl font-black text-brand-700 dark:text-brand-300">{data.analytics.contacts30}</div>
-                    <div className="text-xs text-slate-400 mt-1">Contacts</div>
+                    <div className="text-xs text-slate-400 mt-1">{t('dash_stats_contacts')}</div>
                   </div>
                   <div className={`rounded-xl p-3 ${data.analytics.convRate >= (data.analytics.catAvgConv ?? 0) ? 'bg-emerald-50 dark:bg-emerald-900/20' : 'bg-amber-50 dark:bg-amber-900/20'}`}>
                     <div className={`text-2xl font-black ${data.analytics.convRate >= (data.analytics.catAvgConv ?? 0) ? 'text-emerald-700 dark:text-emerald-300' : 'text-amber-700 dark:text-amber-300'}`}>
                       {data.analytics.convRate}%
                     </div>
-                    <div className="text-xs text-slate-400 mt-1">Conversion</div>
+                    <div className="text-xs text-slate-400 mt-1">{t('dash_stats_conversion')}</div>
                   </div>
                 </div>
                 {data.analytics.catAvgConv !== null && (
                   <p className="text-xs text-slate-500">
-                    Moyenne de votre catégorie : <strong>{data.analytics.catAvgConv}%</strong>
+                    {t('dash_category_avg')} : <strong>{data.analytics.catAvgConv}%</strong>
                     {data.analytics.convRate >= data.analytics.catAvgConv
-                      ? ' — 🟢 Vous faites mieux que la moyenne !'
-                      : ' — 💡 Améliorez votre profil pour booster votre conversion.'}
+                      ? ` — ${t('dash_better_than_avg')}`
+                      : ` — ${t('dash_improve_profile')}`}
                   </p>
                 )}
               </div>
@@ -1425,7 +1423,7 @@ export default function ProfessionalDashboardPage() {
             {/* ── Best days chart ── */}
             {!loading && data?.analytics?.contactsByDay && (
               <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
-                <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-4">📅 Contacts par jour de la semaine (30j)</h2>
+                <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-4">{t('dash_contacts_by_day')}</h2>
                 <div className="h-44">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data.analytics.contactsByDay}>
@@ -1442,11 +1440,11 @@ export default function ProfessionalDashboardPage() {
 
             {/* Tips */}
             <div className="rounded-2xl border border-orange-100 dark:border-orange-900/30 bg-orange-50 dark:bg-orange-900/10 p-5">
-              <h3 className="text-sm font-bold text-orange-800 dark:text-orange-300 mb-3">💡 Conseils pour augmenter votre visibilité</h3>
+              <h3 className="text-sm font-bold text-orange-800 dark:text-orange-300 mb-3">{t('dash_tips_title')}</h3>
               <ul className="space-y-2 text-sm text-orange-700 dark:text-orange-400">
-                <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 shrink-0" /> Ajoutez une photo professionnelle — les profils avec photo reçoivent 3× plus de contacts.</li>
-                <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 shrink-0" /> Rédigez une description détaillée avec vos spécialités et zones d'intervention.</li>
-                <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 shrink-0" /> Partagez votre lien de profil sur WhatsApp et les réseaux sociaux.</li>
+                <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 shrink-0" /> {t('dash_tip_1')}</li>
+                <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 shrink-0" /> {t('dash_tip_2')}</li>
+                <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 shrink-0" /> {t('dash_tip_3')}</li>
                 <li className="flex items-start gap-2"><CheckCircle className="h-4 w-4 mt-0.5 shrink-0" /> Restez en statut "Disponible" pour apparaître en priorité dans les résultats.</li>
               </ul>
             </div>
