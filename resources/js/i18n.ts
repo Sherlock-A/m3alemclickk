@@ -62,6 +62,33 @@ const resources = {
       city_region: 'Région',
       active: 'Actif',
 
+      // Hero
+      hero_badge: 'Maroc • WhatsApp • Appel immédiat',
+      hero_city_detected: 'Votre ville détectée :',
+      hero_p: 'Trouvez rapidement un artisan ou un professionnel vérifié, proche de chez vous — contact WhatsApp instantané et avis clients authentiques.',
+
+      // Categories section
+      cat_see_all: 'Voir tout',
+      cat_none: 'Aucune catégorie disponible.',
+
+      // Featured professionals
+      feat_title: 'Professionnels recommandés',
+      feat_sub: 'Vérifiés, disponibles et les mieux notés',
+      feat_all: 'Tous les pros',
+      feat_discover: 'Découvrez nos professionnels',
+      feat_discover_sub: "Des centaines d'artisans vérifiés disponibles dans votre ville.",
+      feat_explore: "Explorer l'annuaire",
+      pro_new: 'Nouveau',
+
+      // How it works (homepage section)
+      hiw_section_title: 'Comment ça marche ?',
+      hiw_step1_title: 'Cherchez',
+      hiw_step1_desc: 'Recherchez par ville, métier ou compétence. Filtrez selon vos besoins.',
+      hiw_step2_title: 'Comparez',
+      hiw_step2_desc: 'Consultez les profils, avis clients et portfolio photo de chaque artisan.',
+      hiw_step3_title: 'Contactez',
+      hiw_step3_desc: 'Appelez ou envoyez un message WhatsApp directement depuis la plateforme.',
+
       // Navigation
       nav_home: 'Accueil',
       nav_professionals: 'Professionnels',
@@ -221,6 +248,33 @@ const resources = {
       city_name: 'اسم المدينة',
       city_region: 'الجهة',
       active: 'نشط',
+
+      // Hero
+      hero_badge: 'المغرب • واتساب • اتصال فوري',
+      hero_city_detected: 'مدينتك المكتشفة :',
+      hero_p: 'اعثر بسرعة على حرفي أو متخصص موثق بالقرب منك — تواصل واتساب فوري وتقييمات عملاء حقيقية.',
+
+      // Categories section
+      cat_see_all: 'عرض الكل',
+      cat_none: 'لا توجد فئات متاحة.',
+
+      // Featured professionals
+      feat_title: 'محترفون موصى بهم',
+      feat_sub: 'موثقون، متاحون والأعلى تقييماً',
+      feat_all: 'كل المحترفين',
+      feat_discover: 'اكتشف محترفينا',
+      feat_discover_sub: 'مئات الحرفيين الموثقين المتاحين في مدينتك.',
+      feat_explore: 'استعرض الدليل',
+      pro_new: 'جديد',
+
+      // How it works (homepage section)
+      hiw_section_title: 'كيف يعمل؟',
+      hiw_step1_title: 'ابحث',
+      hiw_step1_desc: 'ابحث حسب المدينة أو المهنة أو المهارة. صفّ حسب احتياجاتك.',
+      hiw_step2_title: 'قارن',
+      hiw_step2_desc: 'اطلع على الملفات الشخصية وتقييمات العملاء وألبوم الأعمال لكل حرفي.',
+      hiw_step3_title: 'تواصل',
+      hiw_step3_desc: 'اتصل أو أرسل رسالة واتساب مباشرة من المنصة.',
 
       // Navigation
       nav_home: 'الرئيسية',
@@ -433,6 +487,33 @@ const resources = {
       city_name: 'اسم المدينة',
       city_region: 'الجهة',
       active: 'نشيط',
+
+      // Hero
+      hero_badge: 'المغرب • واتساب • اتصال دابا',
+      hero_city_detected: 'المدينة ديالك :',
+      hero_p: 'لقا بسرعة معلم أو متخصص موثوق قريب منك — تواصل واتساب دابا دابا وتقييمات زبناء حقيقيين.',
+
+      // Categories section
+      cat_see_all: 'شوف كلهم',
+      cat_none: 'ما كاينش أصناف متاحة.',
+
+      // Featured professionals
+      feat_title: 'معلمين موصى بهم',
+      feat_sub: 'موثوقين، متاحين والأحسن تقييماً',
+      feat_all: 'كل المعلمين',
+      feat_discover: 'اكتشف المعلمين ديالنا',
+      feat_discover_sub: 'ميات معلم موثوق متاح فمدينتك.',
+      feat_explore: 'استعرض الدليل',
+      pro_new: 'جديد',
+
+      // How it works (homepage section)
+      hiw_section_title: 'كيفاش كيخدم؟',
+      hiw_step1_title: 'قلب',
+      hiw_step1_desc: 'قلب على المدينة، الحرفة أو المهارة. فلتر حسب الحاجة ديالك.',
+      hiw_step2_title: 'قارن',
+      hiw_step2_desc: 'شوف البروفيلات، التقييمات والبورتفوليو ديال كل معلم.',
+      hiw_step3_title: 'تواصل',
+      hiw_step3_desc: 'اتصل أو سيفط رسالة واتساب مباشرة من البلاتفورم.',
 
       // Navigation
       nav_home: 'الصفحة الرئيسية',
