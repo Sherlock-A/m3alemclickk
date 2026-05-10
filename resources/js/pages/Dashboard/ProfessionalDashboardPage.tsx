@@ -577,6 +577,35 @@ export default function ProfessionalDashboardPage() {
           languages:     p.languages ?? [],
           portfolio:     p.portfolio ?? [],
         };
+        // Apply Google pre-registration data (name + phone collected before OAuth)
+        try {
+          const pending = localStorage.getItem('pro_google_pending');
+          if (pending) {
+            const { name: gName, phone: gPhone } = JSON.parse(pending);
+            localStorage.removeItem('pro_google_pending');
+            // Only patch if phone is missing (fresh Google signup)
+            if (!p.phone?.trim() && gPhone) {
+              const patchValues = {
+                ...apiValues,
+                name:  gName  || apiValues.name,
+                phone: gPhone || apiValues.phone,
+              };
+              axios.patch('/api/pro/profile', {
+                name:  patchValues.name,
+                phone: patchValues.phone,
+                profession:    apiValues.profession,
+                main_city:     apiValues.main_city,
+                is_available:  apiValues.is_available,
+                travel_cities: apiValues.travel_cities,
+                languages:     apiValues.languages,
+                portfolio:     apiValues.portfolio,
+              }, { headers: { Authorization: `Bearer ${token}` } }).catch(() => {});
+              apiValues.name  = patchValues.name;
+              apiValues.phone = patchValues.phone;
+            }
+          }
+        } catch {}
+
         // Restore unsaved draft from localStorage
         try {
           const raw = localStorage.getItem(DRAFT_KEY);
