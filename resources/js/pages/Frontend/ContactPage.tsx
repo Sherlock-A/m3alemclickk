@@ -1,19 +1,22 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Layout } from '../../components/Layout';
 import { Send, CheckCircle, AlertCircle, Loader2, MessageSquare, Clock } from 'lucide-react';
 
-const SUBJECTS = [
-  'Question générale',
-  'Problème technique',
-  'Signaler un profil',
-  'Partenariat',
-  'Inscription pro',
-  'Autre',
-];
-
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: '', email: '', subject: SUBJECTS[0], message: '' });
+  const { t } = useTranslation();
+
+  const SUBJECTS = [
+    t('contact_s1'),
+    t('contact_s2'),
+    t('contact_s3'),
+    t('contact_s4'),
+    t('contact_s5'),
+    t('contact_s6'),
+  ];
+
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [loading, setLoading]     = useState(false);
   const [success, setSuccess]     = useState(false);
   const [errorMsg, setErrorMsg]   = useState('');
@@ -49,11 +52,13 @@ export default function ContactPage() {
       }
       setSuccess(true);
     } catch {
-      setErrorMsg('Erreur réseau. Vérifiez votre connexion.');
+      setErrorMsg(t('contact_network_error'));
     } finally {
       setLoading(false);
     }
   }
+
+  const currentSubject = form.subject || SUBJECTS[0];
 
   return (
     <Layout>
@@ -65,9 +70,9 @@ export default function ContactPage() {
           <div className="inline-flex items-center justify-center h-14 w-14 rounded-2xl bg-orange-500/20 mb-5">
             <MessageSquare className="h-7 w-7 text-orange-400" />
           </div>
-          <h1 className="text-3xl font-black mb-3">Contactez-nous</h1>
+          <h1 className="text-3xl font-black mb-3">{t('contact_title')}</h1>
           <p className="text-slate-400 text-base leading-relaxed">
-            Une question, un problème ou une suggestion ? Notre équipe vous répond dans les 24h.
+            {t('contact_subtitle')}
           </p>
         </div>
       </section>
@@ -82,21 +87,21 @@ export default function ContactPage() {
                 <div className="shrink-0 flex h-9 w-9 items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-900/40">
                   <Clock className="h-5 w-5 text-orange-500" />
                 </div>
-                <p className="text-sm font-semibold text-orange-700 dark:text-orange-400">Délai de réponse</p>
+                <p className="text-sm font-semibold text-orange-700 dark:text-orange-400">{t('contact_response_time')}</p>
               </div>
               <p className="text-xs text-orange-600 dark:text-orange-300 leading-relaxed">
-                Nous répondons à tous les messages dans un délai de 24h (jours ouvrés).
+                {t('contact_response_desc')}
               </p>
             </div>
 
             <div className="rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 p-5 space-y-3 shadow-sm">
-              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">Pourquoi nous contacter ?</p>
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{t('contact_why_title')}</p>
               <ul className="text-xs text-slate-500 dark:text-slate-400 space-y-2 leading-relaxed">
-                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Question sur la plateforme</li>
-                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Problème avec un profil ou un avis</li>
-                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Demande d'inscription professionnelle</li>
-                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Proposition de partenariat</li>
-                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> Signalement d'un contenu inapproprié</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> {t('contact_why_1')}</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> {t('contact_why_2')}</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> {t('contact_why_3')}</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> {t('contact_why_4')}</li>
+                <li className="flex gap-2"><span className="text-orange-400 font-bold">›</span> {t('contact_why_5')}</li>
               </ul>
             </div>
           </div>
@@ -109,20 +114,20 @@ export default function ContactPage() {
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
                     <CheckCircle className="h-8 w-8 text-green-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">Message envoyé !</h3>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{t('contact_success_title')}</h3>
                   <p className="text-slate-500 dark:text-slate-400 text-sm max-w-xs">
-                    Nous avons bien reçu votre message et vous répondrons dans les 24h.
+                    {t('contact_success_desc')}
                   </p>
                   <button
-                    onClick={() => { setSuccess(false); setForm({ name: '', email: '', subject: SUBJECTS[0], message: '' }); }}
+                    onClick={() => { setSuccess(false); setForm({ name: '', email: '', subject: '', message: '' }); }}
                     className="mt-2 text-sm font-semibold text-orange-500 hover:text-orange-600 hover:underline"
                   >
-                    Envoyer un autre message
+                    {t('contact_send_another')}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-5">
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">Envoyez-nous un message</h2>
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-1">{t('contact_send_message')}</h2>
 
                   {errorMsg && (
                     <div className="flex items-start gap-3 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 dark:bg-red-950/30 dark:border-red-800 dark:text-red-400">
@@ -134,10 +139,10 @@ export default function ContactPage() {
                   <div className="grid sm:grid-cols-2 gap-4">
                     {/* Nom */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Nom complet *</label>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('contact_full_name')} *</label>
                       <input
                         type="text" required value={form.name} onChange={e => set('name', e.target.value)}
-                        placeholder="Votre nom"
+                        placeholder={t('contact_your_name')}
                         className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400/20 focus:border-orange-400 transition-colors ${fieldErrors.name ? 'border-red-400' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {fieldErrors.name && <p className="mt-1 text-xs text-red-500">{fieldErrors.name}</p>}
@@ -147,7 +152,7 @@ export default function ContactPage() {
                       <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email *</label>
                       <input
                         type="email" required value={form.email} onChange={e => set('email', e.target.value)}
-                        placeholder="vous@exemple.ma"
+                        placeholder={t('contact_email_placeholder')}
                         className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400/20 focus:border-orange-400 transition-colors ${fieldErrors.email ? 'border-red-400' : 'border-slate-200 dark:border-slate-700'}`}
                       />
                       {fieldErrors.email && <p className="mt-1 text-xs text-red-500">{fieldErrors.email}</p>}
@@ -156,9 +161,9 @@ export default function ContactPage() {
 
                   {/* Sujet */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Sujet *</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('contact_subject')} *</label>
                     <select
-                      required value={form.subject} onChange={e => set('subject', e.target.value)}
+                      required value={currentSubject} onChange={e => set('subject', e.target.value)}
                       className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400/20 focus:border-orange-400 transition-colors"
                     >
                       {SUBJECTS.map(s => <option key={s} value={s}>{s}</option>)}
@@ -168,11 +173,11 @@ export default function ContactPage() {
                   {/* Message */}
                   <div>
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                      Message * <span className="text-xs text-slate-400 font-normal">({form.message.length}/2000)</span>
+                      {t('contact_message')} * <span className="text-xs text-slate-400 font-normal">({form.message.length}/2000)</span>
                     </label>
                     <textarea
                       required rows={5} value={form.message} onChange={e => set('message', e.target.value)}
-                      placeholder="Décrivez votre demande en détail…"
+                      placeholder="..."
                       maxLength={2000}
                       className={`w-full rounded-xl border px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400/20 focus:border-orange-400 transition-colors resize-none ${fieldErrors.message ? 'border-red-400' : 'border-slate-200 dark:border-slate-700'}`}
                     />
@@ -184,7 +189,7 @@ export default function ContactPage() {
                     className="w-full flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-5 py-3 text-sm font-bold text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 transition-colors disabled:opacity-60 shadow-sm"
                   >
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                    {loading ? 'Envoi en cours…' : 'Envoyer le message'}
+                    {loading ? t('contact_sending') : t('contact_send')}
                   </button>
                 </form>
               )}

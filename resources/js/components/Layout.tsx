@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { JoblyLogo } from './JoblyLogo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -22,13 +23,7 @@ const defaultSettings: Settings = {
   contact_phone: '+212 6XX XXX XXX',
   address: 'Casablanca, Maroc',
   footer_about: 'La plateforme de mise en relation entre clients et artisans au Maroc.',
-  footer_links: [
-    { label: 'Accueil', url: '/' },
-    { label: 'Professionnels', url: '/professionals' },
-    { label: 'Comment ça marche', url: '/how-it-works' },
-    { label: 'Inscription pro', url: '/pro/register' },
-    { label: 'Contact', url: '/contact' },
-  ],
+  footer_links: [],
   footer_social: { facebook: 'https://www.facebook.com/profile.php?id=61563166932840', instagram: 'https://www.instagram.com/jobly.ma' },
   footer_copyright: '© 2026 Jobly. Tous droits réservés.',
 };
@@ -77,6 +72,7 @@ function logout(role: 'admin' | 'professional' | 'client') {
 
 export function Layout({ children }: { children: ReactNode }) {
   const { rtl } = useLanguage();
+  const { t } = useTranslation();
   const [dark, setDark] = useState(() => {
     try { return localStorage.getItem('jobly_dark') === 'true'; } catch { return false; }
   });
@@ -101,6 +97,15 @@ export function Layout({ children }: { children: ReactNode }) {
       .catch(() => {});
   }, []);
 
+  const defaultFooterLinks = [
+    { label: t('nav_home'), url: '/' },
+    { label: t('nav_professionals'), url: '/professionals' },
+    { label: t('nav_how_it_works'), url: '/how-it-works' },
+    { label: t('footer_pro_register'), url: '/pro/register' },
+    { label: t('nav_contact'), url: '/contact' },
+  ];
+  const footerLinks = settings.footer_links.length > 0 ? settings.footer_links : defaultFooterLinks;
+
   const AuthButtons = ({ mobile = false }: { mobile?: boolean }) => {
     if (auth) {
       const roleIcon = auth.role === 'admin'
@@ -123,14 +128,14 @@ export function Layout({ children }: { children: ReactNode }) {
             onClick={() => setMobileOpen(false)}
           >
             {roleIcon}
-            {auth.label}
+            {auth.role === 'admin' ? t('nav_admin') : auth.role === 'professional' ? t('nav_dashboard') : t('nav_client_space')}
           </a>
           <button
             onClick={() => logout(auth.role)}
             className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-50 hover:text-red-500 dark:border-slate-700 dark:hover:bg-slate-800 transition-colors"
           >
             <LogOut className="h-3.5 w-3.5" />
-            Déconnexion
+            {t('logout')}
           </button>
         </div>
       );
@@ -144,7 +149,7 @@ export function Layout({ children }: { children: ReactNode }) {
           onClick={() => setMobileOpen(false)}
         >
           <Search className="h-4 w-4" />
-          Chercher un artisan
+          {t('nav_search')}
         </a>
         <a
           href="/login"
@@ -152,7 +157,7 @@ export function Layout({ children }: { children: ReactNode }) {
           onClick={() => setMobileOpen(false)}
         >
           <LogIn className="h-4 w-4" />
-          Connexion
+          {t('nav_login')}
         </a>
       </div>
     );
@@ -169,16 +174,16 @@ export function Layout({ children }: { children: ReactNode }) {
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
             <a href="/" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
-              Accueil
+              {t('nav_home')}
             </a>
             <a href="/professionals" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
-              Professionnels
+              {t('nav_professionals')}
             </a>
             <a href="/how-it-works" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
-              Comment ça marche
+              {t('nav_how_it_works')}
             </a>
             <a href="/contact" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
-              Contact
+              {t('nav_contact')}
             </a>
           </nav>
 
@@ -210,10 +215,10 @@ export function Layout({ children }: { children: ReactNode }) {
         {mobileOpen && (
           <div className="border-t border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950 md:hidden">
             <nav className="flex flex-col gap-3 text-sm font-medium">
-              <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Accueil</a>
-              <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Professionnels</a>
-              <a href="/how-it-works" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Comment ça marche</a>
-              <a href="/contact" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>Contact</a>
+              <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_home')}</a>
+              <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_professionals')}</a>
+              <a href="/how-it-works" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_how_it_works')}</a>
+              <a href="/contact" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_contact')}</a>
               <AuthButtons mobile />
             </nav>
           </div>
@@ -257,10 +262,10 @@ export function Layout({ children }: { children: ReactNode }) {
             {/* Colonne 2 — Liens rapides */}
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-                Liens rapides
+                {t('footer_quick_links')}
               </h3>
               <ul className="space-y-2">
-                {settings.footer_links.map((link, i) => (
+                {footerLinks.map((link, i) => (
                   <li key={i}>
                     <a href={link.url} className="text-sm text-slate-400 hover:text-orange-400 transition-colors">
                       → {link.label}
@@ -273,7 +278,7 @@ export function Layout({ children }: { children: ReactNode }) {
             {/* Colonne 3 — Contact */}
             <div>
               <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-                Contact
+                {t('footer_contact')}
               </h3>
               <ul className="space-y-3 text-sm text-slate-400">
                 {settings.contact_email && (
