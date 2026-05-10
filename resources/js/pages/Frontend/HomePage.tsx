@@ -254,28 +254,6 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           <SearchBar initialCity={geo?.city} />
         </div>
 
-        {/* ── Futuristic Stats ───────────────────────────────────────────── */}
-        <div className="relative mt-14 max-w-3xl mx-auto">
-          {/* Background glow blob */}
-          <div className="pointer-events-none absolute -inset-6 rounded-3xl bg-gradient-to-r from-orange-500/15 via-amber-400/8 to-orange-500/15 blur-2xl dark:from-orange-500/20 dark:via-amber-400/10 dark:to-orange-500/20" />
-          <div ref={statsRef} className="relative grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {[
-              { label: 'Professionnels', value: stats.professionals, icon: Briefcase as ElementType },
-              { label: 'Vérifiés',       value: stats.verified,      icon: ShieldCheck as ElementType },
-              { label: 'Missions',       value: stats.missions,      icon: Sparkles as ElementType },
-              { label: 'Villes',         value: stats.cities,        icon: MapPin as ElementType },
-            ].map((item, i) => (
-              <StatCard
-                key={item.label}
-                label={item.label}
-                target={item.value}
-                icon={item.icon}
-                started={statsVisible}
-                delay={i * 0.1}
-              />
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* ── Categories ───────────────────────────────────────────────────── */}

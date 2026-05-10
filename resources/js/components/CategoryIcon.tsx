@@ -313,6 +313,51 @@ const ICONS: Record<string, JSX.Element> = {
       <rect x="35" y="9" width="3" height="8" rx="1" fill="#f59e0b" transform="rotate(45 36.5 13)"/>
     </svg>
   ),
+  alumin: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#64748b"/>
+      <rect x="6" y="10" width="36" height="6" rx="2" fill="white" opacity="0.9"/>
+      <rect x="6" y="20" width="36" height="6" rx="2" fill="white" opacity="0.75"/>
+      <rect x="6" y="30" width="36" height="6" rx="2" fill="white" opacity="0.6"/>
+      <rect x="8" y="8" width="4" height="32" rx="2" fill="white" opacity="0.5"/>
+      <rect x="36" y="8" width="4" height="32" rx="2" fill="white" opacity="0.5"/>
+      <circle cx="38" cy="38" r="7" fill="#f59e0b"/>
+      <path d="M35 38 L38 34 L41 38 L38 42 Z" fill="white"/>
+    </svg>
+  ),
+  ferronner: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#1e293b"/>
+      <path d="M10 38 L10 14 Q10 8 16 8 L18 8 Q24 8 24 14 L24 20 Q24 24 20 26 L24 26 Q30 26 30 32 L30 38" fill="none" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+      <rect x="8" y="36" width="24" height="4" rx="2" fill="white" opacity="0.8"/>
+      <circle cx="38" cy="14" r="7" fill="#f59e0b"/>
+      <path d="M34 14 L38 10 L42 14 L38 18 Z" fill="white"/>
+    </svg>
+  ),
+  marbre: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#94a3b8"/>
+      <rect x="6" y="8" width="36" height="32" rx="4" fill="white" opacity="0.85"/>
+      <path d="M8 16 Q16 12 22 20 Q28 28 36 22 Q40 19 42 22" fill="none" stroke="#94a3b8" strokeWidth="1.5" opacity="0.5" strokeLinecap="round"/>
+      <path d="M6 26 Q14 22 18 28 Q22 34 30 28 Q36 23 42 28" fill="none" stroke="#94a3b8" strokeWidth="1.5" opacity="0.4" strokeLinecap="round"/>
+      <path d="M10 34 Q16 30 22 36" fill="none" stroke="#94a3b8" strokeWidth="1.5" opacity="0.35" strokeLinecap="round"/>
+      <circle cx="38" cy="38" r="7" fill="#f59e0b"/>
+      <path d="M35 38 L38 34 L41 38 L38 42 Z" fill="white"/>
+    </svg>
+  ),
+  cuisin: (
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="12" fill="#ea580c"/>
+      <rect x="6" y="28" width="36" height="14" rx="3" fill="white" opacity="0.9"/>
+      <rect x="6" y="26" width="36" height="4" rx="2" fill="white" opacity="0.6"/>
+      <circle cx="14" cy="18" r="6" fill="none" stroke="white" strokeWidth="2.5"/>
+      <path d="M14 10 Q14 6 16 8 Q14 10 16 12" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <circle cx="28" cy="16" r="8" fill="none" stroke="white" strokeWidth="2.5"/>
+      <path d="M26 7 Q24 4 28 5 Q26 8 29 9" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+      <rect x="10" y="31" width="8" height="2" rx="1" fill="#ea580c" opacity="0.4"/>
+      <rect x="22" y="31" width="14" height="2" rx="1" fill="#ea580c" opacity="0.4"/>
+    </svg>
+  ),
 };
 
 // Fallback generic icon

@@ -4,7 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 const langs = [
   { code: 'fr', label: 'FR' },
   { code: 'ar', label: 'العربية' },
-  { code: 'en', label: 'EN' },
+  { code: 'dz', label: 'الدارجة' },
 ];
 
 export function LanguageSwitcher() {

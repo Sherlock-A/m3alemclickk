@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import i18n from '../i18n';
 
-type Language = 'fr' | 'ar' | 'en';
+type Language = 'fr' | 'ar' | 'dz' | 'en';
 
 type LanguageContextValue = {
   language: Language;
@@ -21,10 +21,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [language]);
 
 
+  useEffect(() => {
+    const isRtl = language === 'ar' || language === 'dz';
+    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+    document.documentElement.lang = language;
+  }, [language]);
+
   const value = useMemo(() => ({
     language,
-    rtl: language === 'ar',
-    setLanguage: (lang: string) => setLanguageState((['fr', 'ar', 'en'].includes(lang) ? lang : 'fr') as Language),
+    rtl: language === 'ar' || language === 'dz',
+    setLanguage: (lang: string) => setLanguageState((['fr', 'ar', 'dz', 'en'].includes(lang) ? lang : 'fr') as Language),
   }), [language]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
