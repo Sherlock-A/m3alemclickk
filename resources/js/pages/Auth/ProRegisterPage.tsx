@@ -56,10 +56,6 @@ export default function ProRegisterPage() {
   const [success, setSuccess]         = useState(false);
   const [emailTaken, setEmailTaken]       = useState(false);
 
-  // Google pre-form state
-  const [googleName, setGoogleName]   = useState('');
-  const [googlePhone, setGooglePhone] = useState('');
-  const [googleFormErrors, setGoogleFormErrors] = useState<{ name?: string; phone?: string }>({});
   const [cities, setCities]               = useState<City[]>([]);
   const [categories, setCategories]       = useState<Category[]>([]);
   const [selectedCatIds, setSelectedCatIds] = useState<number[]>([]);
@@ -89,18 +85,15 @@ export default function ProRegisterPage() {
   }, []);
 
   const handleGoogle = async () => {
-    // Validate the Google pre-form
-    const errs: { name?: string; phone?: string } = {};
-    if (!googleName.trim()) errs.name = t('reg_name_required');
-    if (!googlePhone.trim()) errs.phone = t('reg_phone_invalid');
-    else if (!/^\+?[0-9\s]{8,15}$/.test(googlePhone)) errs.phone = t('reg_phone_invalid');
-    if (Object.keys(errs).length > 0) { setGoogleFormErrors(errs); return; }
-    setGoogleFormErrors({});
+    const errs: FieldErrors = {};
+    if (!form.name.trim()) errs.name = t('reg_name_required');
+    if (!form.phone.trim()) errs.phone = t('reg_phone_invalid');
+    else if (!/^\+?[0-9\s]{8,15}$/.test(form.phone)) errs.phone = t('reg_phone_invalid');
+    if (Object.keys(errs).length > 0) { setFieldErrors(errs); return; }
 
-    // Store name + phone in localStorage to retrieve after OAuth callback
     localStorage.setItem('pro_google_pending', JSON.stringify({
-      name:  googleName.trim(),
-      phone: googlePhone.trim(),
+      name:  form.name.trim(),
+      phone: form.phone.trim(),
     }));
 
     setGoogleLoading(true);
@@ -143,8 +136,8 @@ export default function ProRegisterPage() {
     const errs: FieldErrors = {};
     if (s === 1) {
       if (!form.name.trim())  errs.name  = t('reg_name_required');
-      if (!form.email.trim()) errs.email = t('reg_email_required');
-      if (form.phone && !/^\+?[0-9\s]{8,15}$/.test(form.phone)) errs.phone = t('reg_phone_invalid');
+      if (!form.phone.trim()) errs.phone = t('reg_phone_invalid');
+      else if (!/^\+?[0-9\s]{8,15}$/.test(form.phone)) errs.phone = t('reg_phone_invalid');
     }
     if (s === 2) {
       if (!form.profession.trim())    errs.profession  = t('reg_profession_required');
@@ -152,6 +145,7 @@ export default function ProRegisterPage() {
       if (selectedCatIds.length === 0) errs.category_ids = t('reg_cat_required');
     }
     if (s === 3) {
+      if (!form.email.trim()) errs.email = t('reg_email_required');
       if (form.password.length < 8) errs.password = t('reg_pwd_min_err');
       if (form.password !== form.password_confirmation) errs.password_confirmation = t('reg_pwd_no_match');
     }
@@ -200,8 +194,9 @@ export default function ProRegisterPage() {
         }
         setFieldErrors(errors);
         if (errors.email?.toLowerCase().match(/unique|pris|taken/)) setEmailTaken(true);
-        if (errors.name || errors.email || errors.phone) setStep(1);
-        else if (errors.profession || errors.main_city) setStep(2);
+        if (errors.name || errors.phone) setStep(1);
+        else if (errors.profession || errors.main_city || errors.category_ids) setStep(2);
+        else if (errors.email || errors.password || errors.password_confirmation) setStep(3);
         return;
       }
       setGlobalError(translateError(data.message || "Erreur lors de l'inscription."));
@@ -298,71 +293,6 @@ export default function ProRegisterPage() {
             </a>
           </div>
 
-          {/* Google — pre-form visible uniquement à l'étape 1 */}
-          {step === 1 && (
-            <>
-              {/* Google pre-form: name + phone required before OAuth */}
-              <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-4 space-y-3">
-                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
-                  <GoogleIcon /> Inscription via Google
-                </p>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    {t('name')} <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={googleName}
-                    onChange={e => { setGoogleName(e.target.value); setGoogleFormErrors(p => ({ ...p, name: '' })); }}
-                    placeholder="Mohammed Alaoui"
-                    className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${
-                      googleFormErrors.name
-                        ? 'border-red-400 focus:ring-red-100'
-                        : 'border-slate-200 dark:border-slate-700 focus:border-orange-400 focus:ring-orange-100 dark:focus:ring-orange-900'
-                    }`}
-                  />
-                  {googleFormErrors.name && <p className="mt-1 text-xs text-red-500">{googleFormErrors.name}</p>}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    {t('phone')} <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={googlePhone}
-                    onChange={e => { setGooglePhone(e.target.value); setGoogleFormErrors(p => ({ ...p, phone: '' })); }}
-                    placeholder="+212 6XX XXX XXX"
-                    className={`w-full rounded-xl border px-4 py-2.5 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${
-                      googleFormErrors.phone
-                        ? 'border-red-400 focus:ring-red-100'
-                        : 'border-slate-200 dark:border-slate-700 focus:border-orange-400 focus:ring-orange-100 dark:focus:ring-orange-900'
-                    }`}
-                  />
-                  {googleFormErrors.phone && <p className="mt-1 text-xs text-red-500">{googleFormErrors.phone}</p>}
-                </div>
-                <button
-                  type="button"
-                  onClick={handleGoogle}
-                  disabled={googleLoading}
-                  className="w-full flex items-center justify-center gap-3 rounded-xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-colors disabled:opacity-60 shadow-sm"
-                >
-                  {googleLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
-                  {googleLoading ? t('reg_redirecting') : t('reg_google')}
-                </button>
-                <p className="text-xs text-center text-slate-400">{t('reg_google_note')}</p>
-              </div>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200 dark:border-slate-700" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white dark:bg-slate-900 px-3 text-slate-400">{t('reg_or_form')}</span>
-                </div>
-              </div>
-            </>
-          )}
-
           {/* Step indicator */}
           <div className="flex items-center gap-2">
             {STEPS.map(({ id, label }, idx) => (
@@ -402,13 +332,6 @@ export default function ProRegisterPage() {
               {globalError}
             </div>
           )}
-          {emailTaken && (
-            <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
-              {t('reg_email_taken')}{' '}
-              <a href="/pro/login" className="font-bold underline hover:text-amber-900">{t('login')} →</a>
-            </div>
-          )}
-
           <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); next(); }} className="space-y-4">
 
             {/* ── Step 1 ── */}
@@ -420,14 +343,6 @@ export default function ProRegisterPage() {
                 <input type="text" required value={form.name} onChange={set('name')}
                   placeholder="Mohammed Alaoui" autoFocus className={inp('name')} />
                 <Err f="name" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {t('email')} <span className="text-red-400">*</span>
-                </label>
-                <input type="email" required value={form.email} onChange={set('email')}
-                  placeholder="pro@exemple.ma" className={inp('email')} />
-                <Err f="email" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
@@ -519,6 +434,20 @@ export default function ProRegisterPage() {
             {step === 3 && <>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                  {t('email')} <span className="text-red-400">*</span>
+                </label>
+                <input type="email" required value={form.email} onChange={set('email')} autoFocus
+                  placeholder="pro@exemple.ma" className={inp('email')} />
+                <Err f="email" />
+              </div>
+              {emailTaken && (
+                <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
+                  {t('reg_email_taken')}{' '}
+                  <a href="/pro/login" className="font-bold underline hover:text-amber-900">{t('login')} →</a>
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
                   {t('password')} <span className="text-red-400">*</span>
                 </label>
                 <div className="relative">
@@ -590,6 +519,29 @@ export default function ProRegisterPage() {
               )}
             </div>
           </form>
+
+          {step === 1 && (
+            <>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200 dark:border-slate-700" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white dark:bg-slate-900 px-3 text-slate-400">{t('reg_or_form')}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleGoogle}
+                disabled={googleLoading}
+                className="w-full flex items-center justify-center gap-3 rounded-xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-colors disabled:opacity-60 shadow-sm"
+              >
+                {googleLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
+                {googleLoading ? t('reg_redirecting') : t('reg_google')}
+              </button>
+              <p className="text-center text-xs text-slate-400">{t('reg_google_note')}</p>
+            </>
+          )}
 
           <p className="text-center text-sm text-slate-500 dark:text-slate-400">
             {t('reg_already_account')}{' '}
