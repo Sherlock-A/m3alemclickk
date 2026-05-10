@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Head } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import {
   Heart, MapPin, MessageCircle, Phone, ShieldCheck,
   Star, Send, CheckCircle, AlertCircle, Mail,
@@ -44,6 +45,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
 }
 
 export default function ProfessionalShowPage({ professional, similar = [] }: Props) {
+  const { t } = useTranslation();
   const [isFav, setIsFav] = useState(() => getFavIds().includes(professional.id));
 
   // Review form state
@@ -74,8 +76,8 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
 
   const submitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) { setReviewError('Votre nom est requis.'); return; }
-    if (rating < 1)   { setReviewError('Veuillez sélectionner une note.'); return; }
+    if (!name.trim()) { setReviewError(t('show_review_err_name')); return; }
+    if (rating < 1)   { setReviewError(t('show_review_err_rating')); return; }
     setSubmitting(true);
     setReviewError('');
     try {
@@ -88,7 +90,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
       setSubmitted(true);
       setShowForm(false);
     } catch {
-      setReviewError("Erreur lors de l'envoi. Réessayez.");
+      setReviewError(t('show_review_err_send'));
     } finally {
       setSubmitting(false);
     }
@@ -128,7 +130,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
   const submitContact = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contactName.trim() || !contactMsg.trim()) {
-      setContactError('Nom et message sont requis.');
+      setContactError(t('show_quote_err_required'));
       return;
     }
     setContactSending(true);
@@ -143,7 +145,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
       });
       setContactDone(true);
     } catch {
-      setContactError("Erreur lors de l'envoi. Réessayez.");
+      setContactError(t('show_quote_err_send'));
     } finally {
       setContactSending(false);
     }
@@ -221,7 +223,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                   className={`absolute top-4 right-4 h-10 w-10 rounded-full flex items-center justify-center shadow-lg transition-all ${
                     isFav ? 'bg-red-500 text-white' : 'bg-white/90 text-slate-500 hover:text-red-500'
                   }`}
-                  title={isFav ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                  title={isFav ? t('show_fav_remove') : t('show_fav_add')}
                 >
                   <Heart className={`h-5 w-5 ${isFav ? 'fill-white' : ''}`} />
                 </button>
@@ -269,7 +271,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                       ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
                       : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
                   }`}>
-                    {professional.status === 'available' ? '● Disponible' : '● Occupé'}
+                    {professional.status === 'available' ? t('show_available') : t('show_busy')}
                   </span>
                 </div>
 
@@ -290,14 +292,14 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                     onClick={() => track('whatsapp_click')}
                     className="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition-colors shadow-md"
                   >
-                    <MessageCircle className="h-4 w-4" /> Contacter sur WhatsApp
+                    <MessageCircle className="h-4 w-4" /> {t('show_whatsapp')}
                   </a>
                   <a
                     href={`tel:${professional.phone}`}
                     onClick={() => track('call')}
                     className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 hover:bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition-colors shadow-md"
                   >
-                    <Phone className="h-4 w-4" /> Appeler
+                    <Phone className="h-4 w-4" /> {t('show_call')}
                   </a>
                 </div>
 
@@ -311,7 +313,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
             {/* Portfolio */}
             {(professional.portfolio || []).length > 0 && (
               <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
-                <h2 className="mb-4 text-xl font-black text-slate-800 dark:text-white">🖼️ Réalisations</h2>
+                <h2 className="mb-4 text-xl font-black text-slate-800 dark:text-white">{t('show_portfolio')}</h2>
                 <PortfolioLightbox images={professional.portfolio!} />
               </div>
             )}
@@ -322,15 +324,15 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                 <div className="h-9 w-9 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center">
                   <Mail className="h-4 w-4 text-blue-500" />
                 </div>
-                <h2 className="text-xl font-black text-slate-800 dark:text-white">Demande de devis</h2>
+                <h2 className="text-xl font-black text-slate-800 dark:text-white">{t('show_quote_title')}</h2>
               </div>
 
               {contactDone ? (
                 <div className="flex items-start gap-3 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-4">
                   <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">Message envoyé !</p>
-                    <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">{professional.name} recevra votre demande et vous contactera bientôt.</p>
+                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{t('show_quote_done')}</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">{t('show_quote_done_desc', { name: professional.name })}</p>
                   </div>
                 </div>
               ) : (
@@ -342,28 +344,28 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                   )}
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-medium text-slate-500 mb-1.5">Votre nom *</label>
+                      <label className="block text-xs font-medium text-slate-500 mb-1.5">{t('show_quote_name')}</label>
                       <input value={contactName} onChange={e => setContactName(e.target.value)} placeholder="Mohammed A."
                         className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-slate-500 mb-1.5">Téléphone</label>
+                      <label className="block text-xs font-medium text-slate-500 mb-1.5">{t('show_quote_phone')}</label>
                       <input value={contactPhone} onChange={e => setContactPhone(e.target.value)} placeholder="+212 6XX XXX XXX" type="tel"
                         className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1.5">Email (pour recevoir la réponse)</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1.5">{t('show_quote_email')}</label>
                     <input value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="vous@exemple.ma" type="email"
                       className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1.5">Objet</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1.5">{t('show_quote_subject')}</label>
                     <input value={contactSubject} onChange={e => setContactSubject(e.target.value)} placeholder="Ex: Devis rénovation salle de bain"
                       className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1.5">Message *</label>
+                    <label className="block text-xs font-medium text-slate-500 mb-1.5">{t('show_quote_msg')}</label>
                     <textarea value={contactMsg} onChange={e => setContactMsg(e.target.value)}
                       placeholder="Décrivez votre besoin, la surface, l'urgence..." rows={4}
                       className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 resize-none" />
@@ -371,7 +373,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                   <button type="submit" disabled={contactSending}
                     className="flex items-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50">
                     <Send className="h-4 w-4" />
-                    {contactSending ? 'Envoi...' : 'Envoyer la demande'}
+                    {contactSending ? t('show_quote_sending') : t('show_quote_send')}
                   </button>
                 </form>
               )}
@@ -380,13 +382,13 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
             {/* Reviews */}
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center justify-between mb-5">
-                <h2 className="text-xl font-black text-slate-800 dark:text-white">⭐ Avis ({reviews.length})</h2>
+                <h2 className="text-xl font-black text-slate-800 dark:text-white">{t('show_reviews_title', { n: reviews.length })}</h2>
                 {!submitted && (
                   <button
                     onClick={() => setShowForm((v) => !v)}
                     className="text-sm font-medium text-orange-500 hover:text-orange-600 transition-colors"
                   >
-                    {showForm ? '✕ Annuler' : '+ Laisser un avis'}
+                    {showForm ? t('show_cancel_review') : t('show_leave_review')}
                   </button>
                 )}
               </div>
@@ -396,7 +398,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                 <div className="mb-4 flex items-start gap-3 rounded-2xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-4">
                   <CheckCircle className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">Merci pour votre avis !</p>
+                    <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{t('show_review_thanks')}</p>
                     <p className="text-xs text-emerald-600 dark:text-emerald-500 mt-0.5">Il sera visible après validation par notre équipe.</p>
                   </div>
                 </div>
@@ -445,7 +447,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                     className="flex items-center gap-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 text-sm font-semibold transition-colors disabled:opacity-50"
                   >
                     <Send className="h-4 w-4" />
-                    {submitting ? 'Envoi...' : 'Publier l\'avis'}
+                    {submitting ? t('show_quote_sending') : t('show_leave_review').replace('+', '').trim()}
                   </button>
                 </form>
               )}

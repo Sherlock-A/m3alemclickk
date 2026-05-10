@@ -20,7 +20,7 @@ export default function ResetPasswordPage({ token, email }: Props) {
     e.preventDefault();
     setError('');
     if (form.password !== form.password_confirmation) {
-      setError('Les mots de passe ne correspondent pas.');
+      setError(t('reset_pwd_mismatch'));
       return;
     }
     setLoading(true);
@@ -37,7 +37,7 @@ export default function ResetPasswordPage({ token, email }: Props) {
       }
       setSuccess(true);
     } catch {
-      setError('Erreur réseau. Veuillez réessayer.');
+      setError(t('reset_network'));
     } finally {
       setLoading(false);
     }
@@ -48,10 +48,10 @@ export default function ResetPasswordPage({ token, email }: Props) {
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center px-4">
         <div className="text-center">
           <div className="text-5xl mb-4">❌</div>
-          <h2 className="text-xl font-bold text-slate-800 mb-2">Lien invalide</h2>
-          <p className="text-slate-500 mb-4">Ce lien de réinitialisation est invalide ou a expiré.</p>
+          <h2 className="text-xl font-bold text-slate-800 mb-2">{t('reset_invalid_title')}</h2>
+          <p className="text-slate-500 mb-4">{t('reset_invalid_desc')}</p>
           <a href="/pro/forgot-password" className="text-orange-500 hover:text-orange-600 font-medium">
-            Demander un nouveau lien →
+            {t('reset_new_link')}
           </a>
         </div>
       </div>
@@ -63,10 +63,10 @@ export default function ResetPasswordPage({ token, email }: Props) {
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center px-4">
         <div className="text-center">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Mot de passe réinitialisé !</h2>
-          <p className="text-slate-500 dark:text-slate-400 mb-6">Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.</p>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">{t('reset_success_title')}</h2>
+          <p className="text-slate-500 dark:text-slate-400 mb-6">{t('reset_success_desc')}</p>
           <a href="/pro/login" className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-500 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-600 transition-colors">
-            Se connecter
+            {t('login')}
           </a>
         </div>
       </div>
@@ -76,7 +76,6 @@ export default function ResetPasswordPage({ token, email }: Props) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <a href="/"><JoblyLogo size="lg" /></a>
         </div>
@@ -90,7 +89,7 @@ export default function ResetPasswordPage({ token, email }: Props) {
           </div>
 
           <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
-            Choisissez un nouveau mot de passe pour <strong className="text-slate-700 dark:text-slate-300">{email}</strong>
+            {t('reset_choose_pwd')} <strong className="text-slate-700 dark:text-slate-300">{email}</strong>
           </p>
 
           {error && (
@@ -109,7 +108,7 @@ export default function ResetPasswordPage({ token, email }: Props) {
                   minLength={8}
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="Minimum 8 caractères"
+                  placeholder={t('reset_pwd_placeholder')}
                   className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 pr-10 text-sm text-slate-800 dark:text-white placeholder-slate-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100 dark:focus:ring-orange-900"
                 />
                 <button type="button" onClick={() => setShowPwd((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -135,8 +134,10 @@ export default function ResetPasswordPage({ token, email }: Props) {
               disabled={loading}
               className="w-full flex items-center justify-center gap-2 rounded-lg bg-orange-500 px-4 py-3 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <KeyRound className="h-4 w-4" />}
-              {loading ? 'Réinitialisation...' : t('reset_password')}
+              {loading
+                ? <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                : <KeyRound className="h-4 w-4" />}
+              {loading ? t('reset_loading') : t('reset_password')}
             </button>
           </form>
         </div>

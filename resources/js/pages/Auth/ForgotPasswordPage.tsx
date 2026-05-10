@@ -1,4 +1,5 @@
 import { useState, useEffect, FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Mail, KeyRound, Eye, EyeOff, ArrowLeft, RefreshCw, CheckCircle, ShieldCheck } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 
@@ -9,6 +10,7 @@ interface Props {
 type Step = 'email' | 'code' | 'password';
 
 export default function ForgotPasswordPage({ role = 'pro' }: Props) {
+  const { t } = useTranslation();
   const [step, setStep]     = useState<Step>('email');
   const [email, setEmail]   = useState('');
   const [code, setCode]     = useState('');
@@ -24,11 +26,10 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
 
   useEffect(() => {
     if (countdown <= 0) return;
-    const t = setTimeout(() => setCountdown(c => c - 1), 1000);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
   }, [countdown]);
 
-  // ── Étape 1 : envoyer le code ──────────────────────────────────────────────
   const handleSendCode = async (e?: FormEvent) => {
     e?.preventDefault();
     if (!email || countdown > 0) return;
@@ -41,34 +42,32 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
         body:    JSON.stringify({ email }),
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.message || "Erreur lors de l'envoi."); return; }
+      if (!res.ok) { setError(data.message || t('fp_err_send')); return; }
       setStep('code');
       setCountdown(60);
     } catch {
-      setError('Erreur réseau. Veuillez réessayer.');
+      setError(t('fp_err_network'));
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Étape 2 : valider le code (avance vers étape 3) ──────────────────────
   const handleCodeNext = (e: FormEvent) => {
     e.preventDefault();
-    if (code.length !== 6) { setError('Entrez le code à 6 chiffres.'); return; }
+    if (code.length !== 6) { setError(t('fp_err_code')); return; }
     setError('');
     setStep('password');
   };
 
-  // ── Étape 3 : nouveau mot de passe ─────────────────────────────────────────
   const handleReset = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     if (form.password !== form.password_confirmation) {
-      setError('Les mots de passe ne correspondent pas.');
+      setError(t('fp_err_pwd_match'));
       return;
     }
     if (form.password.length < 8) {
-      setError('Le mot de passe doit contenir au moins 8 caractères.');
+      setError(t('fp_err_pwd_min'));
       return;
     }
     setLoading(true);
@@ -86,23 +85,22 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
       }
       setSuccess(true);
     } catch {
-      setError('Erreur réseau. Veuillez réessayer.');
+      setError(t('fp_err_network'));
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Succès ─────────────────────────────────────────────────────────────────
   if (success) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center px-4">
         <div className="text-center space-y-4">
           <CheckCircle className="h-20 w-20 text-green-500 mx-auto" />
-          <h2 className="text-2xl font-bold text-slate-800 dark:text-white">Mot de passe modifié !</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">Vous pouvez maintenant vous connecter.</p>
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white">{t('fp_success_title')}</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">{t('fp_success_desc')}</p>
           <a href={loginUrl}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-6 py-3 text-sm font-bold text-white hover:bg-orange-600 transition-colors mt-2">
-            Se connecter
+            {t('fp_login')}
           </a>
         </div>
       </div>
@@ -110,9 +108,9 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
   }
 
   const stepLabels: Record<Step, string> = {
-    email:    'Votre email',
-    code:     'Code reçu',
-    password: 'Nouveau mot de passe',
+    email:    t('fp_step_email'),
+    code:     t('fp_step_code'),
+    password: t('fp_step_pwd'),
   };
   const steps: Step[] = ['email', 'code', 'password'];
   const stepIdx = steps.indexOf(step);
@@ -123,12 +121,12 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
 
         <div className="text-center mb-8">
           <a href="/"><JoblyLogo size="lg" /></a>
-          <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm">Réinitialisation du mot de passe</p>
+          <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm">{t('fp_page_title')}</p>
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 p-8">
 
-          {/* Indicateur d'étapes */}
+          {/* Step indicator */}
           <div className="flex items-center gap-2 mb-7">
             {steps.map((s, i) => (
               <div key={s} className="flex items-center gap-2 flex-1">
@@ -155,7 +153,7 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
             </div>
           )}
 
-          {/* ── Étape 1 : Email ── */}
+          {/* Step 1: Email */}
           {step === 'email' && (
             <>
               <div className="flex items-center gap-3 mb-5">
@@ -163,14 +161,14 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
                   <Mail className="h-5 w-5 text-orange-500" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-slate-800 dark:text-white">Mot de passe oublié ?</h1>
-                  <p className="text-xs text-slate-400">Nous vous enverrons un code par email</p>
+                  <h1 className="text-xl font-bold text-slate-800 dark:text-white">{t('fp_forgot_title')}</h1>
+                  <p className="text-xs text-slate-400">{t('fp_forgot_desc')}</p>
                 </div>
               </div>
 
               <form onSubmit={handleSendCode} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Adresse email</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('fp_email_label')}</label>
                   <input
                     type="email" required autoFocus
                     value={email}
@@ -181,13 +179,15 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
                 </div>
                 <button type="submit" disabled={loading || !email}
                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 disabled:opacity-50 transition-colors">
-                  {loading ? <><RefreshCw className="h-4 w-4 animate-spin" /> Envoi…</> : <><Mail className="h-4 w-4" /> Envoyer le code</>}
+                  {loading
+                    ? <><RefreshCw className="h-4 w-4 animate-spin" /> {t('fp_sending')}</>
+                    : <><Mail className="h-4 w-4" /> {t('fp_send_code')}</>}
                 </button>
               </form>
             </>
           )}
 
-          {/* ── Étape 2 : Code ── */}
+          {/* Step 2: Code */}
           {step === 'code' && (
             <>
               <div className="flex items-center gap-3 mb-5">
@@ -195,14 +195,16 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
                   <ShieldCheck className="h-5 w-5 text-orange-500" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-slate-800 dark:text-white">Code de vérification</h1>
-                  <p className="text-xs text-slate-400">Envoyé à <strong>{email}</strong> — valable 10 min</p>
+                  <h1 className="text-xl font-bold text-slate-800 dark:text-white">{t('fp_code_title')}</h1>
+                  <p className="text-xs text-slate-400"
+                    dangerouslySetInnerHTML={{ __html: t('fp_code_desc', { email: `<strong>${email}</strong>` }) }}
+                  />
                 </div>
               </div>
 
               <form onSubmit={handleCodeNext} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Code à 6 chiffres</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('fp_code_label')}</label>
                   <input
                     value={code}
                     onChange={e => { setCode(e.target.value.replace(/\D/g, '').slice(0, 6)); setError(''); }}
@@ -215,22 +217,22 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
 
                 <button type="submit" disabled={code.length !== 6}
                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 disabled:opacity-50 transition-colors">
-                  Valider le code →
+                  {t('fp_validate_code')}
                 </button>
 
                 <div className="text-center pt-1">
                   {countdown > 0
-                    ? <p className="text-xs text-slate-400">Renvoyer dans {countdown}s</p>
+                    ? <p className="text-xs text-slate-400">{t('fp_resend_wait', { n: countdown })}</p>
                     : <button type="button" onClick={() => handleSendCode()} disabled={loading}
                         className="text-xs text-orange-500 hover:underline flex items-center gap-1 mx-auto">
-                        <RefreshCw className="h-3 w-3" /> Renvoyer le code
+                        <RefreshCw className="h-3 w-3" /> {t('fp_resend')}
                       </button>}
                 </div>
               </form>
             </>
           )}
 
-          {/* ── Étape 3 : Nouveau mot de passe ── */}
+          {/* Step 3: New password */}
           {step === 'password' && (
             <>
               <div className="flex items-center gap-3 mb-5">
@@ -238,21 +240,23 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
                   <KeyRound className="h-5 w-5 text-orange-500" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-slate-800 dark:text-white">Nouveau mot de passe</h1>
-                  <p className="text-xs text-slate-400">Pour le compte <strong>{email}</strong></p>
+                  <h1 className="text-xl font-bold text-slate-800 dark:text-white">{t('fp_new_pwd_title')}</h1>
+                  <p className="text-xs text-slate-400"
+                    dangerouslySetInnerHTML={{ __html: t('fp_new_pwd_desc', { email: `<strong>${email}</strong>` }) }}
+                  />
                 </div>
               </div>
 
               <form onSubmit={handleReset} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Nouveau mot de passe</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('fp_new_pwd_label')}</label>
                   <div className="relative">
                     <input
                       type={showPwd ? 'text' : 'password'}
                       required minLength={8} autoFocus
                       value={form.password}
                       onChange={e => { setForm({ ...form, password: e.target.value }); setError(''); }}
-                      placeholder="Minimum 8 caractères"
+                      placeholder={t('fp_pwd_min_hint')}
                       className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 pr-12 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors"
                     />
                     <button type="button" onClick={() => setShowPwd(v => !v)}
@@ -274,7 +278,7 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Confirmer le mot de passe</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('fp_confirm_pwd_label')}</label>
                   <input
                     type="password" required
                     value={form.password_confirmation}
@@ -287,17 +291,16 @@ export default function ForgotPasswordPage({ role = 'pro' }: Props) {
                 <button type="submit" disabled={loading}
                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 disabled:opacity-50 transition-colors">
                   {loading
-                    ? <><RefreshCw className="h-4 w-4 animate-spin" /> Réinitialisation…</>
-                    : <><KeyRound className="h-4 w-4" /> Enregistrer le mot de passe</>}
+                    ? <><RefreshCw className="h-4 w-4 animate-spin" /> {t('fp_saving')}</>
+                    : <><KeyRound className="h-4 w-4" /> {t('fp_save')}</>}
                 </button>
               </form>
             </>
           )}
 
-          {/* Retour connexion */}
           <div className="mt-6 text-center">
             <a href={loginUrl} className="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-orange-500 transition-colors">
-              <ArrowLeft className="h-3.5 w-3.5" /> Retour à la connexion
+              <ArrowLeft className="h-3.5 w-3.5" /> {t('fp_back_login')}
             </a>
           </div>
 

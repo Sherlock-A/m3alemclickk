@@ -1,10 +1,12 @@
 import { useState, FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, LogIn, ShieldCheck, ArrowRight } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 
 type Step = 'form' | 'admin_notice';
 
 export default function ProLoginPage() {
+  const { t } = useTranslation();
   const [form, setForm]       = useState({ email: '', password: '' });
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,9 +58,9 @@ export default function ProLoginPage() {
         window.location.href = '/dashboard/admin';
         return;
       }
-      setError('Email ou mot de passe incorrect.');
+      setError(t('pro_login_wrong_creds'));
     } catch {
-      setError('Erreur réseau. Veuillez réessayer.');
+      setError(t('pro_login_network_err'));
     } finally {
       setLoading(false);
     }
@@ -72,17 +74,24 @@ export default function ProLoginPage() {
             <ShieldCheck className="h-8 w-8 text-orange-400" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white mb-2">Compte administrateur</h2>
-            <p className="text-slate-400 text-sm">Un lien de réinitialisation a été envoyé à votre adresse email. Vérifiez votre boîte de réception et vos spams.</p>
+            <h2 className="text-xl font-bold text-white mb-2">{t('pro_admin_account')}</h2>
+            <p className="text-slate-400 text-sm">{t('pro_admin_reset_sent')}</p>
           </div>
           <button onClick={() => setStep('form')}
             className="text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors">
-            ← Retour
+            {t('pro_admin_back')}
           </button>
         </div>
       </div>
     );
   }
+
+  const stats = [
+    { label: t('pro_login_stat_active'),   value: '500+' },
+    { label: t('pro_login_stat_cities'),   value: '20+' },
+    { label: t('pro_login_stat_contacts'), value: '1000+' },
+    { label: t('pro_login_stat_rating'),   value: '4.8★' },
+  ];
 
   return (
     <div className="min-h-screen flex">
@@ -92,18 +101,13 @@ export default function ProLoginPage() {
         <div className="space-y-6">
           <div className="h-1 w-12 bg-orange-500 rounded-full" />
           <h2 className="text-3xl font-black text-white leading-tight">
-            Gérez votre activité depuis un seul endroit.
+            {t('pro_login_manage')}
           </h2>
           <p className="text-slate-400 text-sm leading-relaxed">
-            Profil public, statistiques de contact, disponibilité en temps réel — tout ce dont vous avez besoin pour développer votre clientèle au Maroc.
+            {t('pro_login_desc')}
           </p>
           <div className="grid grid-cols-2 gap-3 pt-4">
-            {[
-              { label: 'Professionnels actifs', value: '500+' },
-              { label: 'Villes couvertes', value: '20+' },
-              { label: 'Contacts par jour', value: '1000+' },
-              { label: 'Note moyenne', value: '4.8★' },
-            ].map((s) => (
+            {stats.map((s) => (
               <div key={s.label} className="rounded-xl bg-white/5 p-4">
                 <p className="text-2xl font-black text-orange-400">{s.value}</p>
                 <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
@@ -124,8 +128,8 @@ export default function ProLoginPage() {
           </div>
 
           <div>
-            <h1 className="text-2xl font-black text-slate-900 dark:text-white">Connexion</h1>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Accédez à votre espace professionnel</p>
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white">{t('pro_login_page_title')}</h1>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t('pro_login_page_sub')}</p>
           </div>
 
           {error && (
@@ -136,7 +140,7 @@ export default function ProLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Adresse email</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">{t('pro_login_email_label')}</label>
               <input
                 type="email" required autoComplete="email"
                 value={form.email}
@@ -148,10 +152,10 @@ export default function ProLoginPage() {
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Mot de passe</label>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">{t('pro_login_pwd_label')}</label>
                 <a href="#" onClick={handleForgotPassword}
                   className="text-xs text-orange-500 hover:text-orange-600 font-medium transition-colors">
-                  Mot de passe oublié ?
+                  {t('pro_login_forgot_link')}
                 </a>
               </div>
               <div className="relative">
@@ -174,22 +178,22 @@ export default function ProLoginPage() {
               {loading
                 ? <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
                 : <LogIn className="h-4 w-4" />}
-              {loading ? 'Connexion en cours...' : 'Se connecter'}
+              {loading ? t('pro_login_loading') : t('pro_login_btn')}
             </button>
           </form>
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-100 dark:border-slate-800" /></div>
-            <div className="relative flex justify-center"><span className="bg-white dark:bg-slate-900 px-3 text-xs text-slate-400">Pas encore de compte ?</span></div>
+            <div className="relative flex justify-center"><span className="bg-white dark:bg-slate-900 px-3 text-xs text-slate-400">{t('pro_login_no_account_text')}</span></div>
           </div>
 
           <a href="/pro/register"
             className="flex items-center justify-center gap-2 w-full rounded-xl border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:border-orange-300 dark:hover:border-orange-700 hover:text-orange-500 transition-all">
-            Créer un compte professionnel <ArrowRight className="h-4 w-4" />
+            {t('pro_login_create_account')} <ArrowRight className="h-4 w-4" />
           </a>
 
           <p className="text-center text-xs text-slate-400">
-            <a href="/" className="hover:text-orange-500 transition-colors">← Retour à l'accueil</a>
+            <a href="/" className="hover:text-orange-500 transition-colors">{t('pro_login_back_home')}</a>
           </p>
         </div>
       </div>
