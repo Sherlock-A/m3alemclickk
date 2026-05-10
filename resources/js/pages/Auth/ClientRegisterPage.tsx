@@ -1,4 +1,5 @@
 import { useState, useEffect, FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, UserPlus, RefreshCw } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 
@@ -34,6 +35,7 @@ function translateError(msg: string): string {
 }
 
 export default function ClientRegisterPage() {
+  const { t } = useTranslation();
   const [cities, setCities] = useState<City[]>([]);
   const [form, setForm]     = useState({
     name: '', email: '', password: '', password_confirmation: '',
@@ -77,7 +79,7 @@ export default function ClientRegisterPage() {
     e.preventDefault();
     setError('');
     if (form.password !== form.password_confirmation) {
-      setError('Les mots de passe ne correspondent pas.');
+      setError(t('reg_pwd_no_match'));
       return;
     }
     if (form.password.length < 8) {
@@ -118,13 +120,13 @@ export default function ClientRegisterPage() {
             <JoblyLogo size="lg" />
           </a>
           <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm">
-            Créez votre compte pour trouver un artisan
+            {t('reg_client_sub')}
           </p>
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 p-8">
 
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">S'inscrire</h1>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">{t('reg_client_title')}</h1>
 
           {/* Google button */}
           <button type="button" onClick={handleGoogle} disabled={googleLoading}
@@ -132,7 +134,7 @@ export default function ClientRegisterPage() {
             {googleLoading
               ? <RefreshCw className="h-4 w-4 animate-spin" />
               : <GoogleIcon />}
-            {googleLoading ? 'Redirection...' : 'Continuer avec Google'}
+            {googleLoading ? t('reg_redirecting') : t('reg_google')}
           </button>
 
           <div className="relative mb-5">
@@ -140,7 +142,7 @@ export default function ClientRegisterPage() {
               <div className="w-full border-t border-slate-200 dark:border-slate-700" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-slate-900 px-3 text-slate-400">ou avec un email</span>
+              <span className="bg-white dark:bg-slate-900 px-3 text-slate-400">{t('login_or')}</span>
             </div>
           </div>
 
@@ -166,34 +168,34 @@ export default function ClientRegisterPage() {
 
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Nom complet</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('name')}</label>
               <input value={form.name} onChange={set('name')} required placeholder="Ahmed El Fassi"
                 className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Adresse email</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('email')}</label>
               <input value={form.email} onChange={set('email')} type="email" required placeholder="ahmed@example.com"
                 className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Téléphone <span className="text-slate-400 font-normal">(pour WhatsApp)</span>
+                {t('phone')} <span className="text-slate-400 font-normal">(pour WhatsApp)</span>
               </label>
               <input value={form.phone} onChange={set('phone')} type="tel" placeholder="+212 6XX XXX XXX"
                 className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors" />
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Ville <span className="text-slate-400 font-normal">(optionnel)</span>
+                {t('city')} <span className="text-slate-400 font-normal">(optionnel)</span>
               </label>
               <select value={form.city} onChange={set('city')}
                 className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors">
-                <option value="">-- Choisir une ville --</option>
+                <option value="">{t('reg_select_city')}</option>
                 {cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Mot de passe</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('password')}</label>
               <div className="relative">
                 <input value={form.password} onChange={set('password')} required
                   type={showPwd ? 'text' : 'password'} placeholder="Minimum 8 caractères"
@@ -205,7 +207,7 @@ export default function ClientRegisterPage() {
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Confirmer le mot de passe</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('confirm_password')}</label>
               <input value={form.password_confirmation} onChange={set('password_confirmation')} required
                 type="password" placeholder="••••••••"
                 className={`w-full rounded-xl border px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
@@ -216,29 +218,29 @@ export default function ClientRegisterPage() {
                     : 'border-slate-200 dark:border-slate-700 focus:ring-orange-300 focus:border-orange-400'
                 }`} />
               {form.password_confirmation && form.password !== form.password_confirmation && (
-                <p className="text-xs text-red-500 mt-1">Les mots de passe ne correspondent pas.</p>
+                <p className="text-xs text-red-500 mt-1">{t('reg_pwd_no_match')}</p>
               )}
               {form.password_confirmation && form.password === form.password_confirmation && (
-                <p className="text-xs text-green-600 mt-1">✓ Les mots de passe correspondent.</p>
+                <p className="text-xs text-green-600 mt-1">{t('reg_pwd_match')}</p>
               )}
             </div>
 
             <button type="submit" disabled={loading}
               className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
               {loading
-                ? <><RefreshCw className="h-4 w-4 animate-spin" /> Inscription…</>
-                : <><UserPlus className="h-4 w-4" /> S'inscrire</>}
+                ? <><RefreshCw className="h-4 w-4 animate-spin" /> {t('reg_creating')}</>
+                : <><UserPlus className="h-4 w-4" /> {t('reg_create_client')}</>}
             </button>
           </form>
 
           <div className="mt-6 text-center space-y-2">
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Déjà un compte ?{' '}
-              <a href="/client/login" className="text-orange-500 font-semibold hover:underline">Se connecter</a>
+              {t('already_have_account')}{' '}
+              <a href="/client/login" className="text-orange-500 font-semibold hover:underline">{t('login')}</a>
             </p>
             <p className="text-xs text-slate-400">
-              Vous êtes un professionnel ?{' '}
-              <a href="/pro/register" className="text-orange-500 hover:underline">Créer un compte pro →</a>
+              {t('login_are_pro')}{' '}
+              <a href="/pro/register" className="text-orange-500 hover:underline">{t('pro_register')} →</a>
             </p>
           </div>
         </div>

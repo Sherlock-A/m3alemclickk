@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Check, ArrowLeft, ArrowRight, User, Lock, Briefcase, RefreshCw } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 
@@ -19,12 +20,6 @@ type ProfessionSuggestion = { label: string; category: string };
 type FieldErrors = Record<string, string>;
 type Step = 1 | 2 | 3;
 
-const STEPS = [
-  { id: 1 as Step, label: 'Identité',   icon: User },
-  { id: 2 as Step, label: 'Activité',   icon: Briefcase },
-  { id: 3 as Step, label: 'Sécurité',   icon: Lock },
-];
-
 function translateError(msg: string): string {
   if (!msg) return "Une erreur est survenue.";
   const m = msg.toLowerCase();
@@ -40,6 +35,14 @@ function translateError(msg: string): string {
 }
 
 export default function ProRegisterPage() {
+  const { t } = useTranslation();
+
+  const STEPS = [
+    { id: 1 as Step, label: t('reg_step_identity'), icon: User },
+    { id: 2 as Step, label: t('reg_step_activity'), icon: Briefcase },
+    { id: 3 as Step, label: t('reg_step_security'), icon: Lock },
+  ];
+
   const [step, setStep]           = useState<Step>(1);
   const [form, setForm]           = useState({
     name: '', email: '', password: '', password_confirmation: '',
@@ -120,18 +123,18 @@ export default function ProRegisterPage() {
   const validateStep = (s: Step): boolean => {
     const errs: FieldErrors = {};
     if (s === 1) {
-      if (!form.name.trim())  errs.name  = 'Nom requis.';
-      if (!form.email.trim()) errs.email = 'Email requis.';
-      if (form.phone && !/^\+?[0-9\s]{8,15}$/.test(form.phone)) errs.phone = 'Numéro invalide (ex: +212 6XX XXX XXX).';
+      if (!form.name.trim())  errs.name  = t('reg_name_required');
+      if (!form.email.trim()) errs.email = t('reg_email_required');
+      if (form.phone && !/^\+?[0-9\s]{8,15}$/.test(form.phone)) errs.phone = t('reg_phone_invalid');
     }
     if (s === 2) {
-      if (!form.profession.trim())    errs.profession  = 'Métier requis.';
-      if (!form.main_city)            errs.main_city   = 'Ville requise.';
-      if (selectedCatIds.length === 0) errs.category_ids = 'Choisissez au moins 1 catégorie.';
+      if (!form.profession.trim())    errs.profession  = t('reg_profession_required');
+      if (!form.main_city)            errs.main_city   = t('reg_city_required');
+      if (selectedCatIds.length === 0) errs.category_ids = t('reg_cat_required');
     }
     if (s === 3) {
-      if (form.password.length < 8) errs.password = 'Minimum 8 caractères.';
-      if (form.password !== form.password_confirmation) errs.password_confirmation = 'Les mots de passe ne correspondent pas.';
+      if (form.password.length < 8) errs.password = t('reg_pwd_min_err');
+      if (form.password !== form.password_confirmation) errs.password_confirmation = t('reg_pwd_no_match');
     }
     setFieldErrors(errs);
     return Object.keys(errs).length === 0;
@@ -211,17 +214,13 @@ export default function ProRegisterPage() {
               <Check className="h-10 w-10 text-green-500" strokeWidth={2.5} />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Demande envoyée !</h2>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">{t('reg_success_title')}</h2>
               <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                Notre équipe examine votre profil sous <strong>24 à 48h</strong>. Vous recevrez un email de confirmation dès validation.
+                {t('reg_success_desc')}
               </p>
             </div>
             <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-4 text-left space-y-2">
-              {[
-                "Profil examiné par l'équipe",
-                'Email de confirmation envoyé',
-                "Accès à l'espace professionnel",
-              ].map((s, i) => (
+              {[t('reg_success_step1'), t('reg_success_step2'), t('reg_success_step3')].map((s, i) => (
                 <div key={i} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
                   <span className="h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-500 text-xs flex items-center justify-center font-bold">{i + 1}</span>
                   {s}
@@ -230,7 +229,7 @@ export default function ProRegisterPage() {
             </div>
             <a href="/pro/login"
               className="flex items-center justify-center gap-2 w-full rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20">
-              Retour à la connexion
+              {t('back_to_login')}
             </a>
           </div>
         </div>
@@ -250,18 +249,13 @@ export default function ProRegisterPage() {
         <div className="space-y-5">
           <div className="h-1 w-12 bg-orange-500 rounded-full" />
           <h2 className="text-3xl font-black text-white leading-tight">
-            Rejoignez des milliers de professionnels.
+            {t('reg_join_title')}
           </h2>
           <p className="text-slate-400 text-sm leading-relaxed">
-            Créez votre profil en 2 minutes et commencez à recevoir des contacts qualifiés directement sur WhatsApp ou par téléphone.
+            {t('reg_join_desc')}
           </p>
           <ul className="space-y-3">
-            {[
-              'Profil public visible par tous les clients',
-              'Contacts directs WhatsApp & appel',
-              'Statistiques de visibilité en temps réel',
-              'Validation rapide sous 24-48h',
-            ].map((item) => (
+            {[t('reg_benefit_1'), t('reg_benefit_2'), t('reg_benefit_3'), t('reg_benefit_4')].map((item) => (
               <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
                 <span className="h-5 w-5 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
                   <Check className="h-3 w-3" />
@@ -291,17 +285,17 @@ export default function ProRegisterPage() {
               <button type="button" onClick={handleGoogle} disabled={googleLoading}
                 className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-colors disabled:opacity-60">
                 {googleLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
-                {googleLoading ? 'Redirection...' : 'Créer mon compte avec Google'}
+                {googleLoading ? t('reg_redirecting') : t('reg_google')}
               </button>
               <p className="text-xs text-center text-slate-400 -mt-1">
-                Votre compte sera en attente de validation après inscription via Google.
+                {t('reg_google_note')}
               </p>
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-slate-200 dark:border-slate-700" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white dark:bg-slate-900 px-3 text-slate-400">ou remplir le formulaire</span>
+                  <span className="bg-white dark:bg-slate-900 px-3 text-slate-400">{t('reg_or_form')}</span>
                 </div>
               </div>
             </>
@@ -330,14 +324,14 @@ export default function ProRegisterPage() {
 
           <div>
             <h1 className="text-xl font-black text-slate-900 dark:text-white">
-              {step === 1 && 'Vos coordonnées'}
-              {step === 2 && 'Votre activité'}
-              {step === 3 && 'Mot de passe'}
+              {step === 1 && t('reg_your_info')}
+              {step === 2 && t('reg_your_activity')}
+              {step === 3 && t('reg_secure')}
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              {step === 1 && 'Comment vous identifier sur la plateforme'}
-              {step === 2 && "Votre métier et zone d'intervention"}
-              {step === 3 && 'Sécurisez votre compte'}
+              {step === 1 && t('reg_your_info_sub')}
+              {step === 2 && t('reg_your_activity_sub')}
+              {step === 3 && t('reg_secure_sub')}
             </p>
           </div>
 
@@ -348,8 +342,8 @@ export default function ProRegisterPage() {
           )}
           {emailTaken && (
             <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
-              Cet email est déjà enregistré.{' '}
-              <a href="/pro/login" className="font-bold underline hover:text-amber-900">Se connecter →</a>
+              {t('reg_email_taken')}{' '}
+              <a href="/pro/login" className="font-bold underline hover:text-amber-900">{t('login')} →</a>
             </div>
           )}
 
@@ -359,7 +353,7 @@ export default function ProRegisterPage() {
             {step === 1 && <>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Nom complet <span className="text-red-400">*</span>
+                  {t('name')} <span className="text-red-400">*</span>
                 </label>
                 <input type="text" required value={form.name} onChange={set('name')}
                   placeholder="Mohammed Alaoui" autoFocus className={inp('name')} />
@@ -367,7 +361,7 @@ export default function ProRegisterPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Adresse email <span className="text-red-400">*</span>
+                  {t('email')} <span className="text-red-400">*</span>
                 </label>
                 <input type="email" required value={form.email} onChange={set('email')}
                   placeholder="pro@exemple.ma" className={inp('email')} />
@@ -375,7 +369,7 @@ export default function ProRegisterPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Téléphone <span className="text-red-400">*</span>
+                  {t('phone')} <span className="text-red-400">*</span>
                 </label>
                 <input type="tel" required value={form.phone} onChange={set('phone')}
                   placeholder="+212 6XX XXX XXX" className={inp('phone')} />
@@ -388,12 +382,12 @@ export default function ProRegisterPage() {
               {/* Catégories — multi-select (max 3) */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  Catégories <span className="text-red-400">*</span>
+                  {t('categories')} <span className="text-red-400">*</span>
                   <span className="ml-2 text-xs font-normal text-slate-400">
-                    ({selectedCatIds.length}/3 choisies)
+                    ({selectedCatIds.length}/3 {t('reg_categories_chosen')})
                   </span>
                 </label>
-                <p className="text-xs text-slate-400 mb-2">Choisissez 1 à 3 domaines qui décrivent votre activité.</p>
+                <p className="text-xs text-slate-400 mb-2">{t('reg_cat_desc')}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {categories.map(cat => {
                     const selected = selectedCatIds.includes(cat.id);
@@ -427,11 +421,11 @@ export default function ProRegisterPage() {
               {/* Métier libre */}
               <div ref={sugRef} className="relative">
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Titre / Métier <span className="text-red-400">*</span>
+                  {t('reg_profession_title')} <span className="text-red-400">*</span>
                 </label>
                 <input type="text" required value={form.profession} onChange={set('profession')}
                   onFocus={() => suggestions.length > 0 && setShowSug(true)}
-                  placeholder="Ex : Plombier, Électricien, Menuisier..." className={inp('profession')} />
+                  placeholder={t('reg_profession_placeholder')} className={inp('profession')} />
                 <Err f="profession" />
                 {showSug && suggestions.length > 0 && (
                   <div className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden">
@@ -449,10 +443,10 @@ export default function ProRegisterPage() {
               {/* Ville */}
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Ville principale <span className="text-red-400">*</span>
+                  {t('reg_main_city')} <span className="text-red-400">*</span>
                 </label>
                 <select required value={form.main_city} onChange={set('main_city')} className={inp('main_city')}>
-                  <option value="">Sélectionner une ville</option>
+                  <option value="">{t('reg_select_city')}</option>
                   {cities.map((c) => <option key={c.id} value={c.name}>{c.name}{c.name_ar ? ` — ${c.name_ar}` : ''}</option>)}
                 </select>
                 <Err f="main_city" />
@@ -463,12 +457,12 @@ export default function ProRegisterPage() {
             {step === 3 && <>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Mot de passe <span className="text-red-400">*</span>
+                  {t('password')} <span className="text-red-400">*</span>
                 </label>
                 <div className="relative">
                   <input type={showPwd ? 'text' : 'password'} required minLength={8} autoFocus
                     value={form.password} onChange={set('password')}
-                    placeholder="Minimum 8 caractères" className={inp('password') + ' pr-11'} />
+                    placeholder={t('reg_pwd_placeholder')} className={inp('password') + ' pr-11'} />
                   <button type="button" onClick={() => setShowPwd((v) => !v)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
                     {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -489,7 +483,7 @@ export default function ProRegisterPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Confirmer le mot de passe <span className="text-red-400">*</span>
+                  {t('confirm_password')} <span className="text-red-400">*</span>
                 </label>
                 <input type="password" required value={form.password_confirmation}
                   onChange={set('password_confirmation')}
@@ -505,10 +499,10 @@ export default function ProRegisterPage() {
                   }`} />
                 <Err f="password_confirmation" />
                 {!fieldErrors.password_confirmation && form.password_confirmation && form.password === form.password_confirmation && (
-                  <p className="text-xs text-green-600 mt-1">✓ Les mots de passe correspondent.</p>
+                  <p className="text-xs text-green-600 mt-1">{t('reg_pwd_match')}</p>
                 )}
                 {!fieldErrors.password_confirmation && form.password_confirmation && form.password !== form.password_confirmation && (
-                  <p className="text-xs text-red-500 mt-1">Les mots de passe ne correspondent pas.</p>
+                  <p className="text-xs text-red-500 mt-1">{t('reg_pwd_no_match')}</p>
                 )}
               </div>
             </>}
@@ -518,30 +512,30 @@ export default function ProRegisterPage() {
               {step > 1 && (
                 <button type="button" onClick={prev}
                   className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                  <ArrowLeft className="h-4 w-4" /> Retour
+                  <ArrowLeft className="h-4 w-4" /> {t('reg_back')}
                 </button>
               )}
               {step < 3 && (
                 <button type="submit" className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 active:scale-[.98] transition-all shadow-lg shadow-orange-500/20">
-                  <ArrowRight className="h-4 w-4" /> Continuer
+                  <ArrowRight className="h-4 w-4" /> {t('reg_continue')}
                 </button>
               )}
               {step === 3 && (
                 <button type="submit" disabled={loading}
                   className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 active:scale-[.98] disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20">
-                  {loading ? <><RefreshCw className="h-4 w-4 animate-spin" /> Création…</> : <><Check className="h-4 w-4" /> Créer mon compte</>}
+                  {loading ? <><RefreshCw className="h-4 w-4 animate-spin" /> {t('reg_creating')}</> : <><Check className="h-4 w-4" /> {t('reg_create')}</>}
                 </button>
               )}
             </div>
           </form>
 
           <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-            Déjà un compte ?{' '}
-            <a href="/pro/login" className="text-orange-500 font-semibold hover:text-orange-600 transition-colors">Se connecter</a>
+            {t('reg_already_account')}{' '}
+            <a href="/pro/login" className="text-orange-500 font-semibold hover:text-orange-600 transition-colors">{t('login')}</a>
           </p>
 
           <p className="text-center text-xs text-slate-400">
-            <a href="/" className="hover:text-orange-500 transition-colors">← Retour à l'accueil</a>
+            <a href="/" className="hover:text-orange-500 transition-colors">{t('reg_back_home')}</a>
           </p>
         </div>
       </div>

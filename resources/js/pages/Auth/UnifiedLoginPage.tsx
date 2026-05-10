@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Layout } from '../../components/Layout';
 import { JoblyLogo } from '../../components/JoblyLogo';
 import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
@@ -19,6 +20,7 @@ function GoogleIcon() {
 type Props = { error?: string };
 
 export default function UnifiedLoginPage({ error: pageError }: Props) {
+  const { t } = useTranslation();
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd]   = useState(false);
@@ -30,7 +32,7 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('error') === 'google_failed') {
-      setErrorMsg('La connexion avec Google a échoué. Réessayez ou utilisez votre email.');
+      setErrorMsg(t('login_google_failed'));
       window.history.replaceState({}, '', '/login');
     }
   }, []);
@@ -61,7 +63,7 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
       } catch {}
       window.location.href = data.dashboard;
     } catch {
-      setErrorMsg('Erreur réseau. Vérifiez votre connexion.');
+      setErrorMsg(t('contact_network_error'));
     } finally {
       setLoading(false);
     }
@@ -103,10 +105,10 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
                 <JoblyLogo size="lg" theme="dark"  className="hidden dark:inline-flex" />
               </a>
               <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                Bienvenue sur Jobly
+                {t('welcome')}
               </h1>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                Connectez-vous pour accéder à votre espace
+                {t('login_subtitle')}
               </p>
               <p className="mt-1 text-[10px] text-slate-300 dark:text-slate-700 font-mono">v2.2 · 2026-05-03</p>
             </div>
@@ -132,13 +134,13 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
                   ? <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
                   : <GoogleIcon />
                 }
-                Continuer avec Google
+                {t('login_google')}
               </button>
 
               {/* Divider */}
               <div className="relative flex items-center gap-3">
                 <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
-                <span className="text-xs font-medium text-slate-400">ou</span>
+                <span className="text-xs font-medium text-slate-400">{t('login_or')}</span>
                 <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
               </div>
 
@@ -147,7 +149,7 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
                 {/* Email */}
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                    Adresse email
+                    {t('email')}
                   </label>
                   <div className="relative">
                     <Mail className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -169,10 +171,10 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                      Mot de passe
+                      {t('password')}
                     </label>
                     <a href="/pro/forgot-password" className="text-xs text-orange-500 hover:text-orange-600 hover:underline">
-                      Mot de passe oublié ?
+                      {t('forgot_password')}
                     </a>
                   </div>
                   <div className="relative">
@@ -206,22 +208,22 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 transition-colors disabled:opacity-60"
                 >
                   {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Se connecter
+                  {t('login_submit')}
                 </button>
               </form>
 
               {/* Footer links */}
               <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2 text-center text-sm text-slate-500 dark:text-slate-400">
                 <p>
-                  Pas encore de compte client ?{' '}
+                  {t('login_no_account')}{' '}
                   <a href="/client/register" className="font-semibold text-orange-500 hover:text-orange-600 hover:underline">
-                    S'inscrire
+                    {t('register')}
                   </a>
                 </p>
                 <p>
-                  Vous êtes un professionnel ?{' '}
+                  {t('login_are_pro')}{' '}
                   <a href="/pro/register" className="font-semibold text-orange-500 hover:text-orange-600 hover:underline">
-                    Créer un profil pro
+                    {t('pro_register')}
                   </a>
                 </p>
               </div>
@@ -230,7 +232,7 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
 
           {/* Google note */}
           <p className="mt-4 text-center text-xs text-slate-400">
-            La connexion Google crée automatiquement un compte client si vous n'en avez pas.
+            {t('login_google_note')}
           </p>
         </div>
       </div>
