@@ -17,6 +17,7 @@ import { JoblyLogo } from '../../components/JoblyLogo';
 import { SentimentDashboard } from '../../components/SentimentDashboard';
 import { QRCodeCard } from '../../components/QRCodeCard';
 import { computeBadges } from '../../components/ProfessionalBadges';
+import { useCatName } from '../../hooks/useCatName';
 
 // ── Photo upload component ─────────────────────────────────────────────────────
 function PhotoUpload({
@@ -459,6 +460,7 @@ function UnavailabilityCalendar({ token, pro }: { token: string | null; pro: any
 
 export default function ProfessionalDashboardPage() {
   const { t } = useTranslation();
+  const getCatName = useCatName();
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('pro_token'));
   const [data, setData]       = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -469,8 +471,11 @@ export default function ProfessionalDashboardPage() {
   const [saveErr, setSaveErr] = useState('');
   const [copied, setCopied]   = useState(false);
   const [cities, setCities]           = useState<string[]>([]);
-  const [allCategories, setAllCategories] = useState<{id:number;name:string;icon:string}[]>([]);
+  const [allCategories, setAllCategories] = useState<{id:number;name:string;icon:string;translations?:Record<string,string>}[]>([]);
   const [selectedCatIds, setSelectedCatIds] = useState<number[]>([]);
+  const [catSearch, setCatSearch]     = useState('');
+  const [catCreating, setCatCreating] = useState(false);
+  const [catCreateErr, setCatCreateErr] = useState('');
   const [notifCount, setNotifCount]   = useState(0);
 
   const DRAFT_KEY = `pro_draft_${(token ?? '').slice(-10)}`;
@@ -1159,16 +1164,68 @@ export default function ProfessionalDashboardPage() {
             {/* Basic info */}
             <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
               <h2 className="text-sm font-bold text-slate-800 dark:text-white">{t('dash_general_info')}</h2>
-              {/* Catégories multi-sélection */}
-              {allCategories.length > 0 && (
-                <div>
-                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
-                    {t('dash_work_categories')}
-                    <span className="ml-2 text-orange-500 font-semibold">({selectedCatIds.length}/3)</span>
-                  </label>
-                  <p className="text-xs text-slate-400 mb-2">{t('dash_work_categories_hint')}</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                    {allCategories.map(cat => {
+              {/* Catégories multi-sélection + création */}
+              <div>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                  {t('dash_work_categories')}
+                  <span className="ml-2 text-orange-500 font-semibold">({selectedCatIds.length}/3)</span>
+                </label>
+                <p className="text-xs text-slate-400 mb-2">{t('dash_work_categories_hint')}</p>
+
+                {/* Search + create */}
+                <div className="mb-3">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={catSearch}
+                      onChange={e => { setCatSearch(e.target.value); setCatCreateErr(''); }}
+                      placeholder={t('dash_cat_search_placeholder')}
+                      className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                      dir="auto"
+                    />
+                    {catSearch.trim().length >= 2 && !allCategories.some(c =>
+                      getCatName(c).toLowerCase().includes(catSearch.toLowerCase()) ||
+                      c.name.toLowerCase().includes(catSearch.toLowerCase())
+                    ) && (
+                      <button
+                        type="button"
+                        disabled={catCreating || selectedCatIds.length >= 3}
+                        onClick={async () => {
+                          setCatCreating(true);
+                          setCatCreateErr('');
+                          try {
+                            const res = await axios.post('/api/categories/suggest',
+                              { name: catSearch.trim() },
+                              { headers: { Authorization: `Bearer ${token}` } }
+                            );
+                            const newCat = res.data.category;
+                            setAllCategories(prev => [...prev, newCat]);
+                            setSelectedCatIds(prev => prev.length < 3 ? [...prev, newCat.id] : prev);
+                            setCatSearch('');
+                          } catch (e: any) {
+                            setCatCreateErr(e?.response?.data?.message ?? t('dash_cat_create_err'));
+                          } finally {
+                            setCatCreating(false);
+                          }
+                        }}
+                        className="flex items-center gap-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 disabled:opacity-50 px-3 py-2 text-xs font-semibold text-white transition-colors whitespace-nowrap"
+                      >
+                        {catCreating ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : '+'}
+                        {t('dash_cat_create')}
+                      </button>
+                    )}
+                  </div>
+                  {catCreateErr && <p className="mt-1 text-xs text-red-500">{catCreateErr}</p>}
+                </div>
+
+                {/* Category grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                  {allCategories
+                    .filter(cat => !catSearch.trim() ||
+                      getCatName(cat).toLowerCase().includes(catSearch.toLowerCase()) ||
+                      cat.name.toLowerCase().includes(catSearch.toLowerCase())
+                    )
+                    .map(cat => {
                       const selected = selectedCatIds.includes(cat.id);
                       const maxReached = selectedCatIds.length >= 3 && !selected;
                       return (
@@ -1187,14 +1244,13 @@ export default function ProfessionalDashboardPage() {
                                 : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-orange-300 hover:bg-orange-50/50'
                             }`}>
                           <span className="text-base leading-none">{cat.icon}</span>
-                          <span className="truncate">{cat.name}</span>
+                          <span className="truncate">{getCatName(cat)}</span>
                           {selected && <span className="ml-auto text-orange-500 shrink-0 font-bold">✓</span>}
                         </button>
                       );
                     })}
-                  </div>
                 </div>
-              )}
+              </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>

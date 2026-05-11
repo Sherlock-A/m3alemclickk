@@ -31,11 +31,16 @@ Route::get('/search-suggestions', [SearchController::class, 'suggestions'])->mid
 Route::get('/categories', function () {
     return response()->json(
         \App\Models\Category::where('active', true)
-            ->select('id', 'name', 'icon', 'slug')
+            ->select('id', 'name', 'icon', 'slug', 'translations')
             ->orderBy('name')
             ->get()
     );
 })->middleware('throttle:120,1');
+
+// ─── Suggest / créer une nouvelle catégorie (professionnel authentifié) ────────
+Route::middleware('jwt:professional')
+    ->post('/categories/suggest', [\App\Http\Controllers\Api\CategorySuggestController::class, 'suggest'])
+    ->middleware('throttle:10,1');
 
 // ─── Diagnostic (admin only) ──────────────────────────────────────────────────
 Route::middleware('jwt:admin')->get('/health', function () {
