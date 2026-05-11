@@ -396,6 +396,7 @@ function SectionProfessionals({ headers }: { headers: any }) {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm]   = useState({ name: '', profession: '', main_city: '' });
   const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState('');
 
   const load = useCallback(() => {
     const params = new URLSearchParams({ page: String(page) });
@@ -429,8 +430,6 @@ function SectionProfessionals({ headers }: { headers: any }) {
       main_city:  u.professional?.main_city  ?? '',
     });
   };
-
-  const [editError, setEditError] = useState('');
 
   const saveEdit = async () => {
     if (!editingId) return;
