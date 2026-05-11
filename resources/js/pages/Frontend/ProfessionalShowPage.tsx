@@ -220,10 +220,10 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                 {/* Fav button */}
                 <button
                   onClick={toggleFav}
+                  aria-label={isFav ? t('show_fav_remove') : t('show_fav_add')}
                   className={`absolute top-4 right-4 h-10 w-10 rounded-full flex items-center justify-center shadow-lg transition-all ${
                     isFav ? 'bg-red-500 text-white' : 'bg-white/90 text-slate-500 hover:text-red-500'
                   }`}
-                  title={isFav ? t('show_fav_remove') : t('show_fav_add')}
                 >
                   <Heart className={`h-5 w-5 ${isFav ? 'fill-white' : ''}`} />
                 </button>
@@ -290,16 +290,18 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                   <a
                     href={`/api/whatsapp/${professional.id}`}
                     onClick={() => track('whatsapp_click')}
+                    aria-label={`${t('show_whatsapp')} — ${professional.name}`}
                     className="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition-colors shadow-md"
                   >
-                    <MessageCircle className="h-4 w-4" /> {t('show_whatsapp')}
+                    <MessageCircle className="h-4 w-4" aria-hidden="true" /> {t('show_whatsapp')}
                   </a>
                   <a
                     href={`tel:${professional.phone}`}
                     onClick={() => track('call')}
+                    aria-label={`${t('show_call')} ${professional.name}`}
                     className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 hover:bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition-colors shadow-md"
                   >
-                    <Phone className="h-4 w-4" /> {t('show_call')}
+                    <Phone className="h-4 w-4" aria-hidden="true" /> {t('show_call')}
                   </a>
                 </div>
 

@@ -1,12 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getEcho, destroyEcho } from '../../echo';
 import axios from 'axios';
-import {
-  BarChart, Bar, CartesianGrid, ResponsiveContainer,
-  Tooltip, XAxis, YAxis,
-} from 'recharts';
 import { useForm } from 'react-hook-form';
+
+const StatsChart = lazy(() => import('../../components/StatsChart'));
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -929,18 +927,9 @@ export default function ProfessionalDashboardPage() {
                 </div>
               ) : (
                 <div className="h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data.weekly} barSize={28}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                      <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={28} />
-                      <Tooltip
-                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,.1)', fontSize: 12 }}
-                        cursor={{ fill: '#f97316', opacity: 0.08, radius: 4 }}
-                      />
-                      <Bar dataKey="total" fill="#f97316" radius={[6, 6, 0, 0]} name="Interactions" />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <Suspense fallback={<Skeleton className="h-48 w-full" />}>
+                    <StatsChart data={data.weekly} dataKey="total" barName="Interactions" barSize={28} height={192} cursorHighlight />
+                  </Suspense>
                 </div>
               )}
             </div>
@@ -1408,17 +1397,9 @@ export default function ProfessionalDashboardPage() {
                   </div>
                 ) : (
                   <div className="h-56">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={data.weekly}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                        <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={28} />
-                        <Tooltip
-                          contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,.08)', fontSize: 12 }}
-                        />
-                        <Bar dataKey="total" fill="#f97316" radius={[6, 6, 0, 0]} name="Total" />
-                      </BarChart>
-                    </ResponsiveContainer>
+                    <Suspense fallback={<Skeleton className="h-56 w-full" />}>
+                      <StatsChart data={data.weekly} dataKey="total" barName="Total" height={224} />
+                    </Suspense>
                   </div>
                 )
               )}
@@ -1460,15 +1441,9 @@ export default function ProfessionalDashboardPage() {
               <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
                 <h2 className="text-sm font-bold text-slate-800 dark:text-white mb-4">{t('dash_contacts_by_day')}</h2>
                 <div className="h-44">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data.analytics.contactsByDay}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                      <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} width={24} />
-                      <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,.08)', fontSize: 12 }} />
-                      <Bar dataKey="contacts" fill="#2563eb" radius={[5, 5, 0, 0]} name="Contacts" />
-                    </BarChart>
-                  </ResponsiveContainer>
+                  <Suspense fallback={<Skeleton className="h-44 w-full" />}>
+                    <StatsChart data={data.analytics.contactsByDay} dataKey="contacts" barName="Contacts" barColor="#2563eb" height={176} yAxisWidth={24} />
+                  </Suspense>
                 </div>
               </div>
             )}

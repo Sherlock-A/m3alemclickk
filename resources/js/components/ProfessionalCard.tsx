@@ -88,9 +88,10 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
 
           <button
             onClick={() => toggleFavorite(professional.id)}
+            aria-label={isFavorite(professional.id) ? t('show_fav_remove') : t('show_fav_add')}
             className="shrink-0 rounded-full p-1.5 text-slate-300 hover:text-rose-500 transition-colors"
           >
-            <Heart className={`h-4 w-4 ${isFavorite(professional.id) ? 'fill-current text-rose-500' : ''}`} />
+            <Heart className={`h-4 w-4 ${isFavorite(professional.id) ? 'fill-current text-rose-500' : ''}`} aria-hidden="true" />
           </button>
         </div>
 
@@ -122,15 +123,17 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
         <div className="mt-3 grid grid-cols-2 gap-2">
           <a
             href={`/api/whatsapp/${professional.id}`}
+            aria-label={`WhatsApp — ${professional.name}`}
             className="flex items-center justify-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors"
           >
-            <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+            <MessageCircle className="h-3.5 w-3.5" aria-hidden="true" /> WhatsApp
           </a>
           <a
             href={`/api/call/${professional.id}`}
+            aria-label={`${t('call')} ${professional.name}`}
             className="flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white dark:bg-slate-700 hover:bg-slate-800 transition-colors"
           >
-            <Phone className="h-3.5 w-3.5" /> {t('call')}
+            <Phone className="h-3.5 w-3.5" aria-hidden="true" /> {t('call')}
           </a>
         </div>
 
