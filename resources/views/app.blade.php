@@ -10,7 +10,7 @@
 
     {{-- PWA --}}
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#1B3A6B">
+    <meta name="theme-color" content="#f97316">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -22,6 +22,14 @@
     {{-- Open Graph defaults --}}
     <meta property="og:site_name" content="Jobly">
     <meta property="og:locale" content="fr_MA">
+    <meta property="og:image" content="{{ config('app.url') }}/icons/icon-512.png">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+
+    {{-- Twitter Card defaults --}}
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@joblyme">
+    <meta name="twitter:image" content="{{ config('app.url') }}/icons/icon-512.png">
 
     {{-- Google OAuth Client ID --}}
     <script nonce="{{ request()->attributes->get('csp_nonce', '') }}">window.__GOOGLE_CLIENT_ID__ = "{{ config('services.google.client_id', '') }}";</script>
@@ -42,6 +50,12 @@
     </script>
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
-    @inertia
+    {{-- Skip to main content (accessibility) --}}
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:rounded-lg focus:bg-orange-500 focus:px-4 focus:py-2 focus:text-white focus:font-bold focus:shadow-lg">
+        Aller au contenu principal
+    </a>
+    <div id="main-content">
+        @inertia
+    </div>
 </body>
 </html>

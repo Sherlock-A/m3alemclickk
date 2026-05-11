@@ -71,8 +71,15 @@ Route::get('/sitemap.xml', function () {
         $urls = collect();
 
         // Static pages
-        foreach (['', '/professionals', '/pro/register'] as $path) {
-            $urls->push("<url><loc>{$base}{$path}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>");
+        $staticPages = [
+            ''               => ['weekly',  '1.0'],
+            '/professionals' => ['daily',   '0.9'],
+            '/how-it-works'  => ['monthly', '0.7'],
+            '/contact'       => ['monthly', '0.6'],
+            '/pro/register'  => ['weekly',  '0.7'],
+        ];
+        foreach ($staticPages as $path => [$freq, $prio]) {
+            $urls->push("<url><loc>{$base}{$path}</loc><changefreq>{$freq}</changefreq><priority>{$prio}</priority></url>");
         }
 
         // SEO city pages + city×category matrix (top 10 cities × all categories)

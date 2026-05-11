@@ -2,12 +2,14 @@ User-agent: *
 Disallow: /api/
 Disallow: /dashboard/
 Disallow: /pro/login
-Disallow: /pro/register
 Disallow: /pro/reset-password
 Disallow: /client/login
-Disallow: /client/register
+Disallow: /client/reset-password
 Allow: /
 Allow: /professionals
 Allow: /professionals/
+Allow: /pro/register
+Allow: /how-it-works
+Allow: /contact
 
-Sitemap: https://m3alemclickk-production.up.railway.app/sitemap.xml
+Sitemap: https://jobly.ma/sitemap.xml

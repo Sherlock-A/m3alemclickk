@@ -673,7 +673,7 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                   className="flex items-center gap-3 rounded-2xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 hover:border-orange-200 dark:hover:border-orange-800 hover:shadow-md transition-all group"
                 >
                   {p.photo
-                    ? <img src={p.photo} alt={p.name} className="h-12 w-12 rounded-full object-cover shrink-0 border-2 border-orange-100" />
+                    ? <img src={p.photo} alt={p.name} className="h-12 w-12 rounded-full object-cover shrink-0 border-2 border-orange-100" loading="lazy" decoding="async" />
                     : <div className="h-12 w-12 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-black text-lg shrink-0">{p.name[0]}</div>
                   }
                   <div className="min-w-0 flex-1">

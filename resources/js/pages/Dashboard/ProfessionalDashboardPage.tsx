@@ -818,6 +818,7 @@ export default function ProfessionalDashboardPage() {
                   ) : (photoUrl || pro?.photo) ? (
                     <img src={photoUrl || pro?.photo} alt={formValues.name || pro?.name}
                       className="h-24 w-24 rounded-2xl object-cover border-2 border-orange-100 dark:border-orange-900/30"
+                      loading="lazy" decoding="async"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                   ) : (
                     <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-2xl font-black text-white">
@@ -1281,6 +1282,7 @@ export default function ProfessionalDashboardPage() {
                       src={url}
                       alt={`Réalisation ${i + 1}`}
                       className="h-full w-full object-cover"
+                      loading="lazy" decoding="async"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                     />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">

@@ -4,11 +4,12 @@
   "description": "Trouvez rapidement un artisan vérifié au Maroc — contact WhatsApp instantané",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1B3A6B",
-  "theme_color": "#1B3A6B",
+  "background_color": "#ffffff",
+  "theme_color": "#f97316",
   "orientation": "portrait-primary",
   "lang": "fr-MA",
   "scope": "/",
+  "id": "/",
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -57,5 +58,6 @@
     }
   ],
   "categories": ["business", "lifestyle", "utilities"],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "display_override": ["standalone", "minimal-ui"]
 }
