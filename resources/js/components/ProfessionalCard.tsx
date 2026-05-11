@@ -63,7 +63,7 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1">
               <a
-                href={`/professionals/${professional.slug}`}
+                href={professional.slug ? `/professionals/${professional.slug}` : `/professionals?search=${encodeURIComponent(professional.name)}`}
                 className="font-bold text-slate-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 transition-colors truncate"
               >
                 {professional.name}

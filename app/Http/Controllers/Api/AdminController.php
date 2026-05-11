@@ -93,15 +93,29 @@ class AdminController extends Controller
             'profession' => ['sometimes', 'string', 'max:100'],
             'main_city'  => ['sometimes', 'string', 'max:100'],
         ]);
+
         if (isset($data['name'])) {
             $user->update(['name' => $data['name']]);
         }
-        if ($user->professional && (isset($data['profession']) || isset($data['main_city']))) {
-            $user->professional->update(array_filter([
-                'profession' => $data['profession'] ?? null,
-                'main_city'  => $data['main_city']  ?? null,
-            ], fn($v) => $v !== null));
+
+        if (isset($data['profession']) || isset($data['main_city'])) {
+            if ($user->professional) {
+                $user->professional->update(array_filter([
+                    'profession' => $data['profession'] ?? null,
+                    'main_city'  => $data['main_city']  ?? null,
+                ], fn($v) => $v !== null));
+            } else {
+                // Crée le profil pro s'il n'existe pas encore
+                $user->professional()->create([
+                    'name'       => $user->name,
+                    'profession' => $data['profession'] ?? '',
+                    'main_city'  => $data['main_city']  ?? '',
+                    'status'     => 'available',
+                    'phone'      => '',
+                ]);
+            }
         }
+
         return response()->json(['success' => true, 'user' => $user->load('professional')]);
     }
 

@@ -430,15 +430,18 @@ function SectionProfessionals({ headers }: { headers: any }) {
     });
   };
 
+  const [editError, setEditError] = useState('');
+
   const saveEdit = async () => {
     if (!editingId) return;
     setEditSaving(true);
+    setEditError('');
     try {
       await axios.patch(`/api/admin/professionals/${editingId}/profile`, editForm, { headers });
       setEditingId(null);
       load();
-    } catch {
-      // silently ignore
+    } catch (e: any) {
+      setEditError(e.response?.data?.message || 'Erreur lors de la sauvegarde.');
     } finally {
       setEditSaving(false);
     }
@@ -557,11 +560,16 @@ function SectionProfessionals({ headers }: { headers: any }) {
                             className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs text-white hover:bg-blue-700 disabled:opacity-50">
                             {editSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Enregistrer
                           </button>
-                          <button onClick={() => setEditingId(null)}
+                          <button onClick={() => { setEditingId(null); setEditError(''); }}
                             className="flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100">
                             Annuler
                           </button>
                         </div>
+                        {editError && (
+                          <div className="mt-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 flex items-center gap-1">
+                            <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {editError}
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )}
@@ -754,17 +762,76 @@ function SectionCities({ headers }: { headers: any }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // SECTION — CATÉGORIES
 // ═══════════════════════════════════════════════════════════════════════════════
-type CatItem = { id: number; name: string; icon: string; description: string; sort_order: number; active: boolean; professionals_count: number };
-type CatForm = { name: string; icon: string; description: string; sort_order: number; active: boolean };
-const emptyCat: CatForm = { name: '', icon: '', description: '', sort_order: 0, active: true };
+type CatTrans = { fr: string; ar: string; dz: string; en: string };
+type CatItem  = { id: number; name: string; icon: string; description: string; sort_order: number; active: boolean; professionals_count: number; translations?: Record<string, string> };
+type CatForm  = { name: string; icon: string; description: string; sort_order: number; active: boolean; translations: CatTrans };
+const emptyCat: CatForm = { name: '', icon: '🔨', description: '', sort_order: 0, active: true, translations: { fr: '', ar: '', dz: '', en: '' } };
+
+// Dictionnaire complet métiers marocains FR → AR/DZ/EN + icône
+const CAT_DICT: Record<string, { ar: string; dz: string; en: string; icon: string }> = {
+  'plomberie':          { ar: 'السباكة',            dz: 'السباكة',                  en: 'Plumbing',            icon: '🔧' },
+  'électricité':        { ar: 'الكهرباء',           dz: 'الكهرباء',                 en: 'Electricity',         icon: '⚡' },
+  'electricite':        { ar: 'الكهرباء',           dz: 'الكهرباء',                 en: 'Electricity',         icon: '⚡' },
+  'peinture':           { ar: 'الدهان',             dz: 'الدهان',                   en: 'Painting',            icon: '🎨' },
+  'climatisation':      { ar: 'تكييف الهواء',       dz: 'كليماتيزاسيون',            en: 'Air Conditioning',    icon: '❄️' },
+  'menuiserie':         { ar: 'النجارة',            dz: 'النجارة',                  en: 'Carpentry',           icon: '🪚' },
+  'maçonnerie':         { ar: 'البناء',             dz: 'البنا',                    en: 'Masonry',             icon: '🧱' },
+  'maconnerie':         { ar: 'البناء',             dz: 'البنا',                    en: 'Masonry',             icon: '🧱' },
+  'carrelage':          { ar: 'تركيب البلاط',       dz: 'الكاريلاج',                en: 'Tiling',              icon: '🪟' },
+  'nettoyage':          { ar: 'التنظيف',            dz: 'النضافة',                  en: 'Cleaning',            icon: '🧹' },
+  'jardinage':          { ar: 'البستنة',            dz: 'البستنة',                  en: 'Gardening',           icon: '🌿' },
+  'informatique':       { ar: 'الإعلام الآلي',      dz: 'الإعلاميات',              en: 'IT / Computing',      icon: '💻' },
+  'déménagement':       { ar: 'نقل الأثاث',         dz: 'ناكليو',                   en: 'Moving',              icon: '📦' },
+  'demenagement':       { ar: 'نقل الأثاث',         dz: 'ناكليو',                   en: 'Moving',              icon: '📦' },
+  'serrurerie':         { ar: 'الحدادة والأقفال',   dz: 'سيراريو',                  en: 'Locksmithing',        icon: '🔑' },
+  'ferronnerie':        { ar: 'الحدادة الفنية',     dz: 'الحدادة',                  en: 'Ironwork',            icon: '⚙️' },
+  'soudure':            { ar: 'اللحام',             dz: 'اللحام',                   en: 'Welding',             icon: '🔩' },
+  'toiture':            { ar: 'أعمال السطح',        dz: 'السطح',                    en: 'Roofing',             icon: '🏚️' },
+  'aluminium':          { ar: 'الألومنيوم',         dz: 'الألومنيوم',               en: 'Aluminium',           icon: '🔲' },
+  'vitrerie':           { ar: 'أعمال الزجاج',       dz: 'الزجاج',                   en: 'Glazing',             icon: '🪞' },
+  'photographie':       { ar: 'التصوير',            dz: 'التصوير',                  en: 'Photography',         icon: '📷' },
+  'décoration':         { ar: 'الديكور',            dz: 'الديكور',                  en: 'Decoration',          icon: '🛋️' },
+  'decoration':         { ar: 'الديكور',            dz: 'الديكور',                  en: 'Decoration',          icon: '🛋️' },
+  'coiffure':           { ar: 'الحلاقة',            dz: 'الحلاقة',                  en: 'Hairdressing',        icon: '✂️' },
+  'cuisine':            { ar: 'تجهيز المطابخ',      dz: 'الكوزينة',                 en: 'Kitchen Fitting',     icon: '🍳' },
+  'marbre':             { ar: 'الرخام',             dz: 'الرخام',                   en: 'Marble',              icon: '🪨' },
+  'chauffage':          { ar: 'التدفئة',            dz: 'الشوفاج',                  en: 'Heating',             icon: '🔥' },
+  'vidéosurveillance':  { ar: 'كاميرات المراقبة',  dz: 'كاميرات ديال المراقبة',   en: 'CCTV / Security',     icon: '📹' },
+  'videosurveillance':  { ar: 'كاميرات المراقبة',  dz: 'كاميرات ديال المراقبة',   en: 'CCTV / Security',     icon: '📹' },
+  'charpenterie':       { ar: 'النجارة الخشبية',   dz: 'الشارباتيري',              en: 'Roofing Carpentry',   icon: '🪵' },
+  'plâtrerie':          { ar: 'أعمال الجبص',        dz: 'الجبص',                    en: 'Plastering',          icon: '🏗️' },
+  'platrerie':          { ar: 'أعمال الجبص',        dz: 'الجبص',                    en: 'Plastering',          icon: '🏗️' },
+  'isolation':          { ar: 'العزل الحراري',      dz: 'الإيزولاسيون',            en: 'Insulation',          icon: '🌡️' },
+  'façade':             { ar: 'واجهات البناية',     dz: 'الفاساد',                  en: 'Facade',              icon: '🏢' },
+  'facade':             { ar: 'واجهات البناية',     dz: 'الفاساد',                  en: 'Facade',              icon: '🏢' },
+  'électroménager':     { ar: 'إصلاح الأجهزة',     dz: 'الإليكترومنزلي',          en: 'Appliance Repair',    icon: '🔌' },
+  'electromenager':     { ar: 'إصلاح الأجهزة',     dz: 'الإليكترومنزلي',          en: 'Appliance Repair',    icon: '🔌' },
+  'ascenseur':          { ar: 'المصعد',             dz: 'الأصانسور',                en: 'Elevator',            icon: '🛗' },
+  'piscine':            { ar: 'حمام السباحة',       dz: 'البيسين',                  en: 'Swimming Pool',       icon: '🏊' },
+  'enduit':             { ar: 'البياض',             dz: 'الكريبي',                  en: 'Rendering',           icon: '🏘️' },
+  'internet':           { ar: 'الإنترنت والشبكات', dz: 'الإنترنت',                 en: 'Internet & Networks', icon: '📡' },
+  'débogage':           { ar: 'فتح الصرف',         dz: 'دبلوكاج',                  en: 'Drain Unblocking',    icon: '🚰' },
+  'debouchage':         { ar: 'فتح الصرف',         dz: 'دبلوكاج',                  en: 'Drain Unblocking',    icon: '🚰' },
+  'revêtement sol':     { ar: 'أرضيات',            dz: 'الأرضيات',                 en: 'Flooring',            icon: '🟫' },
+  'revetement sol':     { ar: 'أرضيات',            dz: 'الأرضيات',                 en: 'Flooring',            icon: '🟫' },
+};
+
+const EMOJI_LIST = [
+  '🔧','🔨','⚡','🎨','❄️','🪚','🧱','🪟','🧹','🌿',
+  '💻','📷','📦','🔑','⚙️','🔩','🏚️','🛁','🍳','✂️',
+  '📡','📹','🔥','🪣','🛠️','🔌','🚿','🪞','🧰','💡',
+  '🏗️','🪵','🪨','🛋️','🚪','🌡️','🏢','🏊','🛗','🏘️',
+  '🚰','🟫','🔲','🔴','🪴','🎭','🧴','🏺','🧲','🔐',
+];
 
 function SectionCategories({ headers }: { headers: any }) {
-  const [cats, setCats]         = useState<CatItem[]>([]);
-  const [loading, setLoading]   = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [editing, setEditing]   = useState<CatItem | null>(null);
-  const [form, setForm]         = useState<CatForm>(emptyCat);
-  const [error, setError]       = useState('');
+  const [cats, setCats]               = useState<CatItem[]>([]);
+  const [loading, setLoading]         = useState(false);
+  const [showForm, setShowForm]       = useState(false);
+  const [editing, setEditing]         = useState<CatItem | null>(null);
+  const [form, setForm]               = useState<CatForm>(emptyCat);
+  const [error, setError]             = useState('');
+  const [showEmoji, setShowEmoji]     = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -775,18 +842,69 @@ function SectionCategories({ headers }: { headers: any }) {
 
   useEffect(() => { load(); }, []);
 
-  const openAdd  = () => { setEditing(null); setForm({ ...emptyCat, sort_order: (cats.length + 1) * 10 }); setError(''); setShowForm(true); };
-  const openEdit = (c: CatItem) => { setEditing(c); setForm({ name: c.name, icon: c.icon ?? '', description: c.description ?? '', sort_order: c.sort_order, active: c.active }); setError(''); setShowForm(true); };
+  // Auto-fill translations from dictionary when name is typed
+  const handleNameChange = (name: string) => {
+    const key = name.toLowerCase().trim().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const hit  = CAT_DICT[name.toLowerCase().trim()] ?? CAT_DICT[key];
+    setForm(f => ({
+      ...f,
+      name,
+      ...(hit ? { icon: f.icon && f.icon !== '🔨' ? f.icon : hit.icon } : {}),
+      translations: {
+        fr: name,
+        ar: hit ? hit.ar : f.translations.ar,
+        dz: hit ? hit.dz : f.translations.dz,
+        en: hit ? hit.en : f.translations.en,
+      },
+    }));
+  };
+
+  const openAdd = () => {
+    setEditing(null);
+    setForm({ ...emptyCat, sort_order: (cats.length + 1) * 10 });
+    setError('');
+    setShowForm(true);
+    setShowEmoji(false);
+  };
+
+  const openEdit = (c: CatItem) => {
+    setEditing(c);
+    setForm({
+      name:        c.name,
+      icon:        c.icon || '🔨',
+      description: c.description ?? '',
+      sort_order:  c.sort_order,
+      active:      c.active,
+      translations: {
+        fr: c.translations?.fr ?? c.name,
+        ar: c.translations?.ar ?? '',
+        dz: c.translations?.dz ?? '',
+        en: c.translations?.en ?? '',
+      },
+    });
+    setError('');
+    setShowForm(true);
+    setShowEmoji(false);
+  };
 
   const save = async () => {
     setError('');
     try {
-      if (editing) await axios.put(`/api/admin/categories/${editing.id}`, form, { headers });
-      else         await axios.post('/api/admin/categories', form, { headers });
+      const payload = {
+        ...form,
+        translations: {
+          fr: form.translations.fr || form.name,
+          ar: form.translations.ar,
+          dz: form.translations.dz,
+          en: form.translations.en,
+        },
+      };
+      if (editing) await axios.put(`/api/admin/categories/${editing.id}`, payload, { headers });
+      else         await axios.post('/api/admin/categories', payload, { headers });
       setShowForm(false);
       load();
     } catch (e: any) {
-      setError(Object.values(e.response?.data?.errors ?? {}).flat().join(' ') || e.response?.data?.message || 'Erreur.');
+      setError(Object.values(e.response?.data?.errors ?? {}).flat().join(' ') || e.response?.data?.message || 'Erreur lors de la sauvegarde.');
     }
   };
 
@@ -813,44 +931,104 @@ function SectionCategories({ headers }: { headers: any }) {
       </div>
 
       {showForm && (
-        <div className="bg-orange-50 dark:bg-orange-900/10 rounded-2xl border border-orange-200 dark:border-orange-800 p-5">
-          <h3 className="font-bold mb-4">{editing ? 'Modifier' : 'Nouvelle catégorie'}</h3>
-          {error && <div className="mb-3 text-sm text-red-600 bg-red-50 rounded-lg p-2">{error}</div>}
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Nom *</label>
-              <input value={form.name} placeholder="Ex: Plomberie" onChange={e => setForm({ ...form, name: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none" />
+        <div className="bg-orange-50 dark:bg-orange-900/10 rounded-2xl border border-orange-200 dark:border-orange-800 p-5 space-y-4">
+          <h3 className="font-bold text-base">{editing ? 'Modifier la catégorie' : 'Nouvelle catégorie'}</h3>
+          {error && <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg p-2">{error}</div>}
+
+          {/* Icon + Nom */}
+          <div className="flex gap-3 items-start">
+            <div className="relative shrink-0">
+              <button type="button" onClick={() => setShowEmoji(p => !p)}
+                className="h-12 w-12 rounded-xl border-2 border-orange-200 bg-white text-2xl flex items-center justify-center hover:border-orange-400 transition-colors shadow-sm"
+                title="Choisir une icône">
+                {form.icon || '🔨'}
+              </button>
+              {showEmoji && (
+                <div className="absolute top-14 left-0 z-30 bg-white rounded-2xl border border-slate-200 shadow-2xl p-3 w-72">
+                  <div className="grid grid-cols-10 gap-0.5 mb-2">
+                    {EMOJI_LIST.map(e => (
+                      <button key={e} type="button"
+                        onClick={() => { setForm(f => ({ ...f, icon: e })); setShowEmoji(false); }}
+                        className={`text-xl rounded-lg p-1 hover:bg-orange-50 transition-colors ${form.icon === e ? 'bg-orange-100 ring-1 ring-orange-400' : ''}`}>
+                        {e}
+                      </button>
+                    ))}
+                  </div>
+                  <input value={form.icon} onChange={e => setForm(f => ({ ...f, icon: e.target.value }))}
+                    placeholder="Coller un emoji…"
+                    className="w-full text-sm border border-slate-200 rounded-lg px-2 py-1.5 focus:outline-none focus:border-orange-400" />
+                </div>
+              )}
             </div>
-            <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Icône (emoji)</label>
-              <input value={form.icon} placeholder="🔧" maxLength={4} onChange={e => setForm({ ...form, icon: e.target.value })}
+
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-slate-500 mb-1">Nom de la catégorie *</label>
+              <input value={form.name} placeholder="Ex: Plomberie"
+                onChange={e => handleNameChange(e.target.value)}
                 className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none" />
+              <p className="text-xs text-slate-400 mt-1">Les traductions se remplissent automatiquement si le métier est reconnu.</p>
             </div>
+          </div>
+
+          {/* Traductions */}
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Globe className="h-3.5 w-3.5 text-orange-500" />
+              <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Traductions multilingues</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {([
+                { lang: 'fr', label: '🇫🇷 Français', dir: 'ltr' as const, ph: 'Plomberie' },
+                { lang: 'ar', label: '🇲🇦 عربية فصحى', dir: 'rtl' as const, ph: 'السباكة' },
+                { lang: 'dz', label: '🇲🇦 دارجة', dir: 'rtl' as const, ph: 'السباكة' },
+                { lang: 'en', label: '🇬🇧 English', dir: 'ltr' as const, ph: 'Plumbing' },
+              ] as const).map(({ lang, label, dir, ph }) => (
+                <div key={lang}>
+                  <label className="block text-xs text-slate-500 mb-1">{label}</label>
+                  <input dir={dir} value={(form.translations as any)[lang]} placeholder={ph}
+                    onChange={e => setForm(f => ({ ...f, translations: { ...f.translations, [lang]: e.target.value } }))}
+                    className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Description + Ordre */}
+          <div className="grid gap-3 sm:grid-cols-3">
             <div className="sm:col-span-2">
               <label className="block text-xs font-medium text-slate-500 mb-1">Description</label>
-              <input value={form.description} placeholder="Services de plomberie..." onChange={e => setForm({ ...form, description: e.target.value })}
+              <input value={form.description} placeholder="Ex: Services de plomberie et sanitaires..."
+                onChange={e => setForm({ ...form, description: e.target.value })}
                 className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Ordre d'affichage</label>
-              <input type="number" value={form.sort_order} min={0} onChange={e => setForm({ ...form, sort_order: Number(e.target.value) })}
+              <input type="number" value={form.sort_order} min={0}
+                onChange={e => setForm({ ...form, sort_order: Number(e.target.value) })}
                 className="w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-orange-400 focus:outline-none" />
             </div>
           </div>
-          <label className="flex items-center gap-2 mt-3 text-sm">
-            <input type="checkbox" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} className="rounded" />
-            Active (visible sur le site)
-          </label>
-          <div className="flex gap-2 mt-4">
-            <button onClick={save} className="flex items-center gap-2 bg-orange-500 text-white rounded-xl px-5 py-2 text-sm font-semibold hover:bg-orange-600">
-              <Check className="h-4 w-4" /> {editing ? 'Enregistrer' : 'Ajouter'}
-            </button>
-            <button onClick={() => setShowForm(false)} className="border border-slate-300 rounded-xl px-5 py-2 text-sm hover:bg-slate-50">Annuler</button>
+
+          <div className="flex items-center justify-between pt-1">
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input type="checkbox" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} className="rounded" />
+              Active (visible sur le site)
+            </label>
+            <div className="flex gap-2">
+              <button onClick={save}
+                className="flex items-center gap-2 bg-orange-500 text-white rounded-xl px-5 py-2 text-sm font-semibold hover:bg-orange-600">
+                <Check className="h-4 w-4" /> {editing ? 'Enregistrer' : 'Ajouter'}
+              </button>
+              <button onClick={() => setShowForm(false)}
+                className="border border-slate-300 rounded-xl px-5 py-2 text-sm hover:bg-slate-50">
+                Annuler
+              </button>
+            </div>
           </div>
         </div>
       )}
 
+      {/* Table */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         {loading ? (
           <div className="py-12 text-center text-slate-400">Chargement...</div>
@@ -858,7 +1036,7 @@ function SectionCategories({ headers }: { headers: any }) {
           <table className="w-full text-sm">
             <thead className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
               <tr>
-                {['Icône', 'Nom', 'Description', 'Pros', 'Ordre', 'Statut', 'Actions'].map(h => (
+                {['Icône', 'FR / EN', 'AR / دارجة', 'Pros', 'Statut', 'Actions'].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{h}</th>
                 ))}
               </tr>
@@ -866,29 +1044,37 @@ function SectionCategories({ headers }: { headers: any }) {
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {cats.map(c => (
                 <tr key={c.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                  <td className="px-4 py-3 text-2xl">{c.icon || '—'}</td>
-                  <td className="px-4 py-3 font-medium">{c.name}</td>
-                  <td className="px-4 py-3 text-slate-500 text-xs max-w-[200px] truncate">{c.description || '—'}</td>
-                  <td className="px-4 py-3 text-slate-600 font-semibold">{c.professionals_count}</td>
-                  <td className="px-4 py-3 text-slate-400">{c.sort_order}</td>
+                  <td className="px-4 py-3 text-2xl">{c.icon || '🔨'}</td>
                   <td className="px-4 py-3">
-                    <button onClick={() => toggle(c)} className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${c.active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
+                    <div className="font-medium">{c.translations?.fr || c.name}</div>
+                    <div className="text-xs text-slate-400">{c.translations?.en || ''}</div>
+                  </td>
+                  <td className="px-4 py-3" dir="rtl">
+                    <div className="text-sm font-medium text-slate-700">{c.translations?.ar || c.name}</div>
+                    <div className="text-xs text-slate-400">{c.translations?.dz || ''}</div>
+                  </td>
+                  <td className="px-4 py-3 text-slate-600 font-semibold">{c.professionals_count}</td>
+                  <td className="px-4 py-3">
+                    <button onClick={() => toggle(c)}
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors ${c.active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}>
                       {c.active ? 'Active' : 'Inactive'}
                     </button>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
-                      <button onClick={() => openEdit(c)} className="flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs hover:bg-slate-50">
+                      <button onClick={() => openEdit(c)}
+                        className="flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 text-xs hover:bg-slate-50">
                         <Pencil className="h-3 w-3" /> Modifier
                       </button>
-                      <button onClick={() => del(c)} className={`flex items-center gap-1 rounded-md border px-2 py-1 text-xs ${c.professionals_count > 0 ? 'border-slate-200 text-slate-300 cursor-not-allowed' : 'border-red-200 text-red-500 hover:bg-red-50'}`}>
+                      <button onClick={() => del(c)}
+                        className={`flex items-center gap-1 rounded-md border px-2 py-1 text-xs ${c.professionals_count > 0 ? 'border-slate-200 text-slate-300 cursor-not-allowed' : 'border-red-200 text-red-500 hover:bg-red-50'}`}>
                         <Trash2 className="h-3 w-3" />
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
-              {cats.length === 0 && <tr><td colSpan={7} className="py-8 text-center text-slate-400">Aucune catégorie.</td></tr>}
+              {cats.length === 0 && <tr><td colSpan={6} className="py-8 text-center text-slate-400">Aucune catégorie.</td></tr>}
             </tbody>
           </table>
         )}
