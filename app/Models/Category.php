@@ -11,13 +11,20 @@ class Category extends Model
 {
     use HasSlug;
 
-    protected $fillable = ['name', 'slug', 'icon', 'description', 'sort_order', 'active'];
+    protected $fillable = ['name', 'slug', 'icon', 'description', 'sort_order', 'active', 'translations'];
 
     protected function casts(): array
     {
         return [
-            'active' => 'boolean',
+            'active'       => 'boolean',
+            'translations' => 'array',
         ];
+    }
+
+    public function getTranslation(string $lang = 'fr'): string
+    {
+        $translations = $this->translations ?? [];
+        return $translations[$lang] ?? $this->name;
     }
 
     public function getSlugOptions(): SlugOptions

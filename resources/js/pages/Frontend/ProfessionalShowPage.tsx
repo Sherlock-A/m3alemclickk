@@ -7,7 +7,8 @@ import {
   Star, Send, CheckCircle, AlertCircle, Mail,
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
-import { Professional } from '../../types';
+import { Category, Professional } from '../../types';
+import { useCatName } from '../../hooks/useCatName';
 import { RatingStars } from '../../components/RatingStars';
 import { PortfolioLightbox } from '../../components/PortfolioLightbox';
 import { ProfessionalBadges } from '../../components/ProfessionalBadges';
@@ -46,6 +47,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
 
 export default function ProfessionalShowPage({ professional, similar = [] }: Props) {
   const { t } = useTranslation();
+  const getCatName = useCatName();
   const [isFav, setIsFav] = useState(() => getFavIds().includes(professional.id));
 
   // Review form state
@@ -257,10 +259,10 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                     {/* Catégories multiples */}
                     {(professional.categories ?? []).length > 0 && (
                       <div className="flex flex-wrap gap-1.5">
-                        {(professional.categories as {id:number;name:string;icon:string}[]).map(cat => (
+                        {(professional.categories as Category[]).map(cat => (
                           <span key={cat.id}
                             className="inline-flex items-center gap-1 rounded-full bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 px-2.5 py-1 text-xs font-semibold text-orange-700 dark:text-orange-300">
-                            {cat.icon} {cat.name}
+                            {cat.icon} {getCatName(cat)}
                           </span>
                         ))}
                       </div>

@@ -10,6 +10,7 @@ import { CategoryIcon } from '../../components/CategoryIcon';
 import { Category, Paginated, Professional } from '../../types';
 import { Filter, X, SlidersHorizontal, Star, MapPin, Loader2, GitCompare } from 'lucide-react';
 import { ComparePanel } from '../../components/ComparePanel';
+import { useCatName } from '../../hooks/useCatName';
 
 type Props = {
   professionals: Paginated<Professional>;
@@ -49,6 +50,7 @@ function FilterButton({
 
 export default function ProfessionalsPage({ professionals, filters, categories, seo }: Props) {
   const { t } = useTranslation();
+  const getCatName = useCatName();
   const [items, setItems]       = useState<Professional[]>(professionals.data);
   const [page, setPage]         = useState(professionals.current_page);
   const [lastPage, setLastPage] = useState(professionals.last_page);
@@ -261,7 +263,7 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
                 }`}
               >
                 <CategoryIcon name={cat.name} size={20} />
-                {cat.name}
+                {getCatName(cat)}
               </button>
             ))}
           </div>

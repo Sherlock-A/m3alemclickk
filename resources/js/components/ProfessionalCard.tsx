@@ -1,8 +1,9 @@
 import { Heart, Phone, MessageCircle, BadgeCheck, MapPin, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Professional } from '../types';
+import { Category, Professional } from '../types';
 import { useFavorites } from '../contexts/FavoritesContext';
+import { useCatName } from '../hooks/useCatName';
 
 const AVATAR_GRADIENTS = [
   'from-orange-400 to-orange-600',
@@ -46,6 +47,7 @@ type CardProps = {
 export function ProfessionalCard({ professional, onCompare, inCompare, compareDisabled }: CardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { t } = useTranslation();
+  const getCatName = useCatName();
 
   return (
     <motion.article
@@ -76,10 +78,10 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
             </p>
             {(professional.categories ?? []).length > 0 && (
               <div className="flex flex-wrap gap-1 mt-1.5">
-                {(professional.categories as {id:number;name:string;icon:string}[]).slice(0, 3).map(cat => (
+                {(professional.categories as Category[]).slice(0, 3).map(cat => (
                   <span key={cat.id}
                     className="inline-flex items-center gap-0.5 rounded-full bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 px-2 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-300">
-                    {cat.icon} {cat.name}
+                    {cat.icon} {getCatName(cat)}
                   </span>
                 ))}
               </div>

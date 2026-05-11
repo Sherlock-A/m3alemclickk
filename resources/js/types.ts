@@ -4,6 +4,7 @@ export type Category = {
   slug: string;
   icon?: string | null;
   description?: string | null;
+  translations?: Record<string, string> | null;
 };
 
 export type Review = {

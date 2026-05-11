@@ -8,6 +8,7 @@ import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
 import { CategoryIcon } from '../../components/CategoryIcon';
 import { Category, Professional } from '../../types';
+import { useCatName } from '../../hooks/useCatName';
 
 type Props = {
   categories: Category[];
@@ -224,6 +225,7 @@ function FeaturedCard({ pro, proNew }: { pro: Professional; proNew: string }) {
 // ── Main page ─────────────────────────────────────────────────────────────
 export default function HomePage({ categories, featured, stats, geo }: Props) {
   const { t } = useTranslation();
+  const getCatName = useCatName();
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
 
@@ -288,11 +290,7 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         </div>
         {categories.length > 0 ? (
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            {categories.map((category) => {
-              const catKey = getCatKey(category.name);
-              const translated = t(catKey);
-              const displayName = translated !== catKey ? translated : category.name;
-              return (
+            {categories.map((category) => (
                 <button
                   key={category.id}
                   type="button"
@@ -303,14 +301,13 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
                     <CategoryIcon name={category.name} size={48} />
                   </div>
                   <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors">
-                    {displayName}
+                    {getCatName(category)}
                   </h3>
                   {category.description && (
                     <p className="mt-1 text-xs text-slate-500 line-clamp-2">{category.description}</p>
                   )}
                 </button>
-              );
-            })}
+            ))}
           </div>
         ) : (
           <p className="text-slate-400 text-sm">{t('cat_none')}</p>
