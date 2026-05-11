@@ -143,6 +143,8 @@ const schema = z.object({
   travel_cities:  z.array(z.string()).default([]),
   languages:      z.array(z.string()).default([]),
   portfolio:      z.array(z.string()).default([]),
+  facebook_url:   z.string().optional(),
+  instagram_url:  z.string().optional(),
 });
 type FormData = z.infer<typeof schema>;
 
@@ -364,6 +366,7 @@ const ACHIEVEMENTS = [
 
 // ── Availability Calendar (unavailability periods) ────────────────────────────
 function UnavailabilityCalendar({ token, pro }: { token: string | null; pro: any }) {
+  const { t } = useTranslation();
   type Period = { id: number; from_date: string; to_date: string; reason: string | null };
   const [items, setItems]       = useState<Period[]>((pro?.unavailabilities ?? []) as Period[]);
   const [from, setFrom]         = useState('');
@@ -381,7 +384,7 @@ function UnavailabilityCalendar({ token, pro }: { token: string | null; pro: any
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!from || !to) { setError('Les deux dates sont requises.'); return; }
+    if (!from || !to) { setError(t('unavail_dates_required')); return; }
     setSaving(true); setError('');
     try {
       await axios.post('/api/pro/unavailabilities', { from_date: from, to_date: to, reason: reason || null }, { headers });
@@ -402,9 +405,9 @@ function UnavailabilityCalendar({ token, pro }: { token: string | null; pro: any
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
       <h2 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
-        📅 Périodes d'indisponibilité
+        📅 {t('unavail_title')}
       </h2>
-      <p className="text-xs text-slate-500">Indiquez vos congés ou jours de repos. Votre profil affichera "Disponible à partir du..." automatiquement.</p>
+      <p className="text-xs text-slate-500">{t('unavail_hint')}</p>
 
       {/* Existing periods */}
       {items.length > 0 && (
@@ -430,26 +433,26 @@ function UnavailabilityCalendar({ token, pro }: { token: string | null; pro: any
       {/* Add period form */}
       <form onSubmit={add} className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Du</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">{t('unavail_from')}</label>
           <input type="date" value={from} onChange={(e) => setFrom(e.target.value)}
             min={new Date().toISOString().split('T')[0]}
             className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm" />
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-500 mb-1">Au</label>
+          <label className="block text-xs font-medium text-slate-500 mb-1">{t('unavail_to')}</label>
           <input type="date" value={to} onChange={(e) => setTo(e.target.value)}
             min={from || new Date().toISOString().split('T')[0]}
             className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm" />
         </div>
         <div className="col-span-2">
           <input type="text" value={reason} onChange={(e) => setReason(e.target.value)}
-            placeholder="Raison (optionnel : vacances, formation...)"
+            placeholder={t('unavail_reason_placeholder')}
             className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm" />
         </div>
         {error && <p className="col-span-2 text-xs text-red-500">{error}</p>}
         <button type="submit" disabled={saving}
           className="col-span-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-semibold text-sm py-2 transition-colors disabled:opacity-60">
-          {saving ? 'Ajout...' : '+ Ajouter cette période'}
+          {saving ? t('unavail_adding') : t('unavail_add_btn')}
         </button>
       </form>
     </div>
@@ -476,7 +479,7 @@ export default function ProfessionalDashboardPage() {
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { travel_cities: [], languages: [], portfolio: [], is_available: true },
+    defaultValues: { travel_cities: [], languages: [], portfolio: [], is_available: true, facebook_url: '', instagram_url: '' },
   });
   const { formState: { errors, isDirty } } = form;
 
@@ -578,6 +581,8 @@ export default function ProfessionalDashboardPage() {
           travel_cities: p.travel_cities ?? [],
           languages:     p.languages ?? [],
           portfolio:     p.portfolio ?? [],
+          facebook_url:  p.facebook_url ?? '',
+          instagram_url: p.instagram_url ?? '',
         };
         // Apply Google pre-registration data (name + phone collected before OAuth)
         try {
@@ -698,6 +703,7 @@ export default function ProfessionalDashboardPage() {
         phone: p.phone ?? '', description: p.description ?? '', photo: p.photo ?? '',
         is_available: !!p.is_available,
         travel_cities: p.travel_cities ?? [], languages: p.languages ?? [], portfolio: p.portfolio ?? [],
+        facebook_url: p.facebook_url ?? '', instagram_url: p.instagram_url ?? '',
       });
       setSaved(true);
       setTimeout(() => setSaved(false), 5000);
@@ -1020,7 +1026,7 @@ export default function ProfessionalDashboardPage() {
                   {/* Header niveau */}
                   <div className="flex items-center justify-between">
                     <h2 className="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-orange-500" /> Niveau & Récompenses
+                      <Trophy className="h-4 w-4 text-orange-500" /> {t('gamif_title')}
                     </h2>
                     <div className="flex items-center gap-2">
                       <span className="text-2xl">{level.emoji}</span>
@@ -1034,7 +1040,7 @@ export default function ProfessionalDashboardPage() {
                   <div>
                     <div className="flex justify-between text-xs text-slate-400 mb-1.5">
                       <span>{level.name}</span>
-                      {nextLevel && <span>{xpToNext} XP pour {nextLevel.name} {nextLevel.emoji}</span>}
+                      {nextLevel && <span>{t('gamif_xp_to_next', { xp: xpToNext, name: nextLevel.name, emoji: nextLevel.emoji })}</span>}
                     </div>
                     <div className="h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                       <div
@@ -1045,20 +1051,20 @@ export default function ProfessionalDashboardPage() {
                   </div>
                   {/* Comment gagner XP */}
                   <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-3 text-xs text-slate-500 dark:text-slate-400 space-y-1">
-                    <p className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1"><Zap className="h-3.5 w-3.5 text-orange-400" /> Comment gagner des XP</p>
+                    <p className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1"><Zap className="h-3.5 w-3.5 text-orange-400" /> {t('gamif_how_xp')}</p>
                     <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 mt-1">
-                      <span>+1 XP par vue (max 300)</span>
-                      <span>+5 XP par clic WhatsApp</span>
-                      <span>+5 XP par appel</span>
-                      <span>+20 XP par avis approuvé</span>
-                      <span>+50 XP si note ≥ 4.5</span>
-                      <span>+10 XP par mission</span>
+                      <span>{t('gamif_xp_view')}</span>
+                      <span>{t('gamif_xp_whatsapp')}</span>
+                      <span>{t('gamif_xp_call')}</span>
+                      <span>{t('gamif_xp_review')}</span>
+                      <span>{t('gamif_xp_rating')}</span>
+                      <span>{t('gamif_xp_mission')}</span>
                     </div>
                   </div>
                   {/* Récompenses débloquées */}
                   {earned.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">🎁 Récompenses débloquées ({earned.length}/{ACHIEVEMENTS.length})</p>
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">{t('gamif_earned', { n: earned.length, total: ACHIEVEMENTS.length })}</p>
                       <div className="flex flex-wrap gap-2">
                         {earned.map((a) => (
                           <div key={a.id} title={a.desc}
@@ -1072,7 +1078,7 @@ export default function ProfessionalDashboardPage() {
                   {/* À débloquer */}
                   {locked.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-slate-400 mb-2">🔒 À débloquer</p>
+                      <p className="text-xs font-semibold text-slate-400 mb-2">{t('gamif_locked')}</p>
                       <div className="flex flex-wrap gap-2">
                         {locked.map((a) => (
                           <div key={a.id} title={a.desc}
@@ -1091,7 +1097,7 @@ export default function ProfessionalDashboardPage() {
             {pro?.main_city && (
               <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5">
                 <h2 className="text-sm font-black text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-orange-500" /> Ma localisation
+                  <MapPin className="h-4 w-4 text-orange-500" /> {t('location_title')}
                 </h2>
                 {pro.latitude && pro.longitude ? (
                   <div className="rounded-xl overflow-hidden border border-slate-100 dark:border-slate-800">
@@ -1114,7 +1120,7 @@ export default function ProfessionalDashboardPage() {
                         target="_blank" rel="noopener noreferrer"
                         className="text-xs text-orange-500 hover:text-orange-600 font-medium"
                       >
-                        Voir sur Google Maps →
+                        {t('location_map_link')}
                       </a>
                     </div>
                   </div>
@@ -1305,6 +1311,33 @@ export default function ProfessionalDashboardPage() {
               </div>
 
               <p className="text-xs text-slate-400">{t('dash_portfolio_formats')}</p>
+            </div>
+
+            {/* Social networks */}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 space-y-4">
+              <h2 className="text-sm font-bold text-slate-800 dark:text-white">{t('social_title')}</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+                    <span className="mr-1.5">📘</span>{t('social_facebook')}
+                  </label>
+                  <input
+                    {...form.register('facebook_url')}
+                    placeholder="https://facebook.com/votre-page"
+                    className={inputCls()}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+                    <span className="mr-1.5">📸</span>{t('social_instagram')}
+                  </label>
+                  <input
+                    {...form.register('instagram_url')}
+                    placeholder="https://instagram.com/votre-profil"
+                    className={inputCls()}
+                  />
+                </div>
+              </div>
             </div>
 
             {/* Save */}

@@ -37,6 +37,8 @@ class Professional extends Model
         'is_available',
         'latitude',
         'longitude',
+        'facebook_url',
+        'instagram_url',
     ];
 
     protected function casts(): array

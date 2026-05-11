@@ -39,6 +39,8 @@ export type Professional = {
   is_available: boolean;
   latitude?: number | null;
   longitude?: number | null;
+  facebook_url?: string | null;
+  instagram_url?: string | null;
   reviews?: Review[];
   category?: Category | null;
   categories?: Category[];

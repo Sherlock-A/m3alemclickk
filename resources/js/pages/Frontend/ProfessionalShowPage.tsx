@@ -307,6 +307,32 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                 {professional.description && (
                   <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">{professional.description}</p>
                 )}
+
+                {/* Social networks */}
+                {(professional.facebook_url || professional.instagram_url) && (
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {professional.facebook_url && (
+                      <a
+                        href={professional.facebook_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 px-3 py-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-100 transition-colors"
+                      >
+                        📘 Facebook
+                      </a>
+                    )}
+                    {professional.instagram_url && (
+                      <a
+                        href={professional.instagram_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-xl bg-pink-50 dark:bg-pink-900/20 border border-pink-100 dark:border-pink-800 px-3 py-1.5 text-xs font-semibold text-pink-600 dark:text-pink-400 hover:bg-pink-100 transition-colors"
+                      >
+                        📸 Instagram
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
 

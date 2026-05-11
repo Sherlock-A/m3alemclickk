@@ -62,9 +62,6 @@ class ContactController extends Controller
             'meta' => ['source' => 'api'],
         ]);
 
-        return response()->json([
-            'phone' => $professional->phone,
-            'link' => 'tel:'.$professional->phone,
-        ]);
+        return redirect()->away('tel:'.$professional->phone);
     }
 }

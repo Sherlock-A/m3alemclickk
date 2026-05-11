@@ -128,6 +128,8 @@ class DashboardController extends Controller
             'is_available'     => ['boolean'],
             'category_ids'     => ['nullable', 'array', 'max:3'],
             'category_ids.*'   => ['integer', 'exists:categories,id'],
+            'facebook_url'     => ['nullable', 'string', 'max:255'],
+            'instagram_url'    => ['nullable', 'string', 'max:255'],
         ]);
 
         $categoryIds = $data['category_ids'] ?? null;

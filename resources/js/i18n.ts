@@ -477,6 +477,52 @@ const resources = {
       admin_edit_city: 'Ville',
       admin_edit_save: 'Enregistrer',
       admin_edit_cancel: 'Annuler',
+
+      // QR Code
+      qr_title: 'Mon QR Code',
+      qr_share_scan: 'Partagez votre profil en un scan',
+      qr_copied: 'Copié !',
+      qr_share_btn: 'Partager',
+      qr_download_btn: 'Télécharger',
+
+      // Unavailability Calendar
+      unavail_title: 'Périodes d\'indisponibilité',
+      unavail_hint: 'Indiquez vos congés ou jours de repos. Votre profil affichera "Disponible à partir du..." automatiquement.',
+      unavail_dates_required: 'Les deux dates sont requises.',
+      unavail_from: 'Du',
+      unavail_to: 'Au',
+      unavail_reason_placeholder: 'Raison (optionnel : vacances, formation...)',
+      unavail_adding: 'Ajout...',
+      unavail_add_btn: '+ Ajouter cette période',
+
+      // Gamification
+      gamif_title: 'Niveau & Récompenses',
+      gamif_how_xp: 'Comment gagner des XP',
+      gamif_xp_view: '+1 XP par vue (max 300)',
+      gamif_xp_whatsapp: '+5 XP par clic WhatsApp',
+      gamif_xp_call: '+5 XP par appel',
+      gamif_xp_review: '+20 XP par avis approuvé',
+      gamif_xp_rating: '+50 XP si note ≥ 4.5',
+      gamif_xp_mission: '+10 XP par mission',
+      gamif_xp_to_next: '{{xp}} XP pour {{name}} {{emoji}}',
+      gamif_earned: '🎁 Récompenses débloquées ({{n}}/{{total}})',
+      gamif_locked: '🔒 À débloquer',
+
+      // Localisation
+      location_title: 'Ma localisation',
+      location_map_link: 'Voir sur Google Maps →',
+
+      // Social networks
+      social_title: 'Réseaux sociaux',
+      social_facebook: 'Page Facebook',
+      social_instagram: 'Instagram',
+
+      // Professional card
+      card_new: 'Nouveau',
+      card_compare: 'Comparer',
+      card_in_compare: 'Dans la comparaison',
+      card_available: 'Disponible',
+      card_busy: 'Occupé',
     },
   },
   ar: {
@@ -944,6 +990,52 @@ const resources = {
       admin_edit_city: 'المدينة',
       admin_edit_save: 'حفظ',
       admin_edit_cancel: 'إلغاء',
+
+      // QR Code
+      qr_title: 'رمز QR الخاص بي',
+      qr_share_scan: 'شارك ملفك بمسح واحد',
+      qr_copied: 'تم النسخ!',
+      qr_share_btn: 'مشاركة',
+      qr_download_btn: 'تنزيل',
+
+      // Unavailability Calendar
+      unavail_title: 'فترات عدم التوفر',
+      unavail_hint: 'حدد إجازاتك أو أيام الراحة. سيعرض ملفك "متاح اعتباراً من..." تلقائياً.',
+      unavail_dates_required: 'التاريخان مطلوبان.',
+      unavail_from: 'من',
+      unavail_to: 'إلى',
+      unavail_reason_placeholder: 'السبب (اختياري: إجازة، تدريب...)',
+      unavail_adding: 'إضافة...',
+      unavail_add_btn: '+ إضافة هذه الفترة',
+
+      // Gamification
+      gamif_title: 'المستوى والمكافآت',
+      gamif_how_xp: 'كيف تكسب نقاط XP',
+      gamif_xp_view: '+1 XP لكل مشاهدة (حد أقصى 300)',
+      gamif_xp_whatsapp: '+5 XP لكل نقر واتساب',
+      gamif_xp_call: '+5 XP لكل اتصال',
+      gamif_xp_review: '+20 XP لكل تقييم موافق عليه',
+      gamif_xp_rating: '+50 XP إذا كانت النقطة ≥ 4.5',
+      gamif_xp_mission: '+10 XP لكل مهمة',
+      gamif_xp_to_next: '{{xp}} XP للوصول إلى {{name}} {{emoji}}',
+      gamif_earned: '🎁 المكافآت المفتوحة ({{n}}/{{total}})',
+      gamif_locked: '🔒 لم تُفتح بعد',
+
+      // Localisation
+      location_title: 'موقعي',
+      location_map_link: 'عرض على خرائط Google ←',
+
+      // Social networks
+      social_title: 'الشبكات الاجتماعية',
+      social_facebook: 'صفحة Facebook',
+      social_instagram: 'Instagram',
+
+      // Professional card
+      card_new: 'جديد',
+      card_compare: 'مقارنة',
+      card_in_compare: 'في المقارنة',
+      card_available: 'متاح',
+      card_busy: 'مشغول',
     },
   },
   en: {
@@ -1463,6 +1555,52 @@ const resources = {
       admin_edit_city: 'المدينة',
       admin_edit_save: 'سجل',
       admin_edit_cancel: 'إلغاء',
+
+      // QR Code
+      qr_title: 'رمز QR ديالي',
+      qr_share_scan: 'شارك البروفايل ديالك بسكان واحد',
+      qr_copied: 'تنسخ!',
+      qr_share_btn: 'شارك',
+      qr_download_btn: 'حمّل',
+
+      // Unavailability Calendar
+      unavail_title: 'فترات عدم الاستعداد',
+      unavail_hint: 'حط الكونجي أو أيام الراحة ديالك. البروفايل غادي يعرض "متاح من..." بأوتوماتيك.',
+      unavail_dates_required: 'الجوج تواريخ مهمين.',
+      unavail_from: 'من',
+      unavail_to: 'لـ',
+      unavail_reason_placeholder: 'السبب (اختياري: عطلة، تكوين...)',
+      unavail_adding: 'كيتزاد...',
+      unavail_add_btn: '+ زيد هاد الفترة',
+
+      // Gamification
+      gamif_title: 'المستوى والمكافآت',
+      gamif_how_xp: 'كيفاش تكسب XP',
+      gamif_xp_view: '+1 XP لكل مشاهدة (ماكس 300)',
+      gamif_xp_whatsapp: '+5 XP لكل كليك واتساب',
+      gamif_xp_call: '+5 XP لكل مكالمة',
+      gamif_xp_review: '+20 XP لكل تقييم مقبول',
+      gamif_xp_rating: '+50 XP إلا النقطة ≥ 4.5',
+      gamif_xp_mission: '+10 XP لكل مهمة',
+      gamif_xp_to_next: '{{xp}} XP باش توصل لـ {{name}} {{emoji}}',
+      gamif_earned: '🎁 المكافآت المفتوحة ({{n}}/{{total}})',
+      gamif_locked: '🔒 مازال ما تفتحوش',
+
+      // Localisation
+      location_title: 'الموقع ديالي',
+      location_map_link: 'شوف على Google Maps ←',
+
+      // Social networks
+      social_title: 'الشبكات الاجتماعية',
+      social_facebook: 'صفحة Facebook',
+      social_instagram: 'Instagram',
+
+      // Professional card
+      card_new: 'جديد',
+      card_compare: 'قارن',
+      card_in_compare: 'فالمقارنة',
+      card_available: 'متاح',
+      card_busy: 'مشغول',
     },
   },
   tzm: {

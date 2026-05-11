@@ -1,5 +1,6 @@
 import { Heart, Phone, MessageCircle, BadgeCheck, MapPin, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Professional } from '../types';
 import { useFavorites } from '../contexts/FavoritesContext';
 
@@ -44,6 +45,7 @@ type CardProps = {
 
 export function ProfessionalCard({ professional, onCompare, inCompare, compareDisabled }: CardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { t } = useTranslation();
 
   return (
     <motion.article
@@ -101,7 +103,7 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
                 <span className="text-sm font-semibold text-amber-600">{professional.rating.toFixed(1)}</span>
               </>
             ) : (
-              <span className="text-xs text-slate-400">Nouveau</span>
+              <span className="text-xs text-slate-400">{t('card_new')}</span>
             )}
             {professional.completed_missions > 0 && (
               <span className="text-xs text-slate-400">· {professional.completed_missions} missions</span>
@@ -112,7 +114,7 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
               ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
               : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
           }`}>
-            {professional.status === 'available' ? 'Disponible' : 'Occupé'}
+            {professional.status === 'available' ? t('card_available') : t('card_busy')}
           </span>
         </div>
 
@@ -128,7 +130,7 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
             href={`/api/call/${professional.id}`}
             className="flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-3 py-2 text-xs font-semibold text-white dark:bg-slate-700 hover:bg-slate-800 transition-colors"
           >
-            <Phone className="h-3.5 w-3.5" /> Appeler
+            <Phone className="h-3.5 w-3.5" /> {t('call')}
           </a>
         </div>
 
@@ -149,7 +151,7 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
             <span className={`h-3.5 w-3.5 rounded border flex-shrink-0 flex items-center justify-center ${inCompare ? 'border-brand-500 bg-brand-500' : 'border-slate-300 dark:border-slate-600'}`}>
               {inCompare && <svg viewBox="0 0 12 12" className="h-2.5 w-2.5 text-white fill-white"><path d="M10 3L5 8.5 2 5.5"/></svg>}
             </span>
-            {inCompare ? 'Dans la comparaison' : 'Comparer'}
+            {inCompare ? t('card_in_compare') : t('card_compare')}
           </button>
         )}
       </div>
