@@ -123,7 +123,7 @@ class AdminController extends Controller
 
     public function reviews(Request $request)
     {
-        $query = Review::with('professional')->latest();
+        $query = Review::with(['professional', 'user'])->latest();
 
         if ($request->filled('approved')) {
             $query->where('approved', filter_var($request->input('approved'), FILTER_VALIDATE_BOOLEAN));

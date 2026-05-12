@@ -8,17 +8,39 @@ use App\Models\ContactRequest;
 use App\Models\Professional;
 use App\Models\Review;
 use Illuminate\Http\Request;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Throwable;
 
 class ReviewController extends Controller
 {
     public function store(Request $request)
     {
+        // Try to resolve the authenticated client (optional — not required)
+        $authUser = null;
+        try {
+            $candidate = JWTAuth::parseToken()->authenticate();
+            if ($candidate && $candidate->role === 'client') {
+                $authUser = $candidate;
+            }
+        } catch (Throwable) {
+            // No token or invalid — anonymous review
+        }
+
         $data = $request->validate([
             'professional_id' => ['required', 'integer', 'exists:professionals,id'],
-            'client_name'     => ['required', 'string', 'min:2', 'max:100'],
+            'client_name'     => $authUser ? ['nullable', 'string', 'max:100'] : ['required', 'string', 'min:2', 'max:100'],
             'rating'          => ['required', 'integer', 'min:1', 'max:5'],
             'comment'         => ['nullable', 'string', 'max:1000'],
         ]);
+
+        // If authenticated, use account name and mark as verified
+        if ($authUser) {
+            $data['user_id']         = $authUser->id;
+            $data['client_name']     = $authUser->name;
+            $data['verified_client'] = true;
+        } else {
+            $data['verified_client'] = false;
+        }
 
         // DB-based daily limit: max 3 reviews per IP per professional per day
         $ip    = $request->ip();
@@ -35,7 +57,20 @@ class ReviewController extends Controller
             ], 429);
         }
 
-        // Default approved = false (pending admin validation)
+        // If authenticated client already reviewed this professional today
+        if ($authUser) {
+            $alreadyReviewed = Review::where('professional_id', $proId)
+                ->where('user_id', $authUser->id)
+                ->whereDate('created_at', now()->toDateString())
+                ->exists();
+
+            if ($alreadyReviewed) {
+                return response()->json([
+                    'message' => 'Vous avez déjà soumis un avis pour ce professionnel aujourd\'hui.',
+                ], 429);
+            }
+        }
+
         $data['approved'] = false;
         $data['ip']       = $ip;
 
@@ -47,8 +82,9 @@ class ReviewController extends Controller
         broadcast(new ProNotification($proId, $newQuotes + $newReviews))->toOthers();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Votre avis a été soumis et sera visible après validation.',
+            'success'  => true,
+            'verified' => $authUser !== null,
+            'message'  => 'Votre avis a été soumis et sera visible après validation.',
         ], 201);
     }
 
@@ -78,7 +114,6 @@ class ReviewController extends Controller
             'pro_response' => ['required', 'string', 'min:5', 'max:1000'],
         ]);
 
-        // Verify the review belongs to the authenticated pro
         $user = $request->user();
         if (! $user || $review->professional_id !== $user->professional_id) {
             return response()->json(['message' => 'Non autorisé.'], 403);

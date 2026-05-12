@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import {
   Heart, MapPin, MessageCircle, Phone, ShieldCheck,
-  Star, Send, CheckCircle, AlertCircle, Mail,
+  Star, Send, CheckCircle, AlertCircle, Mail, BadgeCheck, LogIn,
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { Category, Professional } from '../../types';
@@ -50,6 +50,16 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
   const getCatName = useCatName();
   const [isFav, setIsFav] = useState(() => getFavIds().includes(professional.id));
 
+  // Authenticated client (if logged in)
+  const [clientUser, setClientUser] = useState<{ name: string; email: string } | null>(null);
+  useEffect(() => {
+    const token = localStorage.getItem('client_token');
+    if (!token) return;
+    axios.get('/api/client/me', { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => setClientUser({ name: r.data.name, email: r.data.email }))
+      .catch(() => {});
+  }, []);
+
   // Review form state
   const [showForm, setShowForm] = useState(false);
   const [name, setName]         = useState('');
@@ -78,17 +88,19 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
 
   const submitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) { setReviewError(t('show_review_err_name')); return; }
-    if (rating < 1)   { setReviewError(t('show_review_err_rating')); return; }
+    if (!clientUser && !name.trim()) { setReviewError(t('show_review_err_name')); return; }
+    if (rating < 1) { setReviewError(t('show_review_err_rating')); return; }
     setSubmitting(true);
     setReviewError('');
     try {
+      const token = localStorage.getItem('client_token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
       await axios.post('/api/reviews', {
         professional_id: professional.id,
-        client_name: name.trim(),
+        client_name: clientUser ? clientUser.name : name.trim(),
         rating,
         comment: comment.trim(),
-      });
+      }, { headers });
       setSubmitted(true);
       setShowForm(false);
     } catch {
@@ -439,21 +451,46 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                 <form onSubmit={submitReview} className="mb-6 space-y-4 p-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                   <h3 className="font-bold text-slate-800 dark:text-white">Écrire un avis</h3>
 
+                  {/* Identity block */}
+                  {clientUser ? (
+                    <div className="flex items-center gap-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 px-4 py-3">
+                      <BadgeCheck className="h-5 w-5 text-emerald-500 shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">Avis soumis en tant que <span className="font-black">{clientUser.name}</span></p>
+                        <p className="text-xs text-emerald-600 dark:text-emerald-500">{clientUser.email} · Identité vérifiée ✓</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <AlertCircle className="h-4 w-4 text-amber-500 shrink-0" />
+                        <p className="text-xs font-semibold text-amber-700 dark:text-amber-400">Avis anonyme — non vérifié</p>
+                      </div>
+                      <p className="text-xs text-amber-600 dark:text-amber-500 mb-2">Les avis vérifiés ont plus de poids et sont traités en priorité.</p>
+                      <a href="/login" className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 dark:text-amber-400 underline underline-offset-2">
+                        <LogIn className="h-3.5 w-3.5" /> Se connecter pour un avis vérifié
+                      </a>
+                    </div>
+                  )}
+
                   {reviewError && (
                     <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 dark:bg-red-900/20 rounded-lg px-3 py-2">
                       <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {reviewError}
                     </div>
                   )}
 
-                  <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1.5">Votre nom *</label>
-                    <input
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Ex: Mohammed A."
-                      className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
-                    />
-                  </div>
+                  {/* Name field — only if not logged in */}
+                  {!clientUser && (
+                    <div>
+                      <label className="block text-xs font-medium text-slate-500 mb-1.5">Votre nom *</label>
+                      <input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Ex: Mohammed A."
+                        className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                      />
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-xs font-medium text-slate-500 mb-1.5">Note *</label>
@@ -498,7 +535,16 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
                           <div className="h-8 w-8 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-sm font-bold text-orange-600">
                             {review.client_name?.[0]?.toUpperCase()}
                           </div>
-                          <span className="font-semibold text-sm text-slate-800 dark:text-white">{review.client_name}</span>
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-semibold text-sm text-slate-800 dark:text-white">{review.client_name}</span>
+                              {(review as any).verified_client && (
+                                <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+                                  <BadgeCheck className="h-3 w-3" /> Vérifié
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         </div>
                         <div className="flex items-center gap-2">
                           <RatingStars value={review.rating} />

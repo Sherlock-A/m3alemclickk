@@ -360,11 +360,28 @@ function SectionDashboard({ headers, setSection }: { headers: any; setSection: (
           <div className="space-y-3">
             {(data.reviewsQueue ?? []).slice(0, 5).map((r: any) => (
               <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
-                <div>
-                  <div className="font-medium text-sm">{r.client_name} → {r.professional?.name}</div>
-                  <p className="text-xs text-slate-500 mt-0.5">{r.comment}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-medium text-sm">{r.client_name} → {r.professional?.name}</span>
+                    {r.verified_client ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
+                        <Check className="h-3 w-3" /> Client vérifié
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[10px] font-semibold text-amber-600">
+                        ⚠️ Anonyme
+                      </span>
+                    )}
+                    <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-50 border border-amber-100 px-2 py-0.5 text-[10px] text-amber-700">
+                      {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                    </span>
+                  </div>
+                  {r.verified_client && r.user?.email && (
+                    <p className="text-[11px] text-slate-400 mt-0.5">📧 {r.user.email}</p>
+                  )}
+                  {r.comment && <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{r.comment}</p>}
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 shrink-0">
                   <button onClick={() => axios.put(`/api/admin/reviews/${r.id}/approve`, {}, { headers: { Authorization: `Bearer ${localStorage.getItem('jobly_token')}` } })}
                     className="flex items-center gap-1 rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-600">
                     <Check className="h-3 w-3" /> Approuver
@@ -1285,16 +1302,37 @@ function SectionReviews({ headers }: { headers: any }) {
 
       <div className="space-y-3">
         {(data?.data ?? []).map((r: any) => (
-          <div key={r.id} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm">
+          <div key={r.id} className={`bg-white dark:bg-slate-900 rounded-2xl border p-4 shadow-sm ${r.verified_client ? 'border-emerald-200 dark:border-emerald-800' : 'border-slate-200 dark:border-slate-800'}`}>
             <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-semibold text-sm">{r.client_name}</span>
+              <div className="flex-1 min-w-0">
+                {/* Reviewer identity */}
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <div className="flex items-center gap-1.5">
+                    <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${r.verified_client ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40' : 'bg-slate-100 text-slate-500 dark:bg-slate-800'}`}>
+                      {r.client_name?.[0]?.toUpperCase()}
+                    </div>
+                    <span className="font-semibold text-sm">{r.client_name}</span>
+                  </div>
+                  {r.verified_client ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                      <Check className="h-2.5 w-2.5" /> Client vérifié
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 px-2 py-0.5 text-[10px] font-bold text-amber-600 dark:text-amber-400">
+                      ⚠️ Anonyme
+                    </span>
+                  )}
                   <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-                  <span className="text-sm text-orange-500">{r.professional?.name ?? '—'}</span>
-                  <span className="text-xs text-slate-400">{'⭐'.repeat(r.rating)}</span>
+                  <span className="text-sm text-orange-500 font-medium">{r.professional?.name ?? '—'}</span>
+                  <span className="text-xs text-amber-500">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
                 </div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">{r.comment}</p>
+                {/* Email du client si vérifié */}
+                {r.verified_client && r.user?.email && (
+                  <p className="text-[11px] text-slate-400 mb-1.5 flex items-center gap-1">
+                    📧 {r.user.email}
+                  </p>
+                )}
+                {r.comment && <p className="text-sm text-slate-600 dark:text-slate-400">{r.comment}</p>}
                 <p className="text-xs text-slate-400 mt-1">{new Date(r.created_at).toLocaleDateString('fr-FR')}</p>
               </div>
               <div className="flex gap-2 shrink-0">
