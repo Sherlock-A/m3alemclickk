@@ -85,18 +85,12 @@ Route::get('/sitemap.xml', function () {
         // SEO city pages + city×category matrix (top 10 cities × all categories)
         $cities = \App\Models\City::where('active', true)->select('name')->take(10)->get();
         foreach ($cities as $city) {
-            $citySlug = rawurlencode($city->name);
+            $citySlug = rawurlencode(mb_strtolower($city->name));
             $urls->push("<url><loc>{$base}/professionnels/{$citySlug}</loc><changefreq>daily</changefreq><priority>0.8</priority></url>");
             foreach ($cats as $cat) {
-                $catSlug = rawurlencode($cat->name);
+                $catSlug = rawurlencode(mb_strtolower($cat->name));
                 $urls->push("<url><loc>{$base}/professionnels/{$citySlug}/{$catSlug}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>");
             }
-        }
-
-        // Legacy query-string category pages
-        foreach ($cats as $cat) {
-            $name = urlencode($cat->name);
-            $urls->push("<url><loc>{$base}/professionals?profession={$name}</loc><changefreq>daily</changefreq><priority>0.6</priority></url>");
         }
 
         // Professional profiles

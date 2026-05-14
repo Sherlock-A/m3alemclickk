@@ -8,6 +8,8 @@ Disallow: /client/reset-password
 Allow: /
 Allow: /professionals
 Allow: /professionals/
+Allow: /professionnels
+Allow: /professionnels/
 Allow: /pro/register
 Allow: /how-it-works
 Allow: /contact

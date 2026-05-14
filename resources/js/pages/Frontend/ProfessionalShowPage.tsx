@@ -16,7 +16,8 @@ import { QRCodeCard } from '../../components/QRCodeCard';
 import { PriceEstimator } from '../../components/PriceEstimator';
 
 type SimilarPro = Pick<Professional, 'id' | 'name' | 'slug' | 'profession' | 'photo' | 'main_city' | 'rating' | 'is_available' | 'verified'>;
-type Props = { professional: Professional; similar?: SimilarPro[] };
+type Seo = { title?: string; description?: string; canonical?: string; image?: string; jsonLd?: string };
+type Props = { professional: Professional; similar?: SimilarPro[]; seo?: Seo };
 
 const FAV_KEY = 'client_favorites';
 function getFavIds(): number[] {
@@ -45,7 +46,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
   );
 }
 
-export default function ProfessionalShowPage({ professional, similar = [] }: Props) {
+export default function ProfessionalShowPage({ professional, similar = [], seo }: Props) {
   const { t } = useTranslation();
   const getCatName = useCatName();
   const [isFav, setIsFav] = useState(() => getFavIds().includes(professional.id));
@@ -213,13 +214,18 @@ export default function ProfessionalShowPage({ professional, similar = [] }: Pro
   return (
     <Layout>
       <Head>
-        <title>{seoTitle}</title>
-        <meta name="description" content={seoDesc} />
-        <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={seoDesc} />
-        {professional.photo && <meta property="og:image" content={professional.photo} />}
+        <title>{seo?.title ?? seoTitle}</title>
+        <meta name="description" content={seo?.description ?? seoDesc} />
+        {(seo?.canonical) && <link rel="canonical" href={seo.canonical} />}
+        <meta property="og:title" content={seo?.title ?? seoTitle} />
+        <meta property="og:description" content={seo?.description ?? seoDesc} />
+        <meta property="og:url" content={seo?.canonical ?? ''} />
+        {(seo?.image ?? professional.photo) && <meta property="og:image" content={seo?.image ?? professional.photo ?? ''} />}
         <meta property="og:type" content="profile" />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seo?.title ?? seoTitle} />
+        <meta name="twitter:description" content={seo?.description ?? seoDesc} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: seo?.jsonLd ?? JSON.stringify(jsonLd) }} />
       </Head>
       <section className="mx-auto max-w-7xl px-4 py-10">
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">

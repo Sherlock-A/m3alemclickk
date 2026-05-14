@@ -174,8 +174,9 @@ class ProfessionalPageController extends Controller
                 Category::where('active', true)->orderBy('sort_order')->get()
             ),
             'seo'           => [
-                'title'       => 'Professionnels',
-                'description' => 'Explorez les meilleurs professionnels du Maroc par ville, métier et disponibilité.',
+                'title'       => 'Artisans & Professionnels au Maroc | Jobly',
+                'description' => 'Trouvez le meilleur artisan au Maroc : plombier, électricien, menuisier, peintre et plus. Contact WhatsApp direct. Avis vérifiés. Devis gratuit.',
+                'canonical'   => config('app.url') . '/professionals',
             ],
         ]);
     }
@@ -275,12 +276,60 @@ class ProfessionalPageController extends Controller
             ->take(3)
             ->get(['id', 'name', 'slug', 'profession', 'photo', 'main_city', 'rating', 'is_available', 'verified', 'category_id']);
 
+        $reviewCount  = $professional->reviews->count();
+        $ratingValue  = $professional->rating > 0 ? $professional->rating : null;
+        $seoTitle     = "{$professional->name} — {$professional->profession} à {$professional->main_city}";
+        $seoDesc      = $professional->description
+            ? str($professional->description)->limit(155)->toString()
+            : "{$professional->name}, {$professional->profession} professionnel à {$professional->main_city}. Contact WhatsApp direct, avis vérifiés. Trouvez votre artisan sur Jobly.";
+
+        $jsonLd = [
+            '@context' => 'https://schema.org',
+            '@type'    => 'LocalBusiness',
+            'name'     => "{$professional->name} — {$professional->profession}",
+            'description' => $seoDesc,
+            'url'      => config('app.url') . "/professionals/{$professional->slug}",
+            'image'    => $professional->photo ?: null,
+            'telephone' => $professional->phone ?: null,
+            'address'  => [
+                '@type'           => 'PostalAddress',
+                'addressLocality' => $professional->main_city,
+                'addressRegion'   => $professional->main_city,
+                'addressCountry'  => 'MA',
+            ],
+            'areaServed' => array_filter(array_merge(
+                [$professional->main_city],
+                is_array($professional->travel_cities) ? $professional->travel_cities : []
+            )),
+            'priceRange' => '$$',
+        ];
+
+        if ($ratingValue && $reviewCount > 0) {
+            $jsonLd['aggregateRating'] = [
+                '@type'       => 'AggregateRating',
+                'ratingValue' => round($ratingValue, 1),
+                'reviewCount' => $reviewCount,
+                'bestRating'  => 5,
+                'worstRating' => 1,
+            ];
+
+            $jsonLd['review'] = $professional->reviews->take(3)->map(fn ($r) => [
+                '@type'       => 'Review',
+                'author'      => ['@type' => 'Person', 'name' => $r->client_name],
+                'reviewRating' => ['@type' => 'Rating', 'ratingValue' => $r->rating, 'bestRating' => 5],
+                'reviewBody'  => $r->comment,
+            ])->toArray();
+        }
+
         return Inertia::render('Frontend/ProfessionalShowPage', [
             'professional' => $professional,
             'similar'      => $similar,
             'seo'          => [
-                'title'       => "{$professional->name} - {$professional->profession}",
-                'description' => str($professional->description)->limit(150)->toString(),
+                'title'     => $seoTitle,
+                'description' => $seoDesc,
+                'canonical' => config('app.url') . "/professionals/{$professional->slug}",
+                'image'     => $professional->photo ?: null,
+                'jsonLd'    => json_encode($jsonLd, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
             ],
         ]);
     }
