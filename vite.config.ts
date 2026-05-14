@@ -19,21 +19,13 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3') || id.includes('node_modules/victory')) {
-            return 'vendor-chart';
-          }
-          if (id.includes('node_modules/react') || id.includes('node_modules/@inertiajs')) {
-            return 'vendor-react';
-          }
-          if (id.includes('node_modules/lucide-react') || id.includes('node_modules/framer-motion')) {
-            return 'vendor-ui';
-          }
-          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {
-            return 'vendor-form';
-          }
-          if (id.includes('node_modules/axios')) {
-            return 'vendor-axios';
-          }
+          // Exact package matching (both / and \ for Windows/Linux compatibility)
+          const pkg = (name: string) => new RegExp(`[/\\\\]node_modules[/\\\\]${name}[/\\\\]`).test(id);
+          if (pkg('recharts') || pkg('d3') || pkg('d3-[^/\\\\]+')) return 'vendor-chart';
+          if (pkg('react') || pkg('react-dom') || pkg('@inertiajs')) return 'vendor-react';
+          if (pkg('lucide-react') || pkg('framer-motion')) return 'vendor-ui';
+          if (pkg('react-hook-form') || pkg('zod') || pkg('@hookform')) return 'vendor-form';
+          if (pkg('axios')) return 'vendor-axios';
         },
       },
     },
