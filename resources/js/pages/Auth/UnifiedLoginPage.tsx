@@ -78,7 +78,7 @@ export default function UnifiedLoginPage({ error: pageError }: Props) {
   return (
     <>
       <Head>
-        <title>{t('login')} — Jobly</title>
+        <title>{`${t('login')} — Jobly`}</title>
         <meta name="robots" content="noindex" />
       </Head>
 
