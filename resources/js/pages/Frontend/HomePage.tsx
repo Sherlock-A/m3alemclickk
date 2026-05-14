@@ -3,12 +3,12 @@ import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle, UserCheck, Award, Zap, CheckCircle2, Crown } from 'lucide-react';
+import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle, UserCheck, Award, Zap, CheckCircle2, Crown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
-import { CategoryIcon } from '../../components/CategoryIcon';
 import { Category, Professional } from '../../types';
 import { useCatName } from '../../hooks/useCatName';
+import { getCategoryIcon } from '../../utils/categoryIconMap';
 
 type Props = {
   categories: Category[];
@@ -223,11 +223,16 @@ function FeaturedCard({ pro, proNew }: { pro: Professional; proNew: string }) {
 }
 
 // ── Main page ─────────────────────────────────────────────────────────────
+const CAT_PER_PAGE = 12;
+
 export default function HomePage({ categories, featured, stats, geo }: Props) {
   const { t } = useTranslation();
   const getCatName = useCatName();
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
+  const [catPage, setCatPage] = useState(1);
+  const catTotalPages = Math.ceil(categories.length / CAT_PER_PAGE);
+  const catPaged = categories.slice((catPage - 1) * CAT_PER_PAGE, catPage * CAT_PER_PAGE);
 
   useEffect(() => {
     const el = statsRef.current;
@@ -320,28 +325,68 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           </a>
         </div>
         {categories.length > 0 ? (
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            {categories.map((category, i) => (
-              <motion.button
-                key={category.id}
-                type="button"
-                onClick={() => handleCategoryClick(category.name)}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04, duration: 0.35, ease: [0.33, 1, 0.68, 1] }}
-                whileHover={{ y: -5, scale: 1.03 }}
-                className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-soft hover:border-orange-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-orange-700 text-left"
-              >
-                <div className="mb-3">
-                  <CategoryIcon name={category.name} size={56} />
-                </div>
-                <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors text-sm">
-                  {getCatName(category)}
-                </h3>
-              </motion.button>
-            ))}
-          </div>
+          <>
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+              {catPaged.map((category, i) => {
+                const { Icon, color, bgColor, isFallback } = getCategoryIcon(category.slug);
+                return (
+                  <motion.button
+                    key={category.id}
+                    type="button"
+                    onClick={() => handleCategoryClick(category.name)}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.04, duration: 0.35, ease: [0.33, 1, 0.68, 1] }}
+                    whileHover={{ y: -5, scale: 1.03 }}
+                    className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-soft hover:border-orange-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-orange-700 text-left"
+                  >
+                    <div className={`mb-3 w-14 h-14 rounded-2xl flex items-center justify-center ${isFallback ? 'bg-orange-50 dark:bg-orange-900/20' : bgColor}`}>
+                      {isFallback
+                        ? <span className="text-2xl leading-none">{category.icon ?? '🔧'}</span>
+                        : <Icon className={`w-7 h-7 ${color}`} />
+                      }
+                    </div>
+                    <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors text-sm leading-snug">
+                      {getCatName(category)}
+                    </h3>
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {/* Pagination */}
+            {catTotalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-8">
+                <button
+                  onClick={() => setCatPage(p => Math.max(1, p - 1))}
+                  disabled={catPage === 1}
+                  className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:border-orange-400 hover:text-orange-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                {Array.from({ length: catTotalPages }, (_, i) => i + 1).map(p => (
+                  <button
+                    key={p}
+                    onClick={() => setCatPage(p)}
+                    className={`w-9 h-9 rounded-xl text-sm font-semibold border transition-all ${
+                      p === catPage
+                        ? 'bg-orange-500 border-orange-500 text-white shadow shadow-orange-300/40'
+                        : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-orange-400 hover:text-orange-600'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCatPage(p => Math.min(catTotalPages, p + 1))}
+                  disabled={catPage === catTotalPages}
+                  className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:border-orange-400 hover:text-orange-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <p className="text-slate-400 text-sm">{t('cat_none')}</p>
         )}
