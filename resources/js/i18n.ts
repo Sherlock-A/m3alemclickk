@@ -1899,8 +1899,14 @@ const resources = {
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: document.documentElement.lang || 'fr',
-  fallbackLng: 'fr',
+  lng: (() => {
+    const stored = localStorage.getItem('jobly_lang');
+    if (stored && ['fr','ar','dz','en'].includes(stored)) return stored;
+    if (navigator.language?.toLowerCase().startsWith('ar')) return 'ar';
+    return document.documentElement.lang || 'fr';
+  })(),
+  // Darija falls back to Arabic, English & Amazigh fall back to French
+  fallbackLng: { dz: ['ar', 'fr'], en: ['fr'], default: ['fr'] },
   interpolation: { escapeValue: false },
 });
 

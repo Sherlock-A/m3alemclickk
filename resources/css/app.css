@@ -7,16 +7,26 @@ html {
 }
 
 body {
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: 'DM Sans', Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
-.rtl {
-  direction: rtl;
+/* Arabic / Darija — Cairo has better Moroccan legibility */
+[dir="rtl"] body,
+[dir="rtl"] {
+  font-family: 'Cairo', 'Noto Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: 0;
 }
 
-.ltr {
-  direction: ltr;
-}
+/* Make sure text aligns correctly in RTL */
+[dir="rtl"] .text-left  { text-align: right; }
+[dir="rtl"] .text-right { text-align: left; }
+
+/* Flip margins/paddings for RTL */
+[dir="rtl"] .mr-auto { margin-right: unset; margin-left: auto; }
+[dir="rtl"] .ml-auto { margin-left: unset; margin-right: auto; }
+
+.rtl { direction: rtl; }
+.ltr { direction: ltr; }
 
 .glass {
   @apply bg-white/80 dark:bg-slate-900/80 backdrop-blur border border-white/20 dark:border-slate-800;

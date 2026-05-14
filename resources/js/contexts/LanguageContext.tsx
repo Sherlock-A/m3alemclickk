@@ -9,28 +9,51 @@ type LanguageContextValue = {
   setLanguage: (lang: string) => void;
 };
 
+const VALID: Language[] = ['fr', 'ar', 'dz', 'en'];
+
+function detectInitialLang(): Language {
+  // 1. User already chose
+  const stored = typeof window !== 'undefined' ? localStorage.getItem('jobly_lang') : null;
+  if (stored && VALID.includes(stored as Language)) return stored as Language;
+
+  // 2. HTML lang attr (set by server)
+  const htmlLang = typeof document !== 'undefined' ? document.documentElement.lang : '';
+  if (htmlLang && VALID.includes(htmlLang as Language)) return htmlLang as Language;
+
+  // 3. Browser preference — Arabic speakers → Arabic interface
+  if (typeof navigator !== 'undefined') {
+    const pref = navigator.language?.toLowerCase() ?? '';
+    if (pref.startsWith('ar')) return 'ar';
+  }
+
+  return 'fr';
+}
+
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const stored = typeof window !== 'undefined' ? (localStorage.getItem('jobly_lang') as Language | null) : null;
-  const [language, setLanguageState] = useState<Language>(stored ?? (document.documentElement.lang as Language) ?? 'fr');
+  const [language, setLanguageState] = useState<Language>(detectInitialLang);
 
   useEffect(() => {
     i18n.changeLanguage(language);
     localStorage.setItem('jobly_lang', language);
   }, [language]);
 
-
   useEffect(() => {
     const isRtl = language === 'ar' || language === 'dz';
-    document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
+    document.documentElement.dir  = isRtl ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
+    // Font optimisation: Arabic script needs a proper font
+    document.documentElement.style.fontFamily = isRtl
+      ? '"Cairo", "Noto Sans Arabic", system-ui, sans-serif'
+      : '';
   }, [language]);
 
   const value = useMemo(() => ({
     language,
     rtl: language === 'ar' || language === 'dz',
-    setLanguage: (lang: string) => setLanguageState((['fr', 'ar', 'dz', 'en'].includes(lang) ? lang : 'fr') as Language),
+    setLanguage: (lang: string) =>
+      setLanguageState((VALID.includes(lang as Language) ? lang : 'fr') as Language),
   }), [language]);
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;

@@ -33,10 +33,10 @@
 
     {{-- Google OAuth Client ID --}}
     <script nonce="{{ request()->attributes->get('csp_nonce', '') }}">window.__GOOGLE_CLIENT_ID__ = "{{ config('services.google.client_id', '') }}";</script>
-    {{-- Jobly brand font --}}
+    {{-- Fonts: Latin (Jobly brand) + Arabic (Cairo) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=DM+Sans:wght@400;500&family=Cairo:wght@400;600;700;800&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.tsx'])
 
