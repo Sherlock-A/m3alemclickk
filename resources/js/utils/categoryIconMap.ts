@@ -106,12 +106,8 @@ const iconMap: Record<string, IconEntry> = {
   coachsportif:       { Icon: Dumbbell,       color: 'text-orange-400',  bgColor: 'bg-orange-500/10'  },
 };
 
-const fallback: IconEntry = {
-  Icon: Wrench,
-  color: 'text-orange-400',
-  bgColor: 'bg-orange-500/10',
-};
-
-export function getCategoryIcon(slug: string): IconEntry {
-  return iconMap[slug] ?? fallback;
+export function getCategoryIcon(slug: string): IconEntry & { isFallback: boolean } {
+  const entry = iconMap[slug];
+  if (entry) return { ...entry, isFallback: false };
+  return { Icon: Wrench, color: 'text-orange-400', bgColor: 'bg-orange-500/10', isFallback: true };
 }
