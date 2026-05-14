@@ -18,12 +18,22 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react':   ['react', 'react-dom', '@inertiajs/react'],
-          'vendor-ui':      ['lucide-react', 'framer-motion'],
-          'vendor-chart':   ['recharts'],
-          'vendor-form':    ['react-hook-form', 'zod', '@hookform/resolvers'],
-          'vendor-axios':   ['axios'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules/recharts') || id.includes('node_modules/d3') || id.includes('node_modules/victory')) {
+            return 'vendor-chart';
+          }
+          if (id.includes('node_modules/react') || id.includes('node_modules/@inertiajs')) {
+            return 'vendor-react';
+          }
+          if (id.includes('node_modules/lucide-react') || id.includes('node_modules/framer-motion')) {
+            return 'vendor-ui';
+          }
+          if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod') || id.includes('node_modules/@hookform')) {
+            return 'vendor-form';
+          }
+          if (id.includes('node_modules/axios')) {
+            return 'vendor-axios';
+          }
         },
       },
     },
