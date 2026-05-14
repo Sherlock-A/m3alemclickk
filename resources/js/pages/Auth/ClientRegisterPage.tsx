@@ -1,7 +1,8 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, UserPlus, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Check, ArrowRight, Loader2, AlertCircle, Star, Users, MapPin, ShieldCheck } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 function GoogleIcon() {
   return (
@@ -36,6 +37,7 @@ function translateError(msg: string): string {
 
 export default function ClientRegisterPage() {
   const { t } = useTranslation();
+  const { rtl } = useLanguage();
   const [cities, setCities] = useState<City[]>([]);
   const [form, setForm]     = useState({
     name: '', email: '', password: '', password_confirmation: '',
@@ -83,7 +85,7 @@ export default function ClientRegisterPage() {
       return;
     }
     if (form.password.length < 8) {
-      setError('Le mot de passe doit contenir au moins 8 caractères.');
+      setError(t('reg_pwd_min_err'));
       return;
     }
     setLoading(true);
@@ -111,138 +113,209 @@ export default function ClientRegisterPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
+  const inp = `w-full rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400/20 transition-colors`;
 
-        <div className="text-center mb-8">
-          <a href="/">
-            <JoblyLogo size="lg" />
-          </a>
-          <p className="mt-2 text-slate-500 dark:text-slate-400 text-sm">
-            {t('reg_client_sub')}
-          </p>
+  const stats = [
+    { icon: Users,       value: '500+', label: t('professionals_registered') },
+    { icon: MapPin,      value: '20+',  label: t('cities_covered') },
+    { icon: Star,        value: '4.8',  label: t('rating') },
+    { icon: ShieldCheck, value: '100%', label: t('trust_verified_label') },
+  ];
+
+  return (
+    <div className="min-h-screen flex" dir={rtl ? 'rtl' : 'ltr'}>
+
+      {/* ── Left brand panel (desktop only) ─────────────────────────────── */}
+      <div className="hidden lg:flex lg:w-[45%] flex-col justify-between bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 relative overflow-hidden">
+        <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-orange-600/10 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full bg-orange-400/5 blur-2xl" />
+
+        <div className="relative z-10">
+          <a href="/"><JoblyLogo size="lg" theme="dark" /></a>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 p-8">
-
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">{t('reg_client_title')}</h1>
-
-          {/* Google button */}
-          <button type="button" onClick={handleGoogle} disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-colors disabled:opacity-60 mb-5">
-            {googleLoading
-              ? <RefreshCw className="h-4 w-4 animate-spin" />
-              : <GoogleIcon />}
-            {googleLoading ? t('reg_redirecting') : t('reg_google')}
-          </button>
-
-          <div className="relative mb-5">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200 dark:border-slate-700" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-slate-900 px-3 text-slate-400">{t('login_or')}</span>
-            </div>
+        <div className="relative z-10 space-y-8">
+          <div>
+            <h2 className="text-3xl font-black text-white leading-tight">{t('hero')}</h2>
+            <p className="mt-3 text-slate-400 text-sm leading-relaxed">{t('hero_p')}</p>
           </div>
 
-          <div className="mb-5">
-            <p className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Choisissez un avatar</p>
-            <div className="flex flex-wrap gap-2">
-              {AVATARS.map(a => (
-                <button key={a} type="button" onClick={() => setAvatar(a)}
-                  className={`text-2xl rounded-xl p-2 border-2 transition-colors ${
-                    avatar === a
-                      ? 'border-orange-400 bg-orange-50 dark:bg-orange-900/20'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-orange-300'
-                  }`}>{a}</button>
-              ))}
-            </div>
+          {/* Stats grid */}
+          <div className="grid grid-cols-2 gap-4">
+            {stats.map(({ icon: Icon, value, label }) => (
+              <div key={label} className="rounded-2xl bg-white/5 border border-white/10 p-4 backdrop-blur">
+                <Icon className="h-5 w-5 text-orange-400 mb-2" />
+                <p className="text-2xl font-black text-white">{value}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{label}</p>
+              </div>
+            ))}
           </div>
 
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-sm text-red-700 dark:text-red-400">
-              {error}
-            </div>
-          )}
+          <div className="flex items-center gap-2 rounded-xl bg-green-500/10 border border-green-500/20 px-4 py-2.5">
+            <ShieldCheck className="h-4 w-4 text-green-400 shrink-0" />
+            <span className="text-xs text-green-300">{t('verif_title')}</span>
+          </div>
+        </div>
 
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('name')}</label>
-              <input value={form.name} onChange={set('name')} required placeholder="Ahmed El Fassi"
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors" />
+        <div className="relative z-10">
+          <p className="text-xs text-slate-600">© {new Date().getFullYear()} Jobly</p>
+        </div>
+      </div>
+
+      {/* ── Right form panel ─────────────────────────────────────────────── */}
+      <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 px-6 py-12">
+
+        {/* Mobile logo */}
+        <div className="lg:hidden mb-8">
+          <a href="/">
+            <JoblyLogo size="lg" theme="light" className="dark:hidden" />
+            <JoblyLogo size="lg" theme="dark" className="hidden dark:block" />
+          </a>
+        </div>
+
+        <div className="w-full max-w-md">
+          <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/60 dark:shadow-slate-900/60 border border-slate-100 dark:border-slate-800 overflow-hidden">
+
+            {/* Orange gradient header */}
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-6">
+              <h1 className="text-xl font-black text-white">{t('reg_client_title')}</h1>
+              <p className="text-orange-100 text-sm mt-1">{t('reg_client_sub')}</p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('email')}</label>
-              <input value={form.email} onChange={set('email')} type="email" required placeholder="ahmed@example.com"
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                {t('phone')} <span className="text-slate-400 font-normal">(pour WhatsApp)</span>
-              </label>
-              <input value={form.phone} onChange={set('phone')} type="tel" placeholder="+212 6XX XXX XXX"
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors" />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                {t('city')} <span className="text-slate-400 font-normal">(optionnel)</span>
-              </label>
-              <select value={form.city} onChange={set('city')}
-                className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 transition-colors">
-                <option value="">{t('reg_select_city')}</option>
-                {cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('password')}</label>
-              <div className="relative">
-                <input value={form.password} onChange={set('password')} required
-                  type={showPwd ? 'text' : 'password'} placeholder="Minimum 8 caractères"
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 pr-12 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition-colors" />
-                <button type="button" onClick={() => setShowPwd(v => !v)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+
+            <div className="px-8 py-7 space-y-5">
+
+              {/* Error */}
+              {error && (
+                <div className="flex items-start gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 dark:bg-red-950/30 dark:border-red-800 dark:text-red-400">
+                  <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                  {error}
+                </div>
+              )}
+
+              {/* Google */}
+              <button type="button" onClick={handleGoogle} disabled={googleLoading || loading}
+                className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-orange-300 hover:bg-orange-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all disabled:opacity-60">
+                {googleLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
+                {googleLoading ? t('reg_redirecting') : t('reg_google')}
+              </button>
+
+              {/* Divider */}
+              <div className="relative flex items-center gap-3">
+                <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                <span className="text-xs font-medium text-slate-400 bg-white dark:bg-slate-900 px-2">{t('login_or')}</span>
+                <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+              </div>
+
+              {/* Avatar selector */}
+              <div>
+                <p className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('reg_choose_avatar') ?? 'Choisissez un avatar'}</p>
+                <div className="flex flex-wrap gap-2">
+                  {AVATARS.map(a => (
+                    <button key={a} type="button" onClick={() => setAvatar(a)}
+                      className={`text-2xl rounded-xl p-2.5 border-2 transition-all ${
+                        avatar === a
+                          ? 'border-orange-400 bg-orange-50 dark:bg-orange-900/20 ring-2 ring-orange-400/20'
+                          : 'border-slate-200 dark:border-slate-700 hover:border-orange-300 hover:bg-orange-50/50'
+                      }`}>{a}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Form */}
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{t('name')} <span className="text-red-400">*</span></label>
+                  <input value={form.name} onChange={set('name')} required placeholder="Ahmed El Fassi" autoFocus className={inp} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{t('email')} <span className="text-red-400">*</span></label>
+                  <input value={form.email} onChange={set('email')} type="email" required placeholder="ahmed@exemple.ma" dir="ltr" className={inp} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                    {t('phone')} <span className="text-slate-400 text-xs font-normal">(WhatsApp)</span>
+                  </label>
+                  <input value={form.phone} onChange={set('phone')} type="tel" placeholder="+212 6XX XXX XXX" dir="ltr" className={inp} />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                    {t('city')} <span className="text-slate-400 text-xs font-normal">({t('optional') ?? 'optionnel'})</span>
+                  </label>
+                  <select value={form.city} onChange={set('city')} className={inp}>
+                    <option value="">{t('reg_select_city')}</option>
+                    {cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{t('password')} <span className="text-red-400">*</span></label>
+                  <div className="relative">
+                    <input value={form.password} onChange={set('password')} required
+                      type={showPwd ? 'text' : 'password'} placeholder={t('reg_pwd_placeholder')}
+                      className={inp + ' pe-11'} />
+                    <button type="button" onClick={() => setShowPwd(v => !v)} tabIndex={-1}
+                      className="absolute end-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                      {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                  {form.password && (
+                    <div className="mt-2 flex gap-1">
+                      {[...Array(4)].map((_, i) => (
+                        <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${
+                          form.password.length >= [4, 6, 8, 12][i]
+                            ? ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'][i]
+                            : 'bg-slate-100 dark:bg-slate-700'
+                        }`} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{t('confirm_password')} <span className="text-red-400">*</span></label>
+                  <input value={form.password_confirmation} onChange={set('password_confirmation')} required
+                    type="password" placeholder="••••••••"
+                    className={`w-full rounded-xl border-2 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors ${
+                      form.password_confirmation && form.password !== form.password_confirmation
+                        ? 'border-red-400 focus:ring-red-200 focus:border-red-400'
+                        : form.password_confirmation && form.password === form.password_confirmation
+                        ? 'border-green-400 focus:ring-green-200 focus:border-green-400'
+                        : 'border-slate-200 dark:border-slate-700 focus:ring-orange-400/20 focus:border-orange-400'
+                    }`} />
+                  {form.password_confirmation && form.password !== form.password_confirmation && (
+                    <p className="text-xs text-red-500 mt-1.5">{t('reg_pwd_no_match')}</p>
+                  )}
+                  {form.password_confirmation && form.password === form.password_confirmation && (
+                    <p className="text-xs text-green-600 mt-1.5">{t('reg_pwd_match')}</p>
+                  )}
+                </div>
+
+                <button type="submit" disabled={loading || googleLoading}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-orange-500/30 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all disabled:opacity-60 mt-2">
+                  {loading
+                    ? <><Loader2 className="h-4 w-4 animate-spin" /> {t('reg_creating')}</>
+                    : <><Check className="h-4 w-4" /> {t('reg_create_client')}</>
+                  }
+                  {!loading && <ArrowRight className="h-4 w-4" />}
                 </button>
+              </form>
+
+              {/* Bottom links */}
+              <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2 text-center text-sm text-slate-500">
+                <p>
+                  {t('already_have_account')}{' '}
+                  <a href="/client/login" className="font-bold text-orange-500 hover:text-orange-600 hover:underline">{t('login')}</a>
+                </p>
+                <p>
+                  {t('login_are_pro')}{' '}
+                  <a href="/pro/register" className="font-bold text-orange-500 hover:text-orange-600 hover:underline">{t('pro_register')}</a>
+                </p>
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">{t('confirm_password')}</label>
-              <input value={form.password_confirmation} onChange={set('password_confirmation')} required
-                type="password" placeholder="••••••••"
-                className={`w-full rounded-xl border px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 transition-colors ${
-                  form.password_confirmation && form.password !== form.password_confirmation
-                    ? 'border-red-400 focus:ring-red-200 focus:border-red-400'
-                    : form.password_confirmation && form.password === form.password_confirmation
-                    ? 'border-green-400 focus:ring-green-200 focus:border-green-400'
-                    : 'border-slate-200 dark:border-slate-700 focus:ring-orange-300 focus:border-orange-400'
-                }`} />
-              {form.password_confirmation && form.password !== form.password_confirmation && (
-                <p className="text-xs text-red-500 mt-1">{t('reg_pwd_no_match')}</p>
-              )}
-              {form.password_confirmation && form.password === form.password_confirmation && (
-                <p className="text-xs text-green-600 mt-1">{t('reg_pwd_match')}</p>
-              )}
-            </div>
-
-            <button type="submit" disabled={loading}
-              className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white font-bold py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
-              {loading
-                ? <><RefreshCw className="h-4 w-4 animate-spin" /> {t('reg_creating')}</>
-                : <><UserPlus className="h-4 w-4" /> {t('reg_create_client')}</>}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center space-y-2">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              {t('already_have_account')}{' '}
-              <a href="/client/login" className="text-orange-500 font-semibold hover:underline">{t('login')}</a>
-            </p>
-            <p className="text-xs text-slate-400">
-              {t('login_are_pro')}{' '}
-              <a href="/pro/register" className="text-orange-500 hover:underline">{t('pro_register')} →</a>
-            </p>
           </div>
+
+          <p className="mt-5 text-center text-xs text-slate-400 dark:text-slate-600 leading-relaxed px-4">
+            {t('login_google_note')}
+          </p>
         </div>
       </div>
     </div>

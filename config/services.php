@@ -13,4 +13,14 @@ return [
         'redirect'      => env('GOOGLE_REDIRECT_URI', '/auth/google/callback'),
     ],
 
+    // Google Gemini — GRATUIT : https://aistudio.google.com/app/apikey
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY', ''),
+    ],
+
+    // Anthropic Claude — payant (optionnel)
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY', ''),
+    ],
+
 ];

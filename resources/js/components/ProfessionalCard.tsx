@@ -42,18 +42,19 @@ type CardProps = {
   onCompare?: (p: Professional) => void;
   inCompare?: boolean;
   compareDisabled?: boolean;
+  index?: number;
 };
 
-export function ProfessionalCard({ professional, onCompare, inCompare, compareDisabled }: CardProps) {
+export function ProfessionalCard({ professional, onCompare, inCompare, compareDisabled, index = 0 }: CardProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { t } = useTranslation();
   const getCatName = useCatName();
 
   return (
     <motion.article
-      whileHover={{ y: -3, boxShadow: '0 12px 40px rgba(249,115,22,0.12)' }}
+      whileHover={{ y: -4, boxShadow: '0 16px 48px rgba(249,115,22,0.14)' }}
       transition={{ duration: 0.2 }}
-      className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
+      className="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 h-full"
     >
       <div className="p-4">
         {/* ── Header: avatar + nom + métier + ville ── */}

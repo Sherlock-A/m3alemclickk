@@ -20,8 +20,12 @@ use App\Http\Controllers\Api\TrackingController;
 use App\Http\Controllers\Api\UploadController;
 use App\Http\Controllers\Api\ContactRequestController;
 use App\Http\Controllers\Api\UnavailabilityController;
+use App\Http\Controllers\ChatBotController;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
+
+// ─── ChatBot ───────────────────────────────────────────────────────────────────
+Route::post('/chat', [ChatBotController::class, 'reply'])->middleware('throttle:20,1');
 
 // ─── Recherche unifiée — alias vers ProfessionalController avec normalisation ──
 Route::get('/search',             [SearchController::class, 'search'])->middleware('throttle:60,1');

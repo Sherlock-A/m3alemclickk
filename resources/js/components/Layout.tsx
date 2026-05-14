@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { JoblyLogo } from './JoblyLogo';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { ChatBot } from './ChatBot';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Moon, Sun, Menu, X, LogIn, Search, MapPin, Mail, Phone, LayoutDashboard, LogOut, ShieldCheck, User } from 'lucide-react';
 
@@ -323,6 +324,8 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </footer>
+
+      <ChatBot />
     </div>
   );
 }

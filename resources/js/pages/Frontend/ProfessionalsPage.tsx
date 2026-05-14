@@ -474,7 +474,7 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
                       />
                     </motion.div>
                   ))}
-                  {loading && Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
+                  {loading && Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} delay={i * 80} />)}
                 </motion.div>
                 <div ref={loader} className="h-10" />
               </>

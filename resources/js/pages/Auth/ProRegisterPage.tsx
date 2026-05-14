@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, EyeOff, Check, ArrowLeft, ArrowRight, User, Lock, Briefcase, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Check, ArrowLeft, ArrowRight, User, Lock, Briefcase, Loader2, ShieldCheck, AlertCircle } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 function GoogleIcon() {
   return (
@@ -36,6 +37,7 @@ function translateError(msg: string): string {
 
 export default function ProRegisterPage() {
   const { t } = useTranslation();
+  const { rtl } = useLanguage();
 
   const STEPS = [
     { id: 1 as Step, label: t('reg_step_identity'), icon: User },
@@ -60,7 +62,6 @@ export default function ProRegisterPage() {
   const [categories, setCategories]       = useState<Category[]>([]);
   const [selectedCatIds, setSelectedCatIds] = useState<number[]>([]);
 
-  // Autocomplete métier
   const [suggestions, setSuggestions]   = useState<ProfessionSuggestion[]>([]);
   const [showSug, setShowSug]           = useState(false);
   const sugRef                          = useRef<HTMLDivElement>(null);
@@ -159,7 +160,7 @@ export default function ProRegisterPage() {
   const toggleCategory = (id: number) => {
     setSelectedCatIds(prev => {
       if (prev.includes(id)) return prev.filter(x => x !== id);
-      if (prev.length >= 3) return prev; // max 3
+      if (prev.length >= 3) return prev;
       return [...prev, id];
     });
     if (fieldErrors.category_ids) setFieldErrors(p => { const n = { ...p }; delete n.category_ids; return n; });
@@ -183,10 +184,7 @@ export default function ProRegisterPage() {
         setSuccess(true);
         return;
       }
-      if (res.status === 429) {
-        setGlobalError(translateError('too many attempts'));
-        return;
-      }
+      if (res.status === 429) { setGlobalError(translateError('too many attempts')); return; }
       if (res.status === 422 && data.errors) {
         const errors: FieldErrors = {};
         for (const [field, messages] of Object.entries(data.errors as Record<string, string[]>)) {
@@ -208,43 +206,87 @@ export default function ProRegisterPage() {
   };
 
   const inp = (field: string) =>
-    `w-full rounded-xl border px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${
+    `w-full rounded-xl border-2 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors ${
       fieldErrors[field]
         ? 'border-red-400 focus:border-red-400 focus:ring-red-100 dark:focus:ring-red-900'
-        : 'border-slate-200 dark:border-slate-700 focus:border-orange-400 focus:ring-orange-100 dark:focus:ring-orange-900'
+        : 'border-slate-200 dark:border-slate-700 focus:border-orange-400 focus:ring-orange-400/20'
     }`;
 
   const Err = ({ f }: { f: string }) =>
     fieldErrors[f] ? <p className="mt-1.5 text-xs text-red-500">{fieldErrors[f]}</p> : null;
 
+  /* ── Left brand panel (shared between success + form) ─────────────────── */
+  const LeftPanel = () => (
+    <div className="hidden lg:flex lg:w-[45%] flex-col justify-between bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-12 relative overflow-hidden">
+      <div className="absolute -top-24 -left-24 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl" />
+      <div className="absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-orange-600/10 blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 rounded-full bg-orange-400/5 blur-2xl" />
+
+      <div className="relative z-10">
+        <a href="/"><JoblyLogo size="lg" theme="dark" /></a>
+      </div>
+
+      <div className="relative z-10 space-y-8">
+        <div>
+          <h2 className="text-3xl font-black text-white leading-tight">{t('reg_join_title')}</h2>
+          <p className="mt-3 text-slate-400 text-sm leading-relaxed">{t('reg_join_desc')}</p>
+        </div>
+
+        <ul className="space-y-3">
+          {[t('reg_benefit_1'), t('reg_benefit_2'), t('reg_benefit_3'), t('reg_benefit_4')].map(item => (
+            <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
+              <span className="h-5 w-5 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
+                <Check className="h-3 w-3" />
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex items-center gap-2 rounded-xl bg-green-500/10 border border-green-500/20 px-4 py-2.5">
+          <ShieldCheck className="h-4 w-4 text-green-400 shrink-0" />
+          <span className="text-xs text-green-300">{t('verif_title')}</span>
+        </div>
+      </div>
+
+      <div className="relative z-10">
+        <p className="text-xs text-slate-600">© {new Date().getFullYear()} Jobly</p>
+      </div>
+    </div>
+  );
+
   /* ── Success ─────────────────────────────────────────────────────────────── */
   if (success) {
     return (
-      <div className="min-h-screen flex">
-        <div className="hidden lg:flex lg:w-2/5 bg-slate-950" />
-        <div className="flex-1 flex items-center justify-center px-6 bg-white dark:bg-slate-900">
-          <div className="w-full max-w-sm text-center space-y-6">
-            <div className="mx-auto h-20 w-20 rounded-2xl bg-green-50 dark:bg-green-900/20 flex items-center justify-center">
-              <Check className="h-10 w-10 text-green-500" strokeWidth={2.5} />
-            </div>
-            <div>
-              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">{t('reg_success_title')}</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                {t('reg_success_desc')}
-              </p>
-            </div>
-            <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-4 text-left space-y-2">
-              {[t('reg_success_step1'), t('reg_success_step2'), t('reg_success_step3')].map((s, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
-                  <span className="h-5 w-5 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-500 text-xs flex items-center justify-center font-bold">{i + 1}</span>
-                  {s}
+      <div className="min-h-screen flex" dir={rtl ? 'rtl' : 'ltr'}>
+        <LeftPanel />
+        <div className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-950 px-6">
+          <div className="w-full max-w-sm">
+            <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/60 dark:shadow-slate-900/60 border border-slate-100 dark:border-slate-800 overflow-hidden">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-8 py-6">
+                <div className="mx-auto h-12 w-12 rounded-2xl bg-white/20 flex items-center justify-center">
+                  <Check className="h-7 w-7 text-white" strokeWidth={2.5} />
                 </div>
-              ))}
+              </div>
+              <div className="px-8 py-7 space-y-5 text-center">
+                <div>
+                  <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">{t('reg_success_title')}</h2>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{t('reg_success_desc')}</p>
+                </div>
+                <div className="rounded-xl bg-slate-50 dark:bg-slate-800 p-4 text-start space-y-3">
+                  {[t('reg_success_step1'), t('reg_success_step2'), t('reg_success_step3')].map((s, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
+                      <span className="h-6 w-6 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-500 text-xs flex items-center justify-center font-bold shrink-0">{i + 1}</span>
+                      {s}
+                    </div>
+                  ))}
+                </div>
+                <a href="/pro/login"
+                  className="flex items-center justify-center gap-2 w-full rounded-xl bg-orange-500 px-4 py-3.5 text-sm font-bold text-white hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/30">
+                  {t('back_to_login')} <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
             </div>
-            <a href="/pro/login"
-              className="flex items-center justify-center gap-2 w-full rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20">
-              {t('back_to_login')}
-            </a>
           </div>
         </div>
       </div>
@@ -253,304 +295,282 @@ export default function ProRegisterPage() {
 
   /* ── Form ────────────────────────────────────────────────────────────────── */
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex" dir={rtl ? 'rtl' : 'ltr'}>
 
-      {/* Left panel */}
-      <div className="hidden lg:flex lg:w-2/5 bg-slate-950 flex-col justify-between p-12">
-        <a href="/">
-          <JoblyLogo size="md" theme="dark" />
-        </a>
-        <div className="space-y-5">
-          <div className="h-1 w-12 bg-orange-500 rounded-full" />
-          <h2 className="text-3xl font-black text-white leading-tight">
-            {t('reg_join_title')}
-          </h2>
-          <p className="text-slate-400 text-sm leading-relaxed">
-            {t('reg_join_desc')}
-          </p>
-          <ul className="space-y-3">
-            {[t('reg_benefit_1'), t('reg_benefit_2'), t('reg_benefit_3'), t('reg_benefit_4')].map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
-                <span className="h-5 w-5 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center shrink-0">
-                  <Check className="h-3 w-3" />
-                </span>
-                {item}
-              </li>
-            ))}
-          </ul>
+      <LeftPanel />
+
+      {/* Right form panel */}
+      <div className="flex-1 flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 px-6 py-12">
+
+        {/* Mobile logo */}
+        <div className="lg:hidden mb-8">
+          <a href="/">
+            <JoblyLogo size="lg" theme="light" className="dark:hidden" />
+            <JoblyLogo size="lg" theme="dark" className="hidden dark:block" />
+          </a>
         </div>
-        <p className="text-slate-600 text-xs">© {new Date().getFullYear()} Jobly</p>
-      </div>
 
-      {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white dark:bg-slate-900">
-        <div className="w-full max-w-sm space-y-7">
+        <div className="w-full max-w-md">
+          <div className="rounded-3xl bg-white dark:bg-slate-900 shadow-2xl shadow-slate-200/60 dark:shadow-slate-900/60 border border-slate-100 dark:border-slate-800 overflow-hidden">
 
-          {/* Mobile logo */}
-          <div className="lg:hidden text-center">
-            <a href="/">
-              <JoblyLogo size="md" />
-            </a>
-          </div>
-
-          {/* Step indicator */}
-          <div className="flex items-center gap-2">
-            {STEPS.map(({ id, label }, idx) => (
-              <div key={id} className="flex items-center gap-2 flex-1">
-                <div className={`flex items-center gap-1.5 ${step >= id ? 'text-orange-500' : 'text-slate-300 dark:text-slate-600'}`}>
-                  <div className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                    step > id  ? 'bg-orange-500 text-white'
-                    : step === id ? 'bg-orange-500 text-white ring-4 ring-orange-100 dark:ring-orange-900/30'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500'
-                  }`}>
-                    {step > id ? <Check className="h-3.5 w-3.5" /> : id}
-                  </div>
-                  <span className="hidden sm:block text-xs font-medium">{label}</span>
+            {/* Orange gradient card header */}
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1 min-w-0">
+                  <p className="text-orange-100/80 text-xs font-medium mb-1">{STEPS[step - 1].label}</p>
+                  <h1 className="text-xl font-black text-white">
+                    {step === 1 && t('reg_your_info')}
+                    {step === 2 && t('reg_your_activity')}
+                    {step === 3 && t('reg_secure')}
+                  </h1>
+                  <p className="text-orange-100/70 text-xs mt-0.5">
+                    {step === 1 && t('reg_your_info_sub')}
+                    {step === 2 && t('reg_your_activity_sub')}
+                    {step === 3 && t('reg_secure_sub')}
+                  </p>
                 </div>
-                {idx < STEPS.length - 1 && (
-                  <div className={`flex-1 h-px transition-colors ${step > id ? 'bg-orange-400' : 'bg-slate-100 dark:bg-slate-800'}`} />
-                )}
+                {/* Step bubbles */}
+                <div className="flex items-center gap-1.5 ps-4 pt-1 shrink-0">
+                  {[1, 2, 3].map(s => (
+                    <div key={s} className={`rounded-full transition-all duration-300 ${
+                      step > s ? 'h-3 w-3 bg-white'
+                      : step === s ? 'h-4 w-4 bg-white ring-4 ring-white/20'
+                      : 'h-3 w-3 bg-white/30'
+                    }`} />
+                  ))}
+                </div>
               </div>
-            ))}
+              {/* Progress bar */}
+              <div className="h-1 bg-white/20 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-white rounded-full transition-all duration-500"
+                  style={{ width: `${(step / 3) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            <div className="px-8 py-7 space-y-5">
+
+              {/* Global error */}
+              {globalError && (
+                <div className="flex items-start gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 dark:bg-red-950/30 dark:border-red-800 dark:text-red-400">
+                  <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                  {globalError}
+                </div>
+              )}
+
+              <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); next(); }} className="space-y-4">
+
+                {/* ── Step 1 ── */}
+                {step === 1 && <>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      {t('name')} <span className="text-red-400">*</span>
+                    </label>
+                    <input type="text" required value={form.name} onChange={set('name')}
+                      placeholder="Mohammed Alaoui" autoFocus className={inp('name')} />
+                    <Err f="name" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      {t('phone')} <span className="text-red-400">*</span>
+                    </label>
+                    <input type="tel" required value={form.phone} onChange={set('phone')}
+                      placeholder="+212 6XX XXX XXX" dir="ltr" className={inp('phone')} />
+                    <Err f="phone" />
+                  </div>
+
+                  {/* Divider + Google button */}
+                  <div className="pt-1 space-y-4">
+                    <div className="relative flex items-center gap-3">
+                      <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                      <span className="text-xs font-medium text-slate-400 bg-white dark:bg-slate-900 px-2">{t('reg_or_form')}</span>
+                      <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                    </div>
+                    <button type="button" onClick={handleGoogle} disabled={googleLoading}
+                      className="w-full flex items-center justify-center gap-3 rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:border-orange-300 hover:bg-orange-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all disabled:opacity-60">
+                      {googleLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
+                      {googleLoading ? t('reg_redirecting') : t('reg_google')}
+                    </button>
+                    <p className="text-center text-xs text-slate-400">{t('reg_google_note')}</p>
+                  </div>
+                </>}
+
+                {/* ── Step 2 ── */}
+                {step === 2 && <>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                      {t('categories')} <span className="text-red-400">*</span>
+                      <span className="ms-2 text-xs font-normal text-slate-400">({selectedCatIds.length}/3 {t('reg_categories_chosen')})</span>
+                    </label>
+                    <p className="text-xs text-slate-400 mb-2">{t('reg_cat_desc')}</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                      {categories.map(cat => {
+                        const selected = selectedCatIds.includes(cat.id);
+                        const maxReached = selectedCatIds.length >= 3 && !selected;
+                        return (
+                          <button key={cat.id} type="button" disabled={maxReached} onClick={() => toggleCategory(cat.id)}
+                            className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 text-sm font-medium transition-all text-start ${
+                              selected
+                                ? 'border-orange-400 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300'
+                                : maxReached
+                                  ? 'border-slate-100 dark:border-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
+                                  : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-orange-300 hover:bg-orange-50/50 dark:hover:bg-orange-900/10'
+                            }`}>
+                            <span className="text-lg leading-none">{cat.icon}</span>
+                            <span className="truncate">{cat.name}</span>
+                            {selected && <Check className="ms-auto h-3.5 w-3.5 text-orange-500 shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {fieldErrors.category_ids && <p className="text-red-500 text-xs mt-1.5">{fieldErrors.category_ids}</p>}
+                  </div>
+
+                  <div ref={sugRef} className="relative">
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      {t('reg_profession_title')} <span className="text-red-400">*</span>
+                    </label>
+                    <input type="text" required value={form.profession} onChange={set('profession')}
+                      onFocus={() => suggestions.length > 0 && setShowSug(true)}
+                      placeholder={t('reg_profession_placeholder')} className={inp('profession')} />
+                    <Err f="profession" />
+                    {showSug && suggestions.length > 0 && (
+                      <div className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden">
+                        {suggestions.map((s, i) => (
+                          <button key={i} type="button" onMouseDown={() => pickSuggestion(s.label)}
+                            className="w-full text-start px-4 py-2.5 hover:bg-orange-50 dark:hover:bg-orange-900/20 flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors">
+                            <span className="text-sm font-medium text-slate-800 dark:text-white">{s.label}</span>
+                            <span className="text-xs text-slate-400 shrink-0">{s.category}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      {t('reg_main_city')} <span className="text-red-400">*</span>
+                    </label>
+                    <select required value={form.main_city} onChange={set('main_city')} className={inp('main_city')}>
+                      <option value="">{t('reg_select_city')}</option>
+                      {cities.map((c) => <option key={c.id} value={c.name}>{c.name}{c.name_ar ? ` — ${c.name_ar}` : ''}</option>)}
+                    </select>
+                    <Err f="main_city" />
+                  </div>
+                </>}
+
+                {/* ── Step 3 ── */}
+                {step === 3 && <>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      {t('email')} <span className="text-red-400">*</span>
+                    </label>
+                    <input type="email" required value={form.email} onChange={set('email')} autoFocus
+                      placeholder="pro@exemple.ma" dir="ltr" className={inp('email')} />
+                    <Err f="email" />
+                  </div>
+
+                  {emailTaken && (
+                    <div className="flex items-start gap-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
+                      <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                      <span>
+                        {t('reg_email_taken')}{' '}
+                        <a href="/pro/login" className="font-bold underline hover:text-amber-900">{t('login')} →</a>
+                      </span>
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      {t('password')} <span className="text-red-400">*</span>
+                    </label>
+                    <div className="relative">
+                      <input type={showPwd ? 'text' : 'password'} required minLength={8}
+                        value={form.password} onChange={set('password')}
+                        placeholder={t('reg_pwd_placeholder')} className={inp('password') + ' pe-11'} />
+                      <button type="button" onClick={() => setShowPwd(v => !v)} tabIndex={-1}
+                        className="absolute end-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                        {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    <Err f="password" />
+                    {form.password && (
+                      <div className="mt-2 flex gap-1">
+                        {[...Array(4)].map((_, i) => (
+                          <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${
+                            form.password.length >= [4, 6, 8, 12][i]
+                              ? ['bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-400'][i]
+                              : 'bg-slate-100 dark:bg-slate-700'
+                          }`} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                      {t('confirm_password')} <span className="text-red-400">*</span>
+                    </label>
+                    <input type="password" required value={form.password_confirmation}
+                      onChange={set('password_confirmation')} placeholder="••••••••"
+                      className={`w-full rounded-xl border-2 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 transition-colors ${
+                        fieldErrors.password_confirmation
+                          ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
+                          : form.password_confirmation && form.password === form.password_confirmation
+                          ? 'border-green-400 focus:border-green-400 focus:ring-green-100'
+                          : form.password_confirmation && form.password !== form.password_confirmation
+                          ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
+                          : 'border-slate-200 dark:border-slate-700 focus:border-orange-400 focus:ring-orange-400/20'
+                      }`} />
+                    <Err f="password_confirmation" />
+                    {!fieldErrors.password_confirmation && form.password_confirmation && form.password === form.password_confirmation && (
+                      <p className="text-xs text-green-600 mt-1.5">{t('reg_pwd_match')}</p>
+                    )}
+                    {!fieldErrors.password_confirmation && form.password_confirmation && form.password !== form.password_confirmation && (
+                      <p className="text-xs text-red-500 mt-1.5">{t('reg_pwd_no_match')}</p>
+                    )}
+                  </div>
+                </>}
+
+                {/* Navigation buttons */}
+                <div className="flex items-center gap-3 pt-1">
+                  {step > 1 && (
+                    <button type="button" onClick={prev}
+                      className="flex items-center gap-1.5 rounded-xl border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                      <ArrowLeft className="h-4 w-4" /> {t('reg_back')}
+                    </button>
+                  )}
+                  {step < 3 && (
+                    <button type="submit"
+                      className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3.5 text-sm font-bold text-white hover:bg-orange-600 active:scale-[.98] transition-all shadow-lg shadow-orange-500/30">
+                      {t('reg_continue')} <ArrowRight className="h-4 w-4" />
+                    </button>
+                  )}
+                  {step === 3 && (
+                    <button type="submit" disabled={loading}
+                      className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3.5 text-sm font-bold text-white hover:bg-orange-600 disabled:opacity-60 active:scale-[.98] transition-all shadow-lg shadow-orange-500/30">
+                      {loading
+                        ? <><Loader2 className="h-4 w-4 animate-spin" /> {t('reg_creating')}</>
+                        : <><Check className="h-4 w-4" /> {t('reg_create')}</>
+                      }
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
           </div>
 
-          <div>
-            <h1 className="text-xl font-black text-slate-900 dark:text-white">
-              {step === 1 && t('reg_your_info')}
-              {step === 2 && t('reg_your_activity')}
-              {step === 3 && t('reg_secure')}
-            </h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              {step === 1 && t('reg_your_info_sub')}
-              {step === 2 && t('reg_your_activity_sub')}
-              {step === 3 && t('reg_secure_sub')}
+          {/* Footer links */}
+          <div className="mt-5 text-center space-y-2 text-sm">
+            <p className="text-slate-500 dark:text-slate-400">
+              {t('reg_already_account')}{' '}
+              <a href="/pro/login" className="font-bold text-orange-500 hover:text-orange-600 hover:underline">{t('login')}</a>
+            </p>
+            <p>
+              <a href="/" className="text-xs text-slate-400 dark:text-slate-600 hover:text-orange-500 transition-colors">{t('reg_back_home')}</a>
             </p>
           </div>
-
-          {globalError && (
-            <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-600 dark:text-red-400">
-              {globalError}
-            </div>
-          )}
-          <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); next(); }} className="space-y-4">
-
-            {/* ── Step 1 ── */}
-            {step === 1 && <>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {t('name')} <span className="text-red-400">*</span>
-                </label>
-                <input type="text" required value={form.name} onChange={set('name')}
-                  placeholder="Mohammed Alaoui" autoFocus className={inp('name')} />
-                <Err f="name" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {t('phone')} <span className="text-red-400">*</span>
-                </label>
-                <input type="tel" required value={form.phone} onChange={set('phone')}
-                  placeholder="+212 6XX XXX XXX" className={inp('phone')} />
-                <Err f="phone" />
-              </div>
-            </>}
-
-            {/* ── Step 2 ── */}
-            {step === 2 && <>
-              {/* Catégories — multi-select (max 3) */}
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  {t('categories')} <span className="text-red-400">*</span>
-                  <span className="ml-2 text-xs font-normal text-slate-400">
-                    ({selectedCatIds.length}/3 {t('reg_categories_chosen')})
-                  </span>
-                </label>
-                <p className="text-xs text-slate-400 mb-2">{t('reg_cat_desc')}</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  {categories.map(cat => {
-                    const selected = selectedCatIds.includes(cat.id);
-                    const maxReached = selectedCatIds.length >= 3 && !selected;
-                    return (
-                      <button
-                        key={cat.id}
-                        type="button"
-                        disabled={maxReached}
-                        onClick={() => toggleCategory(cat.id)}
-                        className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 text-sm font-medium transition-all text-left
-                          ${selected
-                            ? 'border-orange-400 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300'
-                            : maxReached
-                              ? 'border-slate-100 dark:border-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed'
-                              : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-orange-300 hover:bg-orange-50/50 dark:hover:bg-orange-900/10'
-                          }`}
-                      >
-                        <span className="text-lg leading-none">{cat.icon}</span>
-                        <span className="truncate">{cat.name}</span>
-                        {selected && <span className="ml-auto text-orange-500 shrink-0">✓</span>}
-                      </button>
-                    );
-                  })}
-                </div>
-                {fieldErrors.category_ids && (
-                  <p className="text-red-500 text-xs mt-1">{fieldErrors.category_ids}</p>
-                )}
-              </div>
-
-              {/* Métier libre */}
-              <div ref={sugRef} className="relative">
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {t('reg_profession_title')} <span className="text-red-400">*</span>
-                </label>
-                <input type="text" required value={form.profession} onChange={set('profession')}
-                  onFocus={() => suggestions.length > 0 && setShowSug(true)}
-                  placeholder={t('reg_profession_placeholder')} className={inp('profession')} />
-                <Err f="profession" />
-                {showSug && suggestions.length > 0 && (
-                  <div className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden">
-                    {suggestions.map((s, i) => (
-                      <button key={i} type="button" onMouseDown={() => pickSuggestion(s.label)}
-                        className="w-full text-left px-4 py-2.5 hover:bg-orange-50 dark:hover:bg-orange-900/20 flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors">
-                        <span className="text-sm font-medium text-slate-800 dark:text-white">{s.label}</span>
-                        <span className="text-xs text-slate-400 shrink-0">{s.category}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Ville */}
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {t('reg_main_city')} <span className="text-red-400">*</span>
-                </label>
-                <select required value={form.main_city} onChange={set('main_city')} className={inp('main_city')}>
-                  <option value="">{t('reg_select_city')}</option>
-                  {cities.map((c) => <option key={c.id} value={c.name}>{c.name}{c.name_ar ? ` — ${c.name_ar}` : ''}</option>)}
-                </select>
-                <Err f="main_city" />
-              </div>
-            </>}
-
-            {/* ── Step 3 ── */}
-            {step === 3 && <>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {t('email')} <span className="text-red-400">*</span>
-                </label>
-                <input type="email" required value={form.email} onChange={set('email')} autoFocus
-                  placeholder="pro@exemple.ma" className={inp('email')} />
-                <Err f="email" />
-              </div>
-              {emailTaken && (
-                <div className="rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 px-4 py-3 text-sm text-amber-700 dark:text-amber-300">
-                  {t('reg_email_taken')}{' '}
-                  <a href="/pro/login" className="font-bold underline hover:text-amber-900">{t('login')} →</a>
-                </div>
-              )}
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {t('password')} <span className="text-red-400">*</span>
-                </label>
-                <div className="relative">
-                  <input type={showPwd ? 'text' : 'password'} required minLength={8} autoFocus
-                    value={form.password} onChange={set('password')}
-                    placeholder={t('reg_pwd_placeholder')} className={inp('password') + ' pr-11'} />
-                  <button type="button" onClick={() => setShowPwd((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
-                    {showPwd ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                <Err f="password" />
-                {form.password && (
-                  <div className="mt-2 flex gap-1">
-                    {[...Array(4)].map((_, i) => (
-                      <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${
-                        form.password.length >= [4,6,8,12][i]
-                          ? ['bg-red-400','bg-orange-400','bg-yellow-400','bg-green-400'][i]
-                          : 'bg-slate-100 dark:bg-slate-700'
-                      }`} />
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
-                  {t('confirm_password')} <span className="text-red-400">*</span>
-                </label>
-                <input type="password" required value={form.password_confirmation}
-                  onChange={set('password_confirmation')}
-                  placeholder="••••••••"
-                  className={`w-full rounded-xl border px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${
-                    fieldErrors.password_confirmation
-                      ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                      : form.password_confirmation && form.password === form.password_confirmation
-                      ? 'border-green-400 focus:border-green-400 focus:ring-green-100'
-                      : form.password_confirmation && form.password !== form.password_confirmation
-                      ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                      : 'border-slate-200 dark:border-slate-700 focus:border-orange-400 focus:ring-orange-100 dark:focus:ring-orange-900'
-                  }`} />
-                <Err f="password_confirmation" />
-                {!fieldErrors.password_confirmation && form.password_confirmation && form.password === form.password_confirmation && (
-                  <p className="text-xs text-green-600 mt-1">{t('reg_pwd_match')}</p>
-                )}
-                {!fieldErrors.password_confirmation && form.password_confirmation && form.password !== form.password_confirmation && (
-                  <p className="text-xs text-red-500 mt-1">{t('reg_pwd_no_match')}</p>
-                )}
-              </div>
-            </>}
-
-            {/* Navigation */}
-            <div className="flex items-center gap-3 pt-1">
-              {step > 1 && (
-                <button type="button" onClick={prev}
-                  className="flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                  <ArrowLeft className="h-4 w-4" /> {t('reg_back')}
-                </button>
-              )}
-              {step < 3 && (
-                <button type="submit" className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 active:scale-[.98] transition-all shadow-lg shadow-orange-500/20">
-                  <ArrowRight className="h-4 w-4" /> {t('reg_continue')}
-                </button>
-              )}
-              {step === 3 && (
-                <button type="submit" disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 text-sm font-bold text-white hover:bg-orange-600 active:scale-[.98] disabled:opacity-50 transition-all shadow-lg shadow-orange-500/20">
-                  {loading ? <><RefreshCw className="h-4 w-4 animate-spin" /> {t('reg_creating')}</> : <><Check className="h-4 w-4" /> {t('reg_create')}</>}
-                </button>
-              )}
-            </div>
-          </form>
-
-          {step === 1 && (
-            <>
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200 dark:border-slate-700" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white dark:bg-slate-900 px-3 text-slate-400">{t('reg_or_form')}</span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleGoogle}
-                disabled={googleLoading}
-                className="w-full flex items-center justify-center gap-3 rounded-xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 transition-colors disabled:opacity-60 shadow-sm"
-              >
-                {googleLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <GoogleIcon />}
-                {googleLoading ? t('reg_redirecting') : t('reg_google')}
-              </button>
-              <p className="text-center text-xs text-slate-400">{t('reg_google_note')}</p>
-            </>
-          )}
-
-          <p className="text-center text-sm text-slate-500 dark:text-slate-400">
-            {t('reg_already_account')}{' '}
-            <a href="/pro/login" className="text-orange-500 font-semibold hover:text-orange-600 transition-colors">{t('login')}</a>
-          </p>
-
-          <p className="text-center text-xs text-slate-400">
-            <a href="/" className="hover:text-orange-500 transition-colors">{t('reg_back_home')}</a>
-          </p>
         </div>
       </div>
     </div>
