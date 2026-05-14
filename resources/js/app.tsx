@@ -3,6 +3,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { createRoot } from 'react-dom/client';
 import { FavoritesProvider } from './contexts/FavoritesContext';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { CookieConsentProvider } from './contexts/CookieConsentContext';
 import './i18n';
 import axios from 'axios';
 
@@ -36,11 +37,13 @@ createInertiaApp({
   },
   setup({ el, App, props }) {
     createRoot(el).render(
-      <LanguageProvider>
-        <FavoritesProvider>
-          <App {...props} />
-        </FavoritesProvider>
-      </LanguageProvider>
+      <CookieConsentProvider>
+        <LanguageProvider>
+          <FavoritesProvider>
+            <App {...props} />
+          </FavoritesProvider>
+        </LanguageProvider>
+      </CookieConsentProvider>
     );
   },
 });

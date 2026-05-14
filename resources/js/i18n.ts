@@ -593,6 +593,22 @@ const resources = {
 
       // Footer about
       footer_about_desc: 'La plateforme de mise en relation entre clients et artisans au Maroc.',
+
+      // Cookie banner
+      cookie_title: 'Nous utilisons des cookies',
+      cookie_desc: 'Nous utilisons des cookies pour améliorer votre expérience et analyser notre trafic.',
+      cookie_customize: 'Personnaliser',
+      cookie_accept_all: 'Tout accepter',
+      cookie_essential: 'Essentiel uniquement',
+      cookie_save_prefs: 'Enregistrer mes choix',
+      cookie_manage: 'Gérer les cookies',
+      cookie_always_on: 'Toujours actif',
+      cookie_cat_essential_title: 'Cookies essentiels',
+      cookie_cat_essential_desc: 'Nécessaires au fonctionnement du site (session, sécurité, préférences de langue).',
+      cookie_cat_analytics_title: 'Cookies analytiques',
+      cookie_cat_analytics_desc: 'Nous aident à comprendre comment vous utilisez Jobly pour améliorer la plateforme.',
+      cookie_cat_marketing_title: 'Cookies marketing',
+      cookie_cat_marketing_desc: 'Utilisés pour afficher des publicités pertinentes sur d\'autres sites.',
     },
   },
   ar: {
@@ -1176,6 +1192,22 @@ const resources = {
 
       // Footer about
       footer_about_desc: 'منصة التواصل بين العملاء والحرفيين في المغرب.',
+
+      // Cookie banner
+      cookie_title: 'نستخدم ملفات تعريف الارتباط',
+      cookie_desc: 'نستخدم ملفات تعريف الارتباط لتحسين تجربتك وتحليل حركة الزوار.',
+      cookie_customize: 'تخصيص',
+      cookie_accept_all: 'قبول الكل',
+      cookie_essential: 'الضرورية فقط',
+      cookie_save_prefs: 'حفظ اختياراتي',
+      cookie_manage: 'إدارة ملفات تعريف الارتباط',
+      cookie_always_on: 'دائم التشغيل',
+      cookie_cat_essential_title: 'ملفات ضرورية',
+      cookie_cat_essential_desc: 'ضرورية لعمل الموقع (الجلسة، الأمان، تفضيلات اللغة).',
+      cookie_cat_analytics_title: 'ملفات تحليلية',
+      cookie_cat_analytics_desc: 'تساعدنا على فهم كيفية استخدامك لـ Jobly لتحسين المنصة.',
+      cookie_cat_marketing_title: 'ملفات تسويقية',
+      cookie_cat_marketing_desc: 'تُستخدم لعرض إعلانات ملائمة على مواقع أخرى.',
     },
   },
   en: {

@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { JoblyLogo } from './JoblyLogo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ChatBot } from './ChatBot';
+import { CookieBanner } from './CookieBanner';
+import { ConsentScripts } from './ConsentScripts';
+import { useCookieConsent } from '../contexts/CookieConsentContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Moon, Sun, Menu, X, LogIn, Search, MapPin, Mail, Phone, LayoutDashboard, LogOut, ShieldCheck, User } from 'lucide-react';
 
@@ -74,6 +77,7 @@ function logout(role: 'admin' | 'professional' | 'client') {
 export function Layout({ children }: { children: ReactNode }) {
   const { rtl } = useLanguage();
   const { t } = useTranslation();
+  const { resetConsent } = useCookieConsent();
   const [dark, setDark] = useState(() => {
     try { return localStorage.getItem('jobly_dark') === 'true'; } catch { return false; }
   });
@@ -308,7 +312,16 @@ export function Layout({ children }: { children: ReactNode }) {
 
           {/* Bottom bar */}
           <div className="mt-10 border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-            <span>{t('footer_copyright')}</span>
+            <div className="flex items-center gap-4">
+              <span>{t('footer_copyright')}</span>
+              <button
+                type="button"
+                onClick={resetConsent}
+                className="hover:text-orange-400 transition-colors underline-offset-2 hover:underline"
+              >
+                {t('cookie_manage')}
+              </button>
+            </div>
             <a
               href="https://shelockdigital.com"
               target="_blank"
@@ -325,7 +338,9 @@ export function Layout({ children }: { children: ReactNode }) {
         </div>
       </footer>
 
+      <ConsentScripts />
       <ChatBot />
+      <CookieBanner />
     </div>
   );
 }
