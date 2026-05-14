@@ -778,58 +778,58 @@ function SectionCities({ headers }: { headers: any }) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // SECTION — CATÉGORIES
 // ═══════════════════════════════════════════════════════════════════════════════
-type CatTrans = { fr: string; ar: string; dz: string; en: string };
+type CatTrans = { fr: string; ar: string; en: string };
 type CatItem  = { id: number; name: string; icon: string; description: string; sort_order: number; active: boolean; professionals_count: number; translations?: Record<string, string> };
 type CatForm  = { name: string; icon: string; description: string; sort_order: number; active: boolean; translations: CatTrans };
-const emptyCat: CatForm = { name: '', icon: '🔨', description: '', sort_order: 0, active: true, translations: { fr: '', ar: '', dz: '', en: '' } };
+const emptyCat: CatForm = { name: '', icon: '🔨', description: '', sort_order: 0, active: true, translations: { fr: '', ar: '', en: '' } };
 
-// Dictionnaire complet métiers marocains FR → AR/DZ/EN + icône
-const CAT_DICT: Record<string, { ar: string; dz: string; en: string; icon: string }> = {
-  'plomberie':          { ar: 'السباكة',            dz: 'السباكة',                  en: 'Plumbing',            icon: '🔧' },
-  'électricité':        { ar: 'الكهرباء',           dz: 'الكهرباء',                 en: 'Electricity',         icon: '⚡' },
-  'electricite':        { ar: 'الكهرباء',           dz: 'الكهرباء',                 en: 'Electricity',         icon: '⚡' },
-  'peinture':           { ar: 'الدهان',             dz: 'الدهان',                   en: 'Painting',            icon: '🎨' },
-  'climatisation':      { ar: 'تكييف الهواء',       dz: 'كليماتيزاسيون',            en: 'Air Conditioning',    icon: '❄️' },
-  'menuiserie':         { ar: 'النجارة',            dz: 'النجارة',                  en: 'Carpentry',           icon: '🪚' },
-  'maçonnerie':         { ar: 'البناء',             dz: 'البنا',                    en: 'Masonry',             icon: '🧱' },
-  'maconnerie':         { ar: 'البناء',             dz: 'البنا',                    en: 'Masonry',             icon: '🧱' },
-  'carrelage':          { ar: 'تركيب البلاط',       dz: 'الكاريلاج',                en: 'Tiling',              icon: '🪟' },
-  'nettoyage':          { ar: 'التنظيف',            dz: 'النضافة',                  en: 'Cleaning',            icon: '🧹' },
-  'jardinage':          { ar: 'البستنة',            dz: 'البستنة',                  en: 'Gardening',           icon: '🌿' },
-  'informatique':       { ar: 'الإعلام الآلي',      dz: 'الإعلاميات',              en: 'IT / Computing',      icon: '💻' },
-  'déménagement':       { ar: 'نقل الأثاث',         dz: 'ناكليو',                   en: 'Moving',              icon: '📦' },
-  'demenagement':       { ar: 'نقل الأثاث',         dz: 'ناكليو',                   en: 'Moving',              icon: '📦' },
-  'serrurerie':         { ar: 'الحدادة والأقفال',   dz: 'سيراريو',                  en: 'Locksmithing',        icon: '🔑' },
-  'ferronnerie':        { ar: 'الحدادة الفنية',     dz: 'الحدادة',                  en: 'Ironwork',            icon: '⚙️' },
-  'soudure':            { ar: 'اللحام',             dz: 'اللحام',                   en: 'Welding',             icon: '🔩' },
-  'toiture':            { ar: 'أعمال السطح',        dz: 'السطح',                    en: 'Roofing',             icon: '🏚️' },
-  'aluminium':          { ar: 'الألومنيوم',         dz: 'الألومنيوم',               en: 'Aluminium',           icon: '🔲' },
-  'vitrerie':           { ar: 'أعمال الزجاج',       dz: 'الزجاج',                   en: 'Glazing',             icon: '🪞' },
-  'photographie':       { ar: 'التصوير',            dz: 'التصوير',                  en: 'Photography',         icon: '📷' },
-  'décoration':         { ar: 'الديكور',            dz: 'الديكور',                  en: 'Decoration',          icon: '🛋️' },
-  'decoration':         { ar: 'الديكور',            dz: 'الديكور',                  en: 'Decoration',          icon: '🛋️' },
-  'coiffure':           { ar: 'الحلاقة',            dz: 'الحلاقة',                  en: 'Hairdressing',        icon: '✂️' },
-  'cuisine':            { ar: 'تجهيز المطابخ',      dz: 'الكوزينة',                 en: 'Kitchen Fitting',     icon: '🍳' },
-  'marbre':             { ar: 'الرخام',             dz: 'الرخام',                   en: 'Marble',              icon: '🪨' },
-  'chauffage':          { ar: 'التدفئة',            dz: 'الشوفاج',                  en: 'Heating',             icon: '🔥' },
-  'vidéosurveillance':  { ar: 'كاميرات المراقبة',  dz: 'كاميرات ديال المراقبة',   en: 'CCTV / Security',     icon: '📹' },
-  'videosurveillance':  { ar: 'كاميرات المراقبة',  dz: 'كاميرات ديال المراقبة',   en: 'CCTV / Security',     icon: '📹' },
-  'charpenterie':       { ar: 'النجارة الخشبية',   dz: 'الشارباتيري',              en: 'Roofing Carpentry',   icon: '🪵' },
-  'plâtrerie':          { ar: 'أعمال الجبص',        dz: 'الجبص',                    en: 'Plastering',          icon: '🏗️' },
-  'platrerie':          { ar: 'أعمال الجبص',        dz: 'الجبص',                    en: 'Plastering',          icon: '🏗️' },
-  'isolation':          { ar: 'العزل الحراري',      dz: 'الإيزولاسيون',            en: 'Insulation',          icon: '🌡️' },
-  'façade':             { ar: 'واجهات البناية',     dz: 'الفاساد',                  en: 'Facade',              icon: '🏢' },
-  'facade':             { ar: 'واجهات البناية',     dz: 'الفاساد',                  en: 'Facade',              icon: '🏢' },
-  'électroménager':     { ar: 'إصلاح الأجهزة',     dz: 'الإليكترومنزلي',          en: 'Appliance Repair',    icon: '🔌' },
-  'electromenager':     { ar: 'إصلاح الأجهزة',     dz: 'الإليكترومنزلي',          en: 'Appliance Repair',    icon: '🔌' },
-  'ascenseur':          { ar: 'المصعد',             dz: 'الأصانسور',                en: 'Elevator',            icon: '🛗' },
-  'piscine':            { ar: 'حمام السباحة',       dz: 'البيسين',                  en: 'Swimming Pool',       icon: '🏊' },
-  'enduit':             { ar: 'البياض',             dz: 'الكريبي',                  en: 'Rendering',           icon: '🏘️' },
-  'internet':           { ar: 'الإنترنت والشبكات', dz: 'الإنترنت',                 en: 'Internet & Networks', icon: '📡' },
-  'débogage':           { ar: 'فتح الصرف',         dz: 'دبلوكاج',                  en: 'Drain Unblocking',    icon: '🚰' },
-  'debouchage':         { ar: 'فتح الصرف',         dz: 'دبلوكاج',                  en: 'Drain Unblocking',    icon: '🚰' },
-  'revêtement sol':     { ar: 'أرضيات',            dz: 'الأرضيات',                 en: 'Flooring',            icon: '🟫' },
-  'revetement sol':     { ar: 'أرضيات',            dz: 'الأرضيات',                 en: 'Flooring',            icon: '🟫' },
+// Dictionnaire complet métiers marocains FR → AR/EN + icône
+const CAT_DICT: Record<string, { ar: string; en: string; icon: string }> = {
+  'plomberie':          { ar: 'السباكة',            en: 'Plumbing',            icon: '🔧' },
+  'électricité':        { ar: 'الكهرباء',           en: 'Electricity',         icon: '⚡' },
+  'electricite':        { ar: 'الكهرباء',           en: 'Electricity',         icon: '⚡' },
+  'peinture':           { ar: 'الدهان',             en: 'Painting',            icon: '🎨' },
+  'climatisation':      { ar: 'تكييف الهواء',       en: 'Air Conditioning',    icon: '❄️' },
+  'menuiserie':         { ar: 'النجارة',            en: 'Carpentry',           icon: '🪚' },
+  'maçonnerie':         { ar: 'البناء',             en: 'Masonry',             icon: '🧱' },
+  'maconnerie':         { ar: 'البناء',             en: 'Masonry',             icon: '🧱' },
+  'carrelage':          { ar: 'تركيب البلاط',       en: 'Tiling',              icon: '🪟' },
+  'nettoyage':          { ar: 'التنظيف',            en: 'Cleaning',            icon: '🧹' },
+  'jardinage':          { ar: 'البستنة',            en: 'Gardening',           icon: '🌿' },
+  'informatique':       { ar: 'الإعلام الآلي',      en: 'IT / Computing',      icon: '💻' },
+  'déménagement':       { ar: 'نقل الأثاث',         en: 'Moving',              icon: '📦' },
+  'demenagement':       { ar: 'نقل الأثاث',         en: 'Moving',              icon: '📦' },
+  'serrurerie':         { ar: 'الحدادة والأقفال',   en: 'Locksmithing',        icon: '🔑' },
+  'ferronnerie':        { ar: 'الحدادة الفنية',     en: 'Ironwork',            icon: '⚙️' },
+  'soudure':            { ar: 'اللحام',             en: 'Welding',             icon: '🔩' },
+  'toiture':            { ar: 'أعمال السطح',        en: 'Roofing',             icon: '🏚️' },
+  'aluminium':          { ar: 'الألومنيوم',         en: 'Aluminium',           icon: '🔲' },
+  'vitrerie':           { ar: 'أعمال الزجاج',       en: 'Glazing',             icon: '🪞' },
+  'photographie':       { ar: 'التصوير',            en: 'Photography',         icon: '📷' },
+  'décoration':         { ar: 'الديكور',            en: 'Decoration',          icon: '🛋️' },
+  'decoration':         { ar: 'الديكور',            en: 'Decoration',          icon: '🛋️' },
+  'coiffure':           { ar: 'الحلاقة',            en: 'Hairdressing',        icon: '✂️' },
+  'cuisine':            { ar: 'تجهيز المطابخ',      en: 'Kitchen Fitting',     icon: '🍳' },
+  'marbre':             { ar: 'الرخام',             en: 'Marble',              icon: '🪨' },
+  'chauffage':          { ar: 'التدفئة',            en: 'Heating',             icon: '🔥' },
+  'vidéosurveillance':  { ar: 'كاميرات المراقبة',  en: 'CCTV / Security',     icon: '📹' },
+  'videosurveillance':  { ar: 'كاميرات المراقبة',  en: 'CCTV / Security',     icon: '📹' },
+  'charpenterie':       { ar: 'النجارة الخشبية',   en: 'Roofing Carpentry',   icon: '🪵' },
+  'plâtrerie':          { ar: 'أعمال الجبص',        en: 'Plastering',          icon: '🏗️' },
+  'platrerie':          { ar: 'أعمال الجبص',        en: 'Plastering',          icon: '🏗️' },
+  'isolation':          { ar: 'العزل الحراري',      en: 'Insulation',          icon: '🌡️' },
+  'façade':             { ar: 'واجهات البناية',     en: 'Facade',              icon: '🏢' },
+  'facade':             { ar: 'واجهات البناية',     en: 'Facade',              icon: '🏢' },
+  'électroménager':     { ar: 'إصلاح الأجهزة',     en: 'Appliance Repair',    icon: '🔌' },
+  'electromenager':     { ar: 'إصلاح الأجهزة',     en: 'Appliance Repair',    icon: '🔌' },
+  'ascenseur':          { ar: 'المصعد',             en: 'Elevator',            icon: '🛗' },
+  'piscine':            { ar: 'حمام السباحة',       en: 'Swimming Pool',       icon: '🏊' },
+  'enduit':             { ar: 'البياض',             en: 'Rendering',           icon: '🏘️' },
+  'internet':           { ar: 'الإنترنت والشبكات', en: 'Internet & Networks', icon: '📡' },
+  'débogage':           { ar: 'فتح الصرف',         en: 'Drain Unblocking',    icon: '🚰' },
+  'debouchage':         { ar: 'فتح الصرف',         en: 'Drain Unblocking',    icon: '🚰' },
+  'revêtement sol':     { ar: 'أرضيات',            en: 'Flooring',            icon: '🟫' },
+  'revetement sol':     { ar: 'أرضيات',            en: 'Flooring',            icon: '🟫' },
 };
 
 const EMOJI_LIST = [
@@ -869,7 +869,6 @@ function SectionCategories({ headers }: { headers: any }) {
       translations: {
         fr: name,
         ar: hit ? hit.ar : f.translations.ar,
-        dz: hit ? hit.dz : f.translations.dz,
         en: hit ? hit.en : f.translations.en,
       },
     }));
@@ -894,7 +893,6 @@ function SectionCategories({ headers }: { headers: any }) {
       translations: {
         fr: c.translations?.fr ?? c.name,
         ar: c.translations?.ar ?? '',
-        dz: c.translations?.dz ?? '',
         en: c.translations?.en ?? '',
       },
     });
@@ -911,7 +909,6 @@ function SectionCategories({ headers }: { headers: any }) {
         translations: {
           fr: form.translations.fr || form.name,
           ar: form.translations.ar,
-          dz: form.translations.dz,
           en: form.translations.en,
         },
       };
@@ -996,7 +993,6 @@ function SectionCategories({ headers }: { headers: any }) {
               {([
                 { lang: 'fr', label: '🇫🇷 Français', dir: 'ltr' as const, ph: 'Plomberie' },
                 { lang: 'ar', label: '🇲🇦 عربية فصحى', dir: 'rtl' as const, ph: 'السباكة' },
-                { lang: 'dz', label: '🇲🇦 دارجة', dir: 'rtl' as const, ph: 'السباكة' },
                 { lang: 'en', label: '🇬🇧 English', dir: 'ltr' as const, ph: 'Plumbing' },
               ] as const).map(({ lang, label, dir, ph }) => (
                 <div key={lang}>
@@ -1067,7 +1063,7 @@ function SectionCategories({ headers }: { headers: any }) {
                   </td>
                   <td className="px-4 py-3" dir="rtl">
                     <div className="text-sm font-medium text-slate-700">{c.translations?.ar || c.name}</div>
-                    <div className="text-xs text-slate-400">{c.translations?.dz || ''}</div>
+                    <div className="text-xs text-slate-400">{c.translations?.en || ''}</div>
                   </td>
                   <td className="px-4 py-3 text-slate-600 font-semibold">{c.professionals_count}</td>
                   <td className="px-4 py-3">

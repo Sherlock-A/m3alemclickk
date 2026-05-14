@@ -69,7 +69,7 @@ export function ChatBot() {
   const greeting = (): Message => ({
     id: 'greet',
     role: 'bot',
-    content: lang.startsWith('ar') || lang === 'dz'
+    content: lang.startsWith('ar')
       ? 'مرحباً بك! 👋 أنا مساعد Jobly الذكي. كيف يمكنني مساعدتك في إيجاد حرفي اليوم؟'
       : 'Bonjour ! 👋 Je suis l\'assistant Jobly. Comment puis-je vous aider à trouver le bon artisan aujourd\'hui ?',
     ts: new Date(),
@@ -148,7 +148,7 @@ export function ChatBot() {
     setInput('');
   };
 
-  const placeholder = lang.startsWith('ar') || lang === 'dz'
+  const placeholder = lang.startsWith('ar')
     ? 'اسأل عن مشكلتك...'
     : 'Posez votre question...';
 
@@ -170,12 +170,12 @@ export function ChatBot() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-white truncate">
-                {lang.startsWith('ar') || lang === 'dz' ? 'مساعد Jobly' : 'Assistant Jobly'}
+                {lang.startsWith('ar') ? 'مساعد Jobly' : 'Assistant Jobly'}
               </p>
               <div className="flex items-center gap-1.5">
                 <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
                 <p className="text-xs text-slate-400">
-                  {lang.startsWith('ar') || lang === 'dz' ? 'متصل' : 'En ligne'}
+                  {lang.startsWith('ar') ? 'متصل' : 'En ligne'}
                 </p>
               </div>
             </div>
@@ -253,7 +253,7 @@ export function ChatBot() {
             {/* Suggestions (quick replies) */}
             {messages.length === 1 && !loading && (
               <div className="px-4 pt-2 pb-1 flex flex-wrap gap-1.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
-                {(lang.startsWith('ar') || lang === 'dz'
+                {(lang.startsWith('ar')
                   ? ['كيف أجد حرفي؟', 'كيف أسجل؟', 'هل الخدمة مجانية؟']
                   : ['Trouver un artisan', 'Comment s\'inscrire ?', 'Prix et tarifs']
                 ).map(q => (

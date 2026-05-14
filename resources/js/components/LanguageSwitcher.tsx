@@ -1,9 +1,8 @@
 import { useLanguage } from '../contexts/LanguageContext';
 
 const langs = [
-  { code: 'fr',  label: 'FR',       title: 'Français'  },
-  { code: 'ar',  label: 'عربي',     title: 'العربية'   },
-  { code: 'dz',  label: 'الدارجة',  title: 'الدارجة المغربية' },
+  { code: 'fr',  label: 'FR',    title: 'Français' },
+  { code: 'ar',  label: 'عربي',  title: 'العربية'  },
 ];
 
 export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {

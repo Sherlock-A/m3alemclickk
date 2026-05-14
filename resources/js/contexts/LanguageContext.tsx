@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import i18n from '../i18n';
 
-type Language = 'fr' | 'ar' | 'dz' | 'en';
+type Language = 'fr' | 'ar' | 'en';
 
 type LanguageContextValue = {
   language: Language;
@@ -9,7 +9,7 @@ type LanguageContextValue = {
   setLanguage: (lang: string) => void;
 };
 
-const VALID: Language[] = ['fr', 'ar', 'dz', 'en'];
+const VALID: Language[] = ['fr', 'ar', 'en'];
 
 function detectInitialLang(): Language {
   // 1. User already chose
@@ -40,10 +40,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, [language]);
 
   useEffect(() => {
-    const isRtl = language === 'ar' || language === 'dz';
+    const isRtl = language === 'ar';
     document.documentElement.dir  = isRtl ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
-    // Font optimisation: Arabic script needs a proper font
     document.documentElement.style.fontFamily = isRtl
       ? '"Cairo", "Noto Sans Arabic", system-ui, sans-serif'
       : '';
@@ -51,7 +50,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(() => ({
     language,
-    rtl: language === 'ar' || language === 'dz',
+    rtl: language === 'ar',
     setLanguage: (lang: string) =>
       setLanguageState((VALID.includes(lang as Language) ? lang : 'fr') as Language),
   }), [language]);
