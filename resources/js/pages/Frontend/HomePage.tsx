@@ -478,6 +478,73 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           </div>
         </div>
       </section>
+      {/* ── Testimonials ─────────────────────────────────────────────────── */}
+      <section className="mx-auto max-w-7xl px-4 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white">{t('testi_title')}</h2>
+          <p className="text-sm text-slate-500 mt-2">{t('testi_sub')}</p>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-3">
+          {[
+            {
+              name: 'Karim B.',
+              city: 'Casablanca',
+              rating: 5,
+              text: "J'ai trouvé un plombier en moins de 5 minutes. Il est arrivé le jour même et a réglé la fuite sans surprise sur la facture. Je recommande !",
+              job: 'Plomberie',
+              avatar: 'K',
+              color: 'from-orange-400 to-orange-600',
+            },
+            {
+              name: 'Fatima-Zahra A.',
+              city: 'Rabat',
+              rating: 5,
+              text: "J'ai contacté 3 peintres via WhatsApp directement depuis Jobly. Super facile, devis clairs, travail impeccable. La plateforme change la vie.",
+              job: 'Peinture',
+              avatar: 'F',
+              color: 'from-rose-400 to-orange-400',
+            },
+            {
+              name: 'Youssef M.',
+              city: 'Marrakech',
+              rating: 5,
+              text: "Mon électricien est venu le lendemain matin. Travail propre, rapide et prix honnête. Je reviens sur Jobly pour chaque besoin à la maison.",
+              job: 'Électricité',
+              avatar: 'Y',
+              color: 'from-sky-400 to-blue-600',
+            },
+          ].map(({ name, city, rating, text, job, avatar, color }, i) => (
+            <motion.div
+              key={name}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.45, ease: [0.33, 1, 0.68, 1] }}
+              className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col gap-4 shadow-soft hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center gap-1">
+                {Array.from({ length: rating }).map((_, s) => (
+                  <Star key={s} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed flex-1">"{text}"</p>
+              <div className="flex items-center gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div className={`h-10 w-10 rounded-full bg-gradient-to-br ${color} flex items-center justify-center text-sm font-black text-white shrink-0`}>
+                  {avatar}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-800 dark:text-white">{name}</p>
+                  <p className="text-xs text-slate-500">
+                    {city} · {t('testi_by')} <span className="text-orange-600 font-medium">{job}</span>
+                  </p>
+                </div>
+                <BadgeCheck className="h-4 w-4 text-emerald-500 ms-auto shrink-0" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Pricing / Freemium ───────────────────────────────────────────── */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center mb-10">

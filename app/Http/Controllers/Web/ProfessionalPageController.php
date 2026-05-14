@@ -167,8 +167,21 @@ class ProfessionalPageController extends Controller
             };
         }
 
+        $paginated = $query->paginate(12)->withQueryString();
+
+        // When filters return 0 results, suggest popular professionals nationally
+        $suggestions = null;
+        if ($paginated->total() === 0 && $request->hasAny(['city', 'profession', 'search', 'status', 'rating_min', 'language', 'lat'])) {
+            $suggestions = Professional::approved()
+                ->with(['category', 'categories'])
+                ->orderByDesc('rating')
+                ->take(6)
+                ->get();
+        }
+
         return Inertia::render('Frontend/ProfessionalsPage', [
-            'professionals' => $query->paginate(12)->withQueryString(),
+            'professionals' => $paginated,
+            'suggestions'   => $suggestions,
             'filters'       => $request->only(['city', 'profession', 'search', 'sort', 'status', 'rating_min', 'language', 'lat', 'lon', 'radius_km']),
             'categories'    => Cache::remember('categories_active', 3600, fn () =>
                 Category::where('active', true)->orderBy('sort_order')->get()

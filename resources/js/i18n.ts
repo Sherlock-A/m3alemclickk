@@ -584,6 +584,12 @@ const resources = {
       empty_see_all: 'Voir tous les artisans',
       empty_see_all_available: 'Voir tous les artisans disponibles',
       empty_phone_placeholder: '06 XX XX XX XX',
+      suggestions_title: 'Professionnels populaires au Maroc',
+
+      // Testimonials
+      testi_title: 'Ce que disent nos clients',
+      testi_sub: 'Des milliers de familles ont trouvé leur artisan de confiance sur Jobly',
+      testi_by: 'via',
 
       // Footer about
       footer_about_desc: 'La plateforme de mise en relation entre clients et artisans au Maroc.',
@@ -1161,6 +1167,12 @@ const resources = {
       empty_see_all: 'عرض جميع الحرفيين',
       empty_see_all_available: 'عرض جميع الحرفيين المتاحين',
       empty_phone_placeholder: '06 XX XX XX XX',
+      suggestions_title: 'حرفيون شعبيون في المغرب',
+
+      // Testimonials
+      testi_title: 'ما يقوله عملاؤنا',
+      testi_sub: 'آلاف العائلات وجدت حرفيها الموثوق على Jobly',
+      testi_by: 'عبر',
 
       // Footer about
       footer_about_desc: 'منصة التواصل بين العملاء والحرفيين في المغرب.',
@@ -1286,6 +1298,17 @@ const resources = {
       pros_sort_best: 'Top rated',
       pros_sort_popular: 'Popular',
       pros_availability: 'Availability',
+      suggestions_title: 'Popular professionals in Morocco',
+      testi_title: 'What our clients say',
+      testi_sub: 'Thousands of families found their trusted craftsman on Jobly',
+      testi_by: 'via',
+      empty_title: 'No {{profession}} yet',
+      empty_sub: 'Leave your number — we\'ll call you back within 24h with the right craftsman.',
+      empty_sent_title: 'Message sent!',
+      empty_sent_sub: 'Our team will call you back within 24h.',
+      empty_see_all: 'See all craftsmen',
+      empty_see_all_available: 'See all available craftsmen',
+      empty_phone_placeholder: '06 XX XX XX XX',
 
       // Show page
       show_call: 'Call',
@@ -1875,6 +1898,12 @@ const resources = {
       empty_see_all: 'شوف جميع المعلمين',
       empty_see_all_available: 'شوف جميع المعلمين المتاحين',
       empty_phone_placeholder: '06 XX XX XX XX',
+      suggestions_title: 'المعلمين الشعبيين فالمغرب',
+
+      // Testimonials
+      testi_title: 'واش كيقولو العملاء ديالنا',
+      testi_sub: 'آلاف العيلات لقاو المعلم ديالهم الموثوق على Jobly',
+      testi_by: 'عبر',
 
       // Footer about
       footer_about_desc: 'البلاتفورم ديال التواصل بين الزبناء والمعلمين فالمغرب.',

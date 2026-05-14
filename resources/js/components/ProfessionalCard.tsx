@@ -62,7 +62,7 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
           <Avatar name={professional.name} photo={professional.photo} size={48} />
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 min-w-0">
               <a
                 href={professional.slug ? `/professionals/${professional.slug}` : `/professionals?search=${encodeURIComponent(professional.name)}`}
                 className="font-bold text-slate-900 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 transition-colors truncate"
@@ -70,7 +70,10 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
                 {professional.name}
               </a>
               {professional.verified && (
-                <BadgeCheck className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+                <span className="inline-flex items-center gap-0.5 shrink-0 rounded-full bg-emerald-50 dark:bg-emerald-900/20 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800">
+                  <BadgeCheck className="h-3 w-3" />
+                  {t('verified')}
+                </span>
               )}
             </div>
             <p className="text-sm text-orange-600 font-medium truncate">{professional.profession}</p>

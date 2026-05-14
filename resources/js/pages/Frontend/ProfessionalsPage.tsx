@@ -17,6 +17,7 @@ type Props = {
   professionals: Paginated<Professional>;
   filters: Record<string, string>;
   categories: Category[];
+  suggestions?: Professional[];
   seo?: { title?: string; description?: string; canonical?: string; h1?: string };
 };
 
@@ -128,7 +129,7 @@ function EmptyLeadForm({ profession, city, onClear }: { profession?: string; cit
   );
 }
 
-export default function ProfessionalsPage({ professionals, filters, categories, seo }: Props) {
+export default function ProfessionalsPage({ professionals, filters, categories, suggestions, seo }: Props) {
   const { t } = useTranslation();
   const getCatName = useCatName();
   const [items, setItems]       = useState<Professional[]>(professionals.data);
@@ -447,11 +448,40 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
             </div>
 
             {items.length === 0 && !loading ? (
-              <EmptyLeadForm
-                profession={filters.profession}
-                city={filters.city}
-                onClear={() => router.get('/professionals', {}, { preserveScroll: true })}
-              />
+              <>
+                <EmptyLeadForm
+                  profession={filters.profession}
+                  city={filters.city}
+                  onClear={() => router.get('/professionals', {}, { preserveScroll: true })}
+                />
+                {suggestions && suggestions.length > 0 && (
+                  <div className="mt-12">
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="h-px flex-1 bg-slate-200 dark:bg-slate-700" />
+                      <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 px-2">
+                        {t('suggestions_title')}
+                      </p>
+                      <div className="h-px flex-1 bg-slate-200 dark:bg-slate-700" />
+                    </div>
+                    <motion.div
+                      className="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+                      initial="hidden"
+                      animate="visible"
+                      variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
+                    >
+                      {suggestions.map((professional) => (
+                        <motion.div
+                          key={professional.id}
+                          variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
+                          transition={{ duration: 0.35, ease: [0.33, 1, 0.68, 1] }}
+                        >
+                          <ProfessionalCard professional={professional} />
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  </div>
+                )}
+              </>
             ) : (
               <>
                 <motion.div
