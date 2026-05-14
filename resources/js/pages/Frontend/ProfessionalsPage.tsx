@@ -50,6 +50,7 @@ function FilterButton({
 }
 
 function EmptyLeadForm({ profession, city, onClear }: { profession?: string; city?: string; onClear: () => void }) {
+  const { t } = useTranslation();
   const [phone, setPhone] = useState('');
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -59,8 +60,9 @@ function EmptyLeadForm({ profession, city, onClear }: { profession?: string; cit
     if (!phone.trim()) return;
     setSending(true);
     try {
+      const profLabel = profession || t('professionals');
       const msg = encodeURIComponent(
-        `Bonjour Jobly 👋\nJe cherche un *${profession || 'artisan'}*${city ? ` à *${city}*` : ''} et je n'ai pas trouvé de résultat.\nMon numéro : ${phone}\nMerci de me rappeler.`
+        `Bonjour Jobly 👋\nJe cherche un *${profLabel}*${city ? ` à *${city}*` : ''} et je n'ai pas trouvé de résultat.\nMon numéro : ${phone}\nMerci de me rappeler.`
       );
       window.open(`https://wa.me/212600000000?text=${msg}`, '_blank');
       setSent(true);
@@ -79,20 +81,20 @@ function EmptyLeadForm({ profession, city, onClear }: { profession?: string; cit
         {sent ? (
           <motion.div key="sent" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-3">
             <CheckCircle2 className="h-14 w-14 text-green-500" />
-            <h3 className="text-lg font-black text-slate-800 dark:text-white">Message envoyé !</h3>
-            <p className="text-sm text-slate-500">Notre équipe vous rappelle sous 24h.</p>
+            <h3 className="text-lg font-black text-slate-800 dark:text-white">{t('empty_sent_title')}</h3>
+            <p className="text-sm text-slate-500">{t('empty_sent_sub')}</p>
             <button type="button" onClick={onClear} className="mt-2 text-sm text-orange-600 font-semibold hover:underline flex items-center gap-1">
-              Voir tous les artisans <ArrowRight className="h-3.5 w-3.5" />
+              {t('empty_see_all')} <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </motion.div>
         ) : (
           <motion.div key="form" className="flex flex-col items-center gap-4 max-w-sm mx-auto">
             <div className="text-5xl">🔍</div>
             <h3 className="text-lg font-black text-slate-800 dark:text-white">
-              Aucun {profession || 'artisan'}{city ? ` à ${city}` : ''} pour l'instant
+              {t('empty_title', { profession: profession || t('professionals') })}{city ? ` — ${city}` : ''}
             </h3>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              Laissez votre numéro — on vous rappelle sous <strong>24h</strong> avec le bon artisan.
+              {t('empty_sub')}
             </p>
             <form onSubmit={submit} className="w-full flex flex-col gap-3">
               <div className="flex gap-2">
@@ -102,7 +104,7 @@ function EmptyLeadForm({ profession, city, onClear }: { profession?: string; cit
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    placeholder="06 XX XX XX XX"
+                    placeholder={t('empty_phone_placeholder')}
                     required
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-9 pr-3 py-2.5 text-sm focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-200"
                   />
@@ -117,7 +119,7 @@ function EmptyLeadForm({ profession, city, onClear }: { profession?: string; cit
               </div>
             </form>
             <button type="button" onClick={onClear} className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline">
-              Voir tous les artisans disponibles
+              {t('empty_see_all_available')}
             </button>
           </motion.div>
         )}

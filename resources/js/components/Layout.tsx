@@ -214,6 +214,10 @@ export function Layout({ children }: { children: ReactNode }) {
 
         {mobileOpen && (
           <div className="border-t border-slate-200 bg-white px-4 py-4 dark:border-slate-800 dark:bg-slate-950 md:hidden">
+            {/* Language selector — prominent on mobile */}
+            <div className="mb-4 flex items-center justify-center gap-2">
+              <LanguageSwitcher compact />
+            </div>
             <nav className="flex flex-col gap-3 text-sm font-medium">
               <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_home')}</a>
               <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_professionals')}</a>
@@ -239,7 +243,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 <JoblyLogo size="md" theme="dark" />
               </a>
               <p className="mt-3 text-sm text-slate-400 leading-relaxed">
-                {settings.footer_about}
+                {settings.footer_about || t('footer_about_desc')}
               </p>
               <div className="mt-4 flex gap-3">
                 {settings.footer_social.facebook && (
@@ -268,7 +272,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 {footerLinks.map((link, i) => (
                   <li key={i}>
                     <a href={link.url} className="text-sm text-slate-400 hover:text-orange-400 transition-colors">
-                      → {link.label}
+                      {rtl ? '←' : '→'} {link.label}
                     </a>
                   </li>
                 ))}

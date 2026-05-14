@@ -285,10 +285,10 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         <div className="mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
-              { icon: UserCheck, label: 'Artisans vérifiés', sub: 'CIN + appel de confirmation', color: 'text-blue-600' },
-              { icon: ShieldCheck, label: 'Avis authentiques', sub: 'Clients réels uniquement', color: 'text-green-600' },
-              { icon: Zap,        label: 'Réponse rapide',    sub: 'Contact WhatsApp direct',   color: 'text-orange-500' },
-              { icon: Award,      label: 'Gratuit pour vous', sub: 'Aucun frais pour les clients', color: 'text-purple-600' },
+              { icon: UserCheck, label: t('trust_verified_label'), sub: t('trust_verified_sub'), color: 'text-blue-600' },
+              { icon: ShieldCheck, label: t('trust_reviews_label'), sub: t('trust_reviews_sub'), color: 'text-green-600' },
+              { icon: Zap,        label: t('trust_fast_label'),    sub: t('trust_fast_sub'),   color: 'text-orange-500' },
+              { icon: Award,      label: t('trust_free_label'),    sub: t('trust_free_sub'),   color: 'text-purple-600' },
             ].map(({ icon: Icon, label, sub, color }, i) => (
               <motion.div
                 key={label}
@@ -397,15 +397,15 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
       <section className="mx-auto max-w-4xl px-4 py-12">
         <div className="rounded-3xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/10 border border-orange-100 dark:border-orange-800/40 p-8 text-center">
           <ShieldCheck className="h-10 w-10 text-orange-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Comment on vérifie nos artisans</h2>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">{t('verif_title')}</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto">
-            Chaque artisan passe par notre processus en 3 étapes avant d'être visible sur Jobly.
+            {t('verif_subtitle')}
           </p>
           <div className="grid sm:grid-cols-3 gap-6 text-left">
             {[
-              { n: '1', title: 'Vérification CIN', desc: 'L\'artisan soumet une copie de sa carte nationale d\'identité.' },
-              { n: '2', title: 'Appel de confirmation', desc: 'Notre équipe appelle et valide les informations déclarées.' },
-              { n: '3', title: 'Badge Vérifié ✓', desc: 'Le badge vert apparaît sur le profil une fois validé.' },
+              { n: '1', title: t('verif_step1_title'), desc: t('verif_step1_desc') },
+              { n: '2', title: t('verif_step2_title'), desc: t('verif_step2_desc') },
+              { n: '3', title: t('verif_step3_title'), desc: t('verif_step3_desc') },
             ].map(({ n, title, desc }) => (
               <div key={n} className="flex gap-3 items-start">
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white text-sm font-black">{n}</span>
@@ -481,8 +481,8 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
       {/* ── Pricing / Freemium ───────────────────────────────────────────── */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center mb-10">
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white">Formules pour les artisans</h2>
-          <p className="text-sm text-slate-500 mt-2">Commencez gratuitement, évoluez quand vous êtes prêt</p>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white">{t('price_title')}</h2>
+          <p className="text-sm text-slate-500 mt-2">{t('price_subtitle')}</p>
         </div>
         <div className="grid gap-6 sm:grid-cols-3 max-w-4xl mx-auto">
           {/* Gratuit */}
@@ -493,18 +493,18 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
             transition={{ duration: 0.4 }}
             className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col"
           >
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Gratuit</p>
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">{t('price_free')}</p>
             <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">0 MAD</p>
-            <p className="text-xs text-slate-400 mb-5">Pour toujours</p>
+            <p className="text-xs text-slate-400 mb-5">{t('price_forever')}</p>
             <ul className="space-y-2.5 flex-1 mb-6">
-              {['Profil basique','3 contacts/mois','Visible dans la liste','Avis clients'].map(f => (
+              {[t('price_free_f1'), t('price_free_f2'), t('price_free_f3'), t('price_free_f4')].map(f => (
                 <li key={f} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                   <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" /> {f}
                 </li>
               ))}
             </ul>
             <a href="/pro/register" className="block text-center rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-              Commencer gratuitement
+              {t('price_free_cta')}
             </a>
           </motion.div>
 
@@ -516,19 +516,19 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
             transition={{ duration: 0.4, delay: 0.1 }}
             className="rounded-3xl border-2 border-orange-400 bg-gradient-to-b from-orange-50 to-white dark:from-orange-900/20 dark:to-slate-900 dark:border-orange-600 p-6 flex flex-col relative shadow-lg shadow-orange-500/10"
           >
-            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-orange-500 text-white text-xs font-black px-3 py-1">⭐ Populaire</span>
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-orange-500 text-white text-xs font-black px-3 py-1">{t('price_popular')}</span>
             <p className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Pro</p>
             <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">99 MAD</p>
-            <p className="text-xs text-slate-400 mb-5">par mois</p>
+            <p className="text-xs text-slate-400 mb-5">{t('price_per_month')}</p>
             <ul className="space-y-2.5 flex-1 mb-6">
-              {['Contacts illimités','Badge Vérifié ✓','Mise en avant prioritaire','Statistiques détaillées','Support WhatsApp'].map(f => (
+              {[t('price_pro_f1'), t('price_pro_f2'), t('price_pro_f3'), t('price_pro_f4'), t('price_pro_f5')].map(f => (
                 <li key={f} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
                   <CheckCircle2 className="h-4 w-4 text-orange-500 shrink-0" /> {f}
                 </li>
               ))}
             </ul>
             <a href="/pro/register" className="block text-center rounded-xl bg-orange-500 hover:bg-orange-600 text-white py-2.5 text-sm font-bold transition-colors shadow shadow-orange-400/30">
-              Commencer — Gratuit 3 mois
+              {t('price_pro_cta')}
             </a>
           </motion.div>
 
@@ -542,20 +542,20 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           >
             <p className="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1 flex items-center gap-1"><Crown className="h-3.5 w-3.5" /> Premium</p>
             <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">249 MAD</p>
-            <p className="text-xs text-slate-400 mb-5">par mois</p>
+            <p className="text-xs text-slate-400 mb-5">{t('price_per_month')}</p>
             <ul className="space-y-2.5 flex-1 mb-6">
-              {['Position #1 dans les résultats','Tout du plan Pro','Appel prioritaire Jobly','Page profil enrichie','Rapport mensuel'].map(f => (
+              {[t('price_premium_f1'), t('price_premium_f2'), t('price_premium_f3'), t('price_premium_f4'), t('price_premium_f5')].map(f => (
                 <li key={f} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
                   <CheckCircle2 className="h-4 w-4 text-purple-500 shrink-0" /> {f}
                 </li>
               ))}
             </ul>
             <a href="/pro/register" className="block text-center rounded-xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white py-2.5 text-sm font-bold transition-colors">
-              Contacter l'équipe
+              {t('price_premium_cta')}
             </a>
           </motion.div>
         </div>
-        <p className="text-center text-xs text-slate-400 mt-6">Sans engagement · Annulable à tout moment · Paiement par virement ou CIH/Attijariwafa</p>
+        <p className="text-center text-xs text-slate-400 mt-6">{t('price_note')}</p>
       </section>
 
     </Layout>
