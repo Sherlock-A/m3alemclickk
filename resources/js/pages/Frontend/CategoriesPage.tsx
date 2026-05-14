@@ -20,7 +20,7 @@ interface Props {
 }
 
 const ITEMS_PER_PAGE = 21; // 3 cols × 7 rows
-const POPULAR_COUNT = 14;
+const POPULAR_COUNT = 12; // 3 cols × 4 rows — grille complète
 
 // Gradient palette for emoji fallbacks (deterministic by index)
 const PALETTE = [
@@ -54,14 +54,17 @@ export default function CategoriesPage({ categories }: Props) {
         );
     }
 
-    const filtered = search.trim()
-        ? categories.filter(c => label(c).toLowerCase().includes(search.toLowerCase()))
-        : categories;
+    // Populaires = les POPULAR_COUNT premiers (grille fixe, toujours visible sans recherche)
+    const showPopular = !search.trim();
+    const popular = categories.slice(0, Math.min(POPULAR_COUNT, categories.length));
 
-    const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-    const paginated = filtered.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
-    const popular = categories.slice(0, POPULAR_COUNT);
-    const showPopular = !search.trim() && page === 1;
+    // "Toutes les catégories" = liste sans les populaires (quand visible) ou résultats de recherche
+    const allSource = showPopular
+        ? categories.slice(POPULAR_COUNT)
+        : categories.filter(c => label(c).toLowerCase().includes(search.toLowerCase()));
+
+    const totalPages = Math.ceil(allSource.length / ITEMS_PER_PAGE);
+    const paginated = allSource.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
 
     function handleSearch(val: string) {
         setSearch(val);
@@ -126,7 +129,7 @@ export default function CategoriesPage({ categories }: Props) {
                     {/* ── Toutes les catégories ────────────────────────────── */}
                     {paginated.length > 0 ? (
                         <section>
-                            {showPopular && (
+                            {showPopular && allSource.length > 0 && (
                                 <SectionTitle rtl={rtl}>
                                     {t('cat_all_label')}
                                 </SectionTitle>
@@ -153,13 +156,13 @@ export default function CategoriesPage({ categories }: Props) {
                                 />
                             )}
                         </section>
-                    ) : (
+                    ) : !showPopular ? (
                         <div className="text-center py-24">
                             <p className="text-4xl mb-4">🔍</p>
                             <p className="text-lg font-medium text-slate-600 dark:text-gray-400 mb-1">{t('cat_empty')}</p>
                             <p className="text-sm text-slate-400 dark:text-gray-500">{t('cat_hint_q')}</p>
                         </div>
-                    )}
+                    ) : null}
                 </div>
             </div>
         </Layout>
