@@ -285,28 +285,22 @@ export function Layout({ children }: { children: ReactNode }) {
                 {t('footer_contact')}
               </h3>
               <ul className="space-y-3 text-sm text-slate-400">
-                {settings.contact_email && (
-                  <li className="flex items-start gap-2">
-                    <Mail className="h-4 w-4 mt-0.5 text-orange-400 shrink-0" />
-                    <a href={`mailto:${settings.contact_email}`} className="hover:text-orange-400 transition-colors">
-                      {settings.contact_email}
-                    </a>
-                  </li>
-                )}
-                {settings.contact_phone && (
-                  <li className="flex items-start gap-2">
-                    <Phone className="h-4 w-4 mt-0.5 text-orange-400 shrink-0" />
-                    <a href={`tel:${settings.contact_phone}`} className="hover:text-orange-400 transition-colors">
-                      {settings.contact_phone}
-                    </a>
-                  </li>
-                )}
-                {settings.address && (
-                  <li className="flex items-start gap-2">
-                    <MapPin className="h-4 w-4 mt-0.5 text-orange-400 shrink-0" />
-                    <span>Casablanca, {t('footer_country')}</span>
-                  </li>
-                )}
+                <li className="flex items-start gap-2">
+                  <Mail className="h-4 w-4 mt-0.5 text-orange-400 shrink-0" />
+                  <a href="mailto:contact@jobly.ma" dir="ltr" className="hover:text-orange-400 transition-colors">
+                    contact@jobly.ma
+                  </a>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Phone className="h-4 w-4 mt-0.5 text-orange-400 shrink-0" />
+                  <a href="tel:+212617776729" dir="ltr" className="hover:text-orange-400 transition-colors">
+                    +212 617-776729
+                  </a>
+                </li>
+                <li className="flex items-start gap-2">
+                  <MapPin className="h-4 w-4 mt-0.5 text-orange-400 shrink-0" />
+                  <span><span dir="ltr">Casablanca</span>, {t('footer_country')}</span>
+                </li>
               </ul>
             </div>
           </div>
