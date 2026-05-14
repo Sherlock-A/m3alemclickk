@@ -97,14 +97,14 @@ export function Layout({ children }: { children: ReactNode }) {
       .catch(() => {});
   }, []);
 
-  const defaultFooterLinks = [
-    { label: t('nav_home'), url: '/' },
+  // Always use translated links — server links are hardcoded in French
+  const footerLinks = [
+    { label: t('nav_home'),         url: '/' },
     { label: t('nav_professionals'), url: '/professionals' },
     { label: t('nav_how_it_works'), url: '/how-it-works' },
     { label: t('footer_pro_register'), url: '/pro/register' },
-    { label: t('nav_contact'), url: '/contact' },
+    { label: t('nav_contact'),      url: '/contact' },
   ];
-  const footerLinks = settings.footer_links.length > 0 ? settings.footer_links : defaultFooterLinks;
 
   const AuthButtons = ({ mobile = false }: { mobile?: boolean }) => {
     if (auth) {
@@ -243,7 +243,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 <JoblyLogo size="md" theme="dark" />
               </a>
               <p className="mt-3 text-sm text-slate-400 leading-relaxed">
-                {settings.footer_about || t('footer_about_desc')}
+                {t('footer_about_desc')}
               </p>
               <div className="mt-4 flex gap-3">
                 {settings.footer_social.facebook && (
@@ -312,8 +312,20 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
 
           {/* Bottom bar */}
-          <div className="mt-10 border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-            <span>{settings.footer_copyright || t('footer_copyright')}</span>
+          <div className="mt-10 border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <span>{t('footer_copyright')}</span>
+            <a
+              href="https://shelockdigital.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 text-slate-500 hover:text-orange-400 transition-colors"
+            >
+              <span>{t('footer_made_by')}</span>
+              <span className="font-bold text-orange-400">ShelockDigital</span>
+              <svg className="h-3 w-3 text-orange-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </a>
           </div>
         </div>
       </footer>
