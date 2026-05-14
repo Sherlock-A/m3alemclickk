@@ -19,6 +19,7 @@ Route::get('/professionals/{slug}', [ProfessionalPageController::class, 'show'])
 // ─── Pages SEO ville / catégorie (/professionnels/casablanca/plombier) ─────────
 Route::get('/professionnels/{city}',           [ProfessionalPageController::class, 'byCity'])->name('professionals.city');
 Route::get('/professionnels/{city}/{category}', [ProfessionalPageController::class, 'byCity'])->name('professionals.city.category');
+Route::get('/categories',   fn () => Inertia::render('Frontend/CategoriesPage'))->name('categories');
 Route::get('/how-it-works', fn () => Inertia::render('Frontend/HowItWorksPage'))->name('how-it-works');
 Route::get('/contact',      fn () => Inertia::render('Frontend/ContactPage'))->name('contact');
 

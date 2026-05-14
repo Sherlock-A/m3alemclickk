@@ -315,7 +315,7 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
       <section className="mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-2xl font-black text-slate-900 dark:text-white">{t('categories')}</h2>
-          <a href="/professionals" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+          <a href="/categories" className="text-sm font-semibold text-orange-600 hover:text-orange-700 flex items-center gap-1">
             {t('cat_see_all')} <ArrowRight className="h-4 w-4" />
           </a>
         </div>

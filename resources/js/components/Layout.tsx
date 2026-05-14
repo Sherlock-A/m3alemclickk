@@ -184,6 +184,9 @@ export function Layout({ children }: { children: ReactNode }) {
             <a href="/professionals" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_professionals')}
             </a>
+            <a href="/categories" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+              {t('nav_categories')}
+            </a>
             <a href="/how-it-works" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_how_it_works')}
             </a>

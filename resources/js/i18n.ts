@@ -591,6 +591,21 @@ const resources = {
       testi_sub: 'Des milliers de familles ont trouvé leur artisan de confiance sur Jobly',
       testi_by: 'via',
 
+      // Categories page
+      cat_page_head: 'Catégories — Jobly',
+      cat_title_1: 'Trouvez le bon',
+      cat_title_2: 'professionnel',
+      cat_subtitle: 'Découvrez 70 catégories de services à travers le Maroc. Plombiers, électriciens, photographes — connectez-vous au pro qu\'il vous faut.',
+      cat_search_placeholder: 'Rechercher un service…',
+      cat_popular_label: 'Populaires',
+      cat_all_label: 'Toutes les catégories',
+      cat_badge_popular: 'POPULAIRE',
+      cat_empty: 'Aucune catégorie ne correspond à votre recherche.',
+      cat_hint_q: 'Vous ne trouvez pas votre service ?',
+      cat_hint_a: 'Décrivez-le et nous vous mettons en relation avec un pro vérifié.',
+      cat_hint_btn: 'Demander un service',
+      nav_categories: 'Catégories',
+
       // Footer about
       footer_about_desc: 'La plateforme de mise en relation entre clients et artisans au Maroc.',
 
@@ -1189,6 +1204,21 @@ const resources = {
       testi_title: 'ما يقوله عملاؤنا',
       testi_sub: 'آلاف العائلات وجدت حرفيها الموثوق على Jobly',
       testi_by: 'عبر',
+
+      // Categories page
+      cat_page_head: 'الفئات — Jobly',
+      cat_title_1: 'اعثر على',
+      cat_title_2: 'المهني المناسب',
+      cat_subtitle: 'اكتشف 70 فئة من الخدمات في جميع أنحاء المغرب. سباكون، كهربائيون، مصورون — تواصل مع المهني الذي تحتاجه.',
+      cat_search_placeholder: 'ابحث عن خدمة…',
+      cat_popular_label: 'الأكثر طلباً',
+      cat_all_label: 'جميع الفئات',
+      cat_badge_popular: 'شائع',
+      cat_empty: 'لا توجد فئات مطابقة لبحثك.',
+      cat_hint_q: 'لم تجد الخدمة التي تبحث عنها؟',
+      cat_hint_a: 'صف لنا ما تحتاجه ونصلك بمحترف موثوق.',
+      cat_hint_btn: 'اطلب خدمة',
+      nav_categories: 'الفئات',
 
       // Footer about
       footer_about_desc: 'منصة التواصل بين العملاء والحرفيين في المغرب.',
