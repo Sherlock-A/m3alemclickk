@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle } from 'lucide-react';
+import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle, UserCheck, Award, Zap, CheckCircle2, Crown } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
 import { CategoryIcon } from '../../components/CategoryIcon';
@@ -280,6 +280,37 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         </div>
       </section>
 
+      {/* ── Trust strip ──────────────────────────────────────────────────── */}
+      <section className="border-y border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 py-6">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {[
+              { icon: UserCheck, label: 'Artisans vérifiés', sub: 'CIN + appel de confirmation', color: 'text-blue-600' },
+              { icon: ShieldCheck, label: 'Avis authentiques', sub: 'Clients réels uniquement', color: 'text-green-600' },
+              { icon: Zap,        label: 'Réponse rapide',    sub: 'Contact WhatsApp direct',   color: 'text-orange-500' },
+              { icon: Award,      label: 'Gratuit pour vous', sub: 'Aucun frais pour les clients', color: 'text-purple-600' },
+            ].map(({ icon: Icon, label, sub, color }, i) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.4 }}
+                className="flex items-center gap-3"
+              >
+                <div className={`shrink-0 rounded-xl bg-white dark:bg-slate-800 p-2.5 shadow-sm ${color}`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-800 dark:text-white leading-tight">{label}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{sub}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Categories ───────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-7xl px-4 py-12">
         <div className="mb-8 flex items-center justify-between">
@@ -290,23 +321,25 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         </div>
         {categories.length > 0 ? (
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
-            {categories.map((category) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  onClick={() => handleCategoryClick(category.name)}
-                  className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-soft transition hover:-translate-y-1 hover:border-orange-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-orange-700 text-left"
-                >
-                  <div className="mb-3">
-                    <CategoryIcon name={category.name} size={48} />
-                  </div>
-                  <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors">
-                    {getCatName(category)}
-                  </h3>
-                  {category.description && (
-                    <p className="mt-1 text-xs text-slate-500 line-clamp-2">{category.description}</p>
-                  )}
-                </button>
+            {categories.map((category, i) => (
+              <motion.button
+                key={category.id}
+                type="button"
+                onClick={() => handleCategoryClick(category.name)}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.04, duration: 0.35, ease: [0.33, 1, 0.68, 1] }}
+                whileHover={{ y: -5, scale: 1.03 }}
+                className="group rounded-3xl border border-slate-200 bg-white p-5 shadow-soft hover:border-orange-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-900 dark:hover:border-orange-700 text-left"
+              >
+                <div className="mb-3">
+                  <CategoryIcon name={category.name} size={56} />
+                </div>
+                <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-orange-600 transition-colors text-sm">
+                  {getCatName(category)}
+                </h3>
+              </motion.button>
             ))}
           </div>
         ) : (
@@ -326,11 +359,23 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           </a>
         </div>
         {featured.length > 0 ? (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <motion.div
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+          >
             {featured.map((pro) => (
-              <FeaturedCard key={pro.id} pro={pro} proNew={t('pro_new')} />
+              <motion.div
+                key={pro.id}
+                variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.45, ease: [0.33, 1, 0.68, 1] }}
+              >
+                <FeaturedCard pro={pro} proNew={t('pro_new')} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
           <div className="rounded-3xl border-2 border-dashed border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-900/10 p-10 text-center">
             <div className="text-4xl mb-3">🔍</div>
@@ -346,6 +391,32 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
             </a>
           </div>
         )}
+      </section>
+
+      {/* ── Verification process ─────────────────────────────────────────── */}
+      <section className="mx-auto max-w-4xl px-4 py-12">
+        <div className="rounded-3xl bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/10 border border-orange-100 dark:border-orange-800/40 p-8 text-center">
+          <ShieldCheck className="h-10 w-10 text-orange-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">Comment on vérifie nos artisans</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto">
+            Chaque artisan passe par notre processus en 3 étapes avant d'être visible sur Jobly.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-6 text-left">
+            {[
+              { n: '1', title: 'Vérification CIN', desc: 'L\'artisan soumet une copie de sa carte nationale d\'identité.' },
+              { n: '2', title: 'Appel de confirmation', desc: 'Notre équipe appelle et valide les informations déclarées.' },
+              { n: '3', title: 'Badge Vérifié ✓', desc: 'Le badge vert apparaît sur le profil une fois validé.' },
+            ].map(({ n, title, desc }) => (
+              <div key={n} className="flex gap-3 items-start">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-orange-500 text-white text-sm font-black">{n}</span>
+                <div>
+                  <p className="font-bold text-slate-800 dark:text-white text-sm">{title}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ── How it works ─────────────────────────────────────────────────── */}
@@ -407,6 +478,86 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           </div>
         </div>
       </section>
+      {/* ── Pricing / Freemium ───────────────────────────────────────────── */}
+      <section className="mx-auto max-w-7xl px-4 py-16">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white">Formules pour les artisans</h2>
+          <p className="text-sm text-slate-500 mt-2">Commencez gratuitement, évoluez quand vous êtes prêt</p>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-3 max-w-4xl mx-auto">
+          {/* Gratuit */}
+          <motion.div
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 24 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4 }}
+            className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col"
+          >
+            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Gratuit</p>
+            <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">0 MAD</p>
+            <p className="text-xs text-slate-400 mb-5">Pour toujours</p>
+            <ul className="space-y-2.5 flex-1 mb-6">
+              {['Profil basique','3 contacts/mois','Visible dans la liste','Avis clients'].map(f => (
+                <li key={f} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                  <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" /> {f}
+                </li>
+              ))}
+            </ul>
+            <a href="/pro/register" className="block text-center rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+              Commencer gratuitement
+            </a>
+          </motion.div>
+
+          {/* Pro */}
+          <motion.div
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 24 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="rounded-3xl border-2 border-orange-400 bg-gradient-to-b from-orange-50 to-white dark:from-orange-900/20 dark:to-slate-900 dark:border-orange-600 p-6 flex flex-col relative shadow-lg shadow-orange-500/10"
+          >
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-orange-500 text-white text-xs font-black px-3 py-1">⭐ Populaire</span>
+            <p className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Pro</p>
+            <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">99 MAD</p>
+            <p className="text-xs text-slate-400 mb-5">par mois</p>
+            <ul className="space-y-2.5 flex-1 mb-6">
+              {['Contacts illimités','Badge Vérifié ✓','Mise en avant prioritaire','Statistiques détaillées','Support WhatsApp'].map(f => (
+                <li key={f} className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+                  <CheckCircle2 className="h-4 w-4 text-orange-500 shrink-0" /> {f}
+                </li>
+              ))}
+            </ul>
+            <a href="/pro/register" className="block text-center rounded-xl bg-orange-500 hover:bg-orange-600 text-white py-2.5 text-sm font-bold transition-colors shadow shadow-orange-400/30">
+              Commencer — Gratuit 3 mois
+            </a>
+          </motion.div>
+
+          {/* Premium */}
+          <motion.div
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 24 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 flex flex-col"
+          >
+            <p className="text-xs font-bold text-purple-600 uppercase tracking-wider mb-1 flex items-center gap-1"><Crown className="h-3.5 w-3.5" /> Premium</p>
+            <p className="text-3xl font-black text-slate-900 dark:text-white mb-1">249 MAD</p>
+            <p className="text-xs text-slate-400 mb-5">par mois</p>
+            <ul className="space-y-2.5 flex-1 mb-6">
+              {['Position #1 dans les résultats','Tout du plan Pro','Appel prioritaire Jobly','Page profil enrichie','Rapport mensuel'].map(f => (
+                <li key={f} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                  <CheckCircle2 className="h-4 w-4 text-purple-500 shrink-0" /> {f}
+                </li>
+              ))}
+            </ul>
+            <a href="/pro/register" className="block text-center rounded-xl bg-slate-900 dark:bg-slate-700 hover:bg-slate-800 text-white py-2.5 text-sm font-bold transition-colors">
+              Contacter l'équipe
+            </a>
+          </motion.div>
+        </div>
+        <p className="text-center text-xs text-slate-400 mt-6">Sans engagement · Annulable à tout moment · Paiement par virement ou CIH/Attijariwafa</p>
+      </section>
+
     </Layout>
   );
 }

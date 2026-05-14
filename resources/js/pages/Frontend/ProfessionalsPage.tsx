@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Head, router } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Layout } from '../../components/Layout';
 import { ProfessionalCard } from '../../components/ProfessionalCard';
 import { SearchBar } from '../../components/SearchBar';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { CategoryIcon } from '../../components/CategoryIcon';
 import { Category, Paginated, Professional } from '../../types';
-import { Filter, X, SlidersHorizontal, Star, MapPin, Loader2, GitCompare } from 'lucide-react';
+import { Filter, X, SlidersHorizontal, Star, MapPin, Loader2, GitCompare, Phone, CheckCircle2, ArrowRight } from 'lucide-react';
 import { ComparePanel } from '../../components/ComparePanel';
 import { useCatName } from '../../hooks/useCatName';
 
@@ -45,6 +46,83 @@ function FilterButton({
     >
       {label}
     </button>
+  );
+}
+
+function EmptyLeadForm({ profession, city, onClear }: { profession?: string; city?: string; onClear: () => void }) {
+  const [phone, setPhone] = useState('');
+  const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!phone.trim()) return;
+    setSending(true);
+    try {
+      const msg = encodeURIComponent(
+        `Bonjour Jobly 👋\nJe cherche un *${profession || 'artisan'}*${city ? ` à *${city}*` : ''} et je n'ai pas trouvé de résultat.\nMon numéro : ${phone}\nMerci de me rappeler.`
+      );
+      window.open(`https://wa.me/212600000000?text=${msg}`, '_blank');
+      setSent(true);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="rounded-3xl border border-dashed border-orange-200 dark:border-orange-800 bg-orange-50/60 dark:bg-orange-900/10 p-10 text-center"
+    >
+      <AnimatePresence mode="wait">
+        {sent ? (
+          <motion.div key="sent" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="flex flex-col items-center gap-3">
+            <CheckCircle2 className="h-14 w-14 text-green-500" />
+            <h3 className="text-lg font-black text-slate-800 dark:text-white">Message envoyé !</h3>
+            <p className="text-sm text-slate-500">Notre équipe vous rappelle sous 24h.</p>
+            <button type="button" onClick={onClear} className="mt-2 text-sm text-orange-600 font-semibold hover:underline flex items-center gap-1">
+              Voir tous les artisans <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+          </motion.div>
+        ) : (
+          <motion.div key="form" className="flex flex-col items-center gap-4 max-w-sm mx-auto">
+            <div className="text-5xl">🔍</div>
+            <h3 className="text-lg font-black text-slate-800 dark:text-white">
+              Aucun {profession || 'artisan'}{city ? ` à ${city}` : ''} pour l'instant
+            </h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              Laissez votre numéro — on vous rappelle sous <strong>24h</strong> avec le bon artisan.
+            </p>
+            <form onSubmit={submit} className="w-full flex flex-col gap-3">
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="06 XX XX XX XX"
+                    required
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-9 pr-3 py-2.5 text-sm focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-200"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="flex items-center gap-1.5 rounded-xl bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 text-sm font-bold transition-colors disabled:opacity-60 whitespace-nowrap"
+                >
+                  {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : '📲'} WhatsApp
+                </button>
+              </div>
+            </form>
+            <button type="button" onClick={onClear} className="text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline">
+              Voir tous les artisans disponibles
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 }
 
@@ -367,32 +445,35 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
             </div>
 
             {items.length === 0 && !loading ? (
-              <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 dark:border-slate-700 py-16 text-center">
-                <div className="text-4xl mb-4">🔍</div>
-                <h3 className="font-bold text-slate-800 dark:text-white mb-2">{t('pros_empty_title')}</h3>
-                <p className="text-sm text-slate-500 mb-4">{t('pros_empty_desc')}</p>
-                <button
-                  type="button"
-                  onClick={() => router.get('/professionals', {}, { preserveScroll: true })}
-                  className="rounded-xl bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors"
-                >
-                  {t('pros_clear_filters')}
-                </button>
-              </div>
+              <EmptyLeadForm
+                profession={filters.profession}
+                city={filters.city}
+                onClear={() => router.get('/professionals', {}, { preserveScroll: true })}
+              />
             ) : (
               <>
-                <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                <motion.div
+                  className="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+                  initial="hidden"
+                  animate="visible"
+                  variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
+                >
                   {items.map((professional) => (
-                    <ProfessionalCard
+                    <motion.div
                       key={professional.id}
-                      professional={professional}
-                      onCompare={toggleCompare}
-                      inCompare={!!compareList.find((x) => x.id === professional.id)}
-                      compareDisabled={compareList.length >= 3}
-                    />
+                      variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
+                      transition={{ duration: 0.35, ease: [0.33, 1, 0.68, 1] }}
+                    >
+                      <ProfessionalCard
+                        professional={professional}
+                        onCompare={toggleCompare}
+                        inCompare={!!compareList.find((x) => x.id === professional.id)}
+                        compareDisabled={compareList.length >= 3}
+                      />
+                    </motion.div>
                   ))}
                   {loading && Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)}
-                </div>
+                </motion.div>
                 <div ref={loader} className="h-10" />
               </>
             )}
