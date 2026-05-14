@@ -167,6 +167,8 @@ const resources = {
       footer_quick_links: 'Liens rapides',
       footer_contact: 'Contact',
       footer_pro_register: 'Inscription pro',
+      footer_copyright: '© 2026 Jobly. Tous droits réservés.',
+      footer_country: 'Maroc',
 
       // How it works
       hiw_title: 'Comment fonctionne Jobly ?',
@@ -742,6 +744,8 @@ const resources = {
       footer_quick_links: 'روابط سريعة',
       footer_contact: 'اتصل بنا',
       footer_pro_register: 'تسجيل محترف',
+      footer_copyright: '© 2026 Jobly. جميع الحقوق محفوظة.',
+      footer_country: 'المغرب',
 
       // How it works
       hiw_title: 'كيف يعمل Jobly؟',
@@ -1453,6 +1457,8 @@ const resources = {
       footer_quick_links: 'روابط سريعة',
       footer_contact: 'تواصل معانا',
       footer_pro_register: 'تسجيل المعلمين',
+      footer_copyright: '© 2026 Jobly. جميع الحقوق محفوظة.',
+      footer_country: 'المغرب',
 
       // How it works
       hiw_title: 'كيفاش كيخدم Jobly؟',

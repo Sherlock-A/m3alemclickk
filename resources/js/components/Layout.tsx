@@ -304,7 +304,7 @@ export function Layout({ children }: { children: ReactNode }) {
                 {settings.address && (
                   <li className="flex items-start gap-2">
                     <MapPin className="h-4 w-4 mt-0.5 text-orange-400 shrink-0" />
-                    <span>{settings.address}</span>
+                    <span>Casablanca, {t('footer_country')}</span>
                   </li>
                 )}
               </ul>
@@ -313,7 +313,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
           {/* Bottom bar */}
           <div className="mt-10 border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-            <span>{settings.footer_copyright}</span>
+            <span>{settings.footer_copyright || t('footer_copyright')}</span>
           </div>
         </div>
       </footer>
