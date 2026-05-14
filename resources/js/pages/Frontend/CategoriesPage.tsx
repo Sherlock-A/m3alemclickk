@@ -75,28 +75,28 @@ export default function CategoriesPage({ categories }: Props) {
 
     return (
         <Layout>
-            <div className="min-h-screen bg-[#0B1220]" dir={rtl ? 'rtl' : 'ltr'}>
+            <div className="min-h-screen bg-slate-50 dark:bg-[#0B1220]" dir={rtl ? 'rtl' : 'ltr'}>
 
                 {/* ── Hero ─────────────────────────────────────────────────── */}
-                <div className="bg-gradient-to-br from-[#0B1220] via-[#0F1829] to-[#0B1220] py-14 px-4 text-center border-b border-white/5">
-                    <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+                <div className="bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-[#0B1220] dark:via-[#0F1829] dark:to-[#0B1220] py-14 px-4 text-center border-b border-slate-200 dark:border-white/5">
+                    <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3">
                         {t('cat_title_1')}{' '}
-                        <span className="text-orange-400">{t('cat_title_2')}</span>
+                        <span className="text-orange-500 dark:text-orange-400">{t('cat_title_2')}</span>
                     </h1>
-                    <p className="text-gray-400 text-base max-w-xl mx-auto mb-8">
+                    <p className="text-slate-500 dark:text-gray-400 text-base max-w-xl mx-auto mb-8">
                         {t('cat_subtitle')}
                     </p>
 
                     <div className="relative max-w-md mx-auto">
                         <Search
-                            className={`absolute top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 ${rtl ? 'right-3' : 'left-3'}`}
+                            className={`absolute top-1/2 -translate-y-1/2 text-slate-400 dark:text-gray-500 w-4 h-4 ${rtl ? 'right-3' : 'left-3'}`}
                         />
                         <input
                             type="text"
                             value={search}
                             onChange={e => handleSearch(e.target.value)}
                             placeholder={t('cat_search_placeholder')}
-                            className={`w-full bg-[#161E2E] border border-white/10 rounded-xl py-3 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 transition-colors ${rtl ? 'pr-9 pl-4' : 'pl-9 pr-4'}`}
+                            className={`w-full bg-white dark:bg-[#161E2E] border border-slate-200 dark:border-white/10 rounded-xl py-3 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 text-sm focus:outline-none focus:border-orange-500/50 transition-colors shadow-sm dark:shadow-none ${rtl ? 'pr-9 pl-4' : 'pl-9 pr-4'}`}
                         />
                     </div>
                 </div>
@@ -154,10 +154,10 @@ export default function CategoriesPage({ categories }: Props) {
                             )}
                         </section>
                     ) : (
-                        <div className="text-center py-24 text-gray-500">
+                        <div className="text-center py-24">
                             <p className="text-4xl mb-4">🔍</p>
-                            <p className="text-lg font-medium text-gray-400 mb-1">{t('cat_empty')}</p>
-                            <p className="text-sm">{t('cat_hint_q')}</p>
+                            <p className="text-lg font-medium text-slate-600 dark:text-gray-400 mb-1">{t('cat_empty')}</p>
+                            <p className="text-sm text-slate-400 dark:text-gray-500">{t('cat_hint_q')}</p>
                         </div>
                     )}
                 </div>
@@ -178,7 +178,7 @@ function SectionTitle({
             {pulse && (
                 <span className="w-2 h-2 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.7)] animate-pulse" />
             )}
-            <h2 className="text-lg font-bold text-white">{children}</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{children}</h2>
         </div>
     );
 }
@@ -195,7 +195,7 @@ function CategoryCard({
     return (
         <a
             href={`/professionals?profession=${searchParam}`}
-            className="group relative flex flex-col items-center gap-4 rounded-2xl bg-[#161E2E] border border-white/5 p-6 text-center transition-all duration-200 hover:bg-[#1E2740] hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40 hover:border-orange-500/25"
+            className="group relative flex flex-col items-center gap-4 rounded-2xl bg-white dark:bg-[#161E2E] border border-slate-200 dark:border-white/5 p-6 text-center transition-all duration-200 hover:bg-slate-50 dark:hover:bg-[#1E2740] hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/80 dark:hover:shadow-black/40 hover:border-orange-400/40 dark:hover:border-orange-500/25 shadow-sm dark:shadow-none"
         >
             {/* Glowing dot for popular */}
             {popular && (
@@ -219,11 +219,11 @@ function CategoryCard({
 
             {/* Label */}
             <div className="space-y-1">
-                <p className="text-sm font-semibold text-gray-200 group-hover:text-white leading-snug line-clamp-2 transition-colors">
+                <p className="text-sm font-semibold text-slate-700 dark:text-gray-200 group-hover:text-slate-900 dark:group-hover:text-white leading-snug line-clamp-2 transition-colors">
                     {label}
                 </p>
                 {popular && (
-                    <p className="text-[11px] font-medium text-orange-400">★ Top</p>
+                    <p className="text-[11px] font-medium text-orange-500 dark:text-orange-400">★ Top</p>
                 )}
             </div>
         </a>
@@ -238,11 +238,11 @@ function Pagination({
     const btnBase =
         'w-10 h-10 rounded-xl border text-sm font-medium transition-all flex items-center justify-center';
     const inactive =
-        'bg-[#161E2E] border-white/10 text-gray-400 hover:text-white hover:border-orange-500/50';
+        'bg-white dark:bg-[#161E2E] border-slate-200 dark:border-white/10 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:border-orange-400/50 dark:hover:border-orange-500/50';
     const active =
         'bg-orange-500 border-orange-500 text-white shadow-[0_0_12px_rgba(249,115,22,0.4)]';
     const disabled =
-        'bg-[#161E2E] border-white/5 text-gray-600 cursor-not-allowed opacity-40';
+        'bg-slate-100 dark:bg-[#161E2E] border-slate-100 dark:border-white/5 text-slate-300 dark:text-gray-600 cursor-not-allowed opacity-40';
 
     return (
         <div className={`flex items-center justify-center gap-2 mt-10 flex-wrap ${rtl ? 'flex-row-reverse' : ''}`}>

@@ -7,9 +7,9 @@ import { Layout } from '../../components/Layout';
 import { ProfessionalCard } from '../../components/ProfessionalCard';
 import { SearchBar } from '../../components/SearchBar';
 import { SkeletonCard } from '../../components/SkeletonCard';
-import { CategoryIcon } from '../../components/CategoryIcon';
+import { getCategoryIcon } from '../../utils/categoryIconMap';
 import { Category, Paginated, Professional } from '../../types';
-import { Filter, X, SlidersHorizontal, Star, MapPin, Loader2, GitCompare, Phone, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Filter, X, SlidersHorizontal, Star, MapPin, Loader2, GitCompare, Phone, CheckCircle2, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ComparePanel } from '../../components/ComparePanel';
 import { useCatName } from '../../hooks/useCatName';
 
@@ -138,6 +138,8 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
   const [total, setTotal]       = useState(professionals.total);
   const [loading, setLoading]       = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [catPage, setCatPage]          = useState(1);
+  const CAT_PER_PAGE = 8;
   const [geoLoading, setGeoLoading]    = useState(false);
   const [geoError, setGeoError]        = useState<string | null>(null);
   const [compareList, setCompareList]  = useState<Professional[]>([]);
@@ -328,28 +330,84 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
       </div>
 
       {/* Categories */}
-      {categories.length > 0 && (
-        <div>
-          <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">{t('pros_category')}</p>
-          <div className="flex flex-col gap-1.5">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                type="button"
-                onClick={() => navigate({ profession: filters.profession === cat.name ? undefined : cat.name })}
-                className={`flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-left transition-colors ${
-                  filters.profession === cat.name
-                    ? 'bg-brand-50 text-brand-700 dark:bg-brand-900/20 dark:text-brand-300 font-semibold'
-                    : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
-                }`}
-              >
-                <CategoryIcon name={cat.name} size={20} />
-                {getCatName(cat)}
-              </button>
-            ))}
+      {categories.length > 0 && (() => {
+        const catTotalPages = Math.ceil(categories.length / CAT_PER_PAGE);
+        const catSlice = categories.slice((catPage - 1) * CAT_PER_PAGE, catPage * CAT_PER_PAGE);
+        return (
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">{t('pros_category')}</p>
+              {catTotalPages > 1 && (
+                <span className="text-xs text-slate-400 dark:text-slate-500">{catPage}/{catTotalPages}</span>
+              )}
+            </div>
+            <div className="flex flex-col gap-1">
+              {catSlice.map((cat) => {
+                const { Icon, color, bgColor, isFallback } = getCategoryIcon(cat.slug);
+                const isActive = filters.profession === cat.name;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => navigate({ profession: isActive ? undefined : cat.name })}
+                    className={`flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm text-left transition-colors ${
+                      isActive
+                        ? 'bg-orange-50 text-orange-700 dark:bg-orange-900/20 dark:text-orange-300 font-semibold'
+                        : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                    }`}
+                  >
+                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${isActive ? 'bg-orange-100 dark:bg-orange-900/30' : bgColor}`}>
+                      {isFallback
+                        ? <span className="text-sm leading-none">{cat.icon ?? '🔧'}</span>
+                        : <Icon className={`w-4 h-4 ${isActive ? 'text-orange-600 dark:text-orange-400' : color}`} />
+                      }
+                    </span>
+                    <span className="truncate">{getCatName(cat)}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {catTotalPages > 1 && (
+              <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setCatPage(p => Math.max(1, p - 1))}
+                  disabled={catPage === 1}
+                  className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  Préc.
+                </button>
+                <div className="flex gap-1">
+                  {Array.from({ length: catTotalPages }, (_, i) => i + 1).map(p => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setCatPage(p)}
+                      className={`w-5 h-5 rounded text-[10px] font-medium transition-colors ${
+                        p === catPage
+                          ? 'bg-orange-500 text-white'
+                          : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCatPage(p => Math.min(catTotalPages, p + 1))}
+                  disabled={catPage === catTotalPages}
+                  className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  Suiv.
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-      )}
+        );
+      })()}
     </aside>
   );
 
