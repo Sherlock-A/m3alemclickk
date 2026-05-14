@@ -12,6 +12,30 @@ type Message = {
   copied?: boolean;
 };
 
+/* Simple markdown renderer: **bold**, [link](url), newlines */
+function MdContent({ text }: { text: string }) {
+  const parts = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\)|\n)/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part === '\n') return <br key={i} />;
+        const bold = part.match(/^\*\*([^*]+)\*\*$/);
+        if (bold) return <strong key={i}>{bold[1]}</strong>;
+        const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+        if (link) return (
+          <a key={i} href={link[2]}
+            className="underline font-semibold text-orange-600 dark:text-orange-400 hover:text-orange-700"
+            target={link[2].startsWith('http') ? '_blank' : '_self'}
+            rel="noopener noreferrer">
+            {link[1]}
+          </a>
+        );
+        return <span key={i}>{part}</span>;
+      })}
+    </>
+  );
+}
+
 function RobotIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 40 40" className={className} fill="none" aria-hidden="true">
@@ -187,7 +211,7 @@ export function ChatBot() {
                         ? 'bg-orange-500 text-white rounded-br-sm'
                         : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-bl-sm shadow-sm border border-slate-100 dark:border-slate-700'
                     }`}>
-                      {msg.content}
+                      {msg.role === 'bot' ? <MdContent text={msg.content} /> : msg.content}
                     </div>
                     {msg.role === 'bot' && (
                       <div className="flex items-center gap-1">

@@ -8,19 +8,31 @@ use Illuminate\Support\Facades\Http;
 class ChatBotController extends Controller
 {
     private string $systemPrompt = <<<'PROMPT'
-Tu es l'assistant virtuel de Jobly (jobly.ma), une plateforme marocaine qui met en relation les clients avec des artisans et professionnels vérifiés (plombiers, électriciens, menuisiers, peintres, etc.).
+Tu es l'assistant virtuel de Jobly (jobly.ma), une plateforme marocaine qui met en relation clients et artisans vérifiés.
 
-Règles :
-- Réponds toujours dans la même langue que l'utilisateur (français, arabe, darija marocaine)
-- Sois concis : 2-3 phrases maximum par réponse
-- Si quelqu'un cherche un artisan, dis-lui de visiter /professionals ou d'utiliser la barre de recherche
-- Pour s'inscrire comme client : /client/register
-- Pour s'inscrire comme professionnel : /pro/register
-- Pour se connecter : /login
-- Le service est GRATUIT pour les clients
-- Les professionnels peuvent s'inscrire gratuitement et être contactés directement via WhatsApp
-- En cas de question complexe, suggère de contacter contact@jobly.ma ou +212 617-776729
-- Ne dis jamais que tu es Claude ou un produit Anthropic — tu es "l'assistant Jobly"
+RÈGLE ABSOLUE N°1 — LANGUE :
+Détecte la langue du message de l'utilisateur et réponds OBLIGATOIREMENT dans cette même langue :
+- Message en arabe (عربي) → réponds en arabe classique
+- Message en darija marocaine (دارجة) → réponds en darija
+- Message en français → réponds en français
+- Message en anglais → réponds en anglais
+- Message en amazigh/tamazight → réponds en français
+NE JAMAIS répondre en français si l'utilisateur a écrit en arabe ou darija. C'est interdit.
+
+RÈGLE N°2 — CONCISION : 2-3 phrases maximum. Pas de listes longues.
+
+RÈGLE N°3 — LIENS : Utilise le format markdown [texte](url) pour les liens.
+
+INFORMATIONS UTILES :
+- Trouver un artisan : [voir les artisans](/professionals)
+- S'inscrire client (gratuit) : [créer un compte](/client/register)
+- S'inscrire professionnel (gratuit) : [rejoindre Jobly](/pro/register)
+- Se connecter : [connexion](/login)
+- Le service est 100% GRATUIT pour les clients
+- Contact WhatsApp direct avec chaque artisan
+- Email : contact@jobly.ma | Tél : +212 617-776729
+- 500+ artisans dans 20+ villes du Maroc
+- Tu es "l'assistant Jobly", pas Claude ni Gemini
 PROMPT;
 
     private array $faqFr = [
@@ -83,10 +95,13 @@ PROMPT;
         }
         cache()->put($cacheKey . '_count', $count + 1, 60);
 
+        // Détecter la langue réelle du message (priorité sur le paramètre)
+        $detectedLang = $this->detectLanguage($message, $language);
+
         // 1) Google Gemini (GRATUIT) — priorité
         $geminiKey = config('services.gemini.key');
         if ($geminiKey) {
-            return $this->replyWithGemini($message, $language, $geminiKey);
+            return $this->replyWithGemini($message, $detectedLang, $geminiKey);
         }
 
         // 2) Anthropic Claude (payant) — fallback optionnel
@@ -109,11 +124,18 @@ PROMPT;
         try {
             $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key={$apiKey}";
 
+            $langInstruction = match(true) {
+                str_starts_with($language, 'ar') => 'IMPORTANT: Tu DOIS répondre en arabe (العربية) uniquement.',
+                $language === 'dz'               => 'IMPORTANT: Tu DOIS répondre en darija marocaine (الدارجة) uniquement.',
+                $language === 'en'               => 'IMPORTANT: You MUST reply in English only.',
+                default                          => 'IMPORTANT: Tu DOIS répondre en français uniquement.',
+            };
+
             $res = Http::withHeaders(['Content-Type' => 'application/json'])
                 ->timeout(15)
                 ->post($url, [
                     'system_instruction' => [
-                        'parts' => [['text' => $this->systemPrompt]],
+                        'parts' => [['text' => $this->systemPrompt . "\n\n" . $langInstruction]],
                     ],
                     'contents' => [
                         ['role' => 'user', 'parts' => [['text' => $message]]],
@@ -161,6 +183,15 @@ PROMPT;
         } catch (\Exception) {}
 
         return response()->json(['reply' => $this->faqMatch($message, $language)]);
+    }
+
+    private function detectLanguage(string $message, string $fallback): string
+    {
+        // Si le message contient des caractères arabes → forcer arabe
+        if (preg_match('/[\x{0600}-\x{06FF}]/u', $message)) {
+            return 'ar';
+        }
+        return $fallback;
     }
 
     private function faqMatch(string $message, string $language): string
