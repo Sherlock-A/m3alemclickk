@@ -31,6 +31,14 @@
     <meta name="twitter:site" content="@joblyme">
     <meta name="twitter:image" content="{{ config('app.url') }}/icons/icon-512.png">
 
+    {{-- Force-clear stale SW caches (runs before app bundle to evict old build chunks) --}}
+    <script nonce="{{ request()->attributes->get('csp_nonce', '') }}">
+      if ('caches' in window) {
+        caches.keys().then(function(keys) {
+          keys.forEach(function(k) { if (k !== 'm3c-v3') caches.delete(k); });
+        });
+      }
+    </script>
     {{-- Google OAuth Client ID --}}
     <script nonce="{{ request()->attributes->get('csp_nonce', '') }}">window.__GOOGLE_CLIENT_ID__ = "{{ config('services.google.client_id', '') }}";</script>
     {{-- Fonts: Latin (Jobly brand) + Arabic (Cairo) --}}
