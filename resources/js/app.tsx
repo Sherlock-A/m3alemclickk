@@ -15,13 +15,16 @@ axios.defaults.headers.common['Accept'] = 'application/json';
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').then((reg) => {
+      // Activate any SW already waiting (e.g. from a previous update detection)
+      if (reg.waiting) {
+        reg.waiting.postMessage('SKIP_WAITING');
+      }
       // Notify user when a new version is waiting
       reg.addEventListener('updatefound', () => {
         const newWorker = reg.installing;
         if (!newWorker) return;
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // New version available — post message to trigger skip waiting
             newWorker.postMessage('SKIP_WAITING');
           }
         });
