@@ -1,4 +1,3 @@
-import { router } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -199,7 +198,7 @@ function CategoryCard({
     return (
         <a
             href={`/professionals?profession=${searchParam}`}
-            onClick={(e) => { e.preventDefault(); router.visit(`/professionals?profession=${searchParam}`); }}
+            onClick={(e) => { e.preventDefault(); window.location.href = `/professionals?profession=${searchParam}`; }}
             className="group relative flex flex-col items-center gap-4 rounded-2xl bg-white dark:bg-[#161E2E] border border-slate-200 dark:border-white/5 p-6 text-center transition-all duration-200 hover:bg-slate-50 dark:hover:bg-[#1E2740] hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200/80 dark:hover:shadow-black/40 hover:border-orange-400/40 dark:hover:border-orange-500/25 shadow-sm dark:shadow-none"
         >
             {/* Glowing dot for popular */}
