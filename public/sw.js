@@ -1,6 +1,6 @@
-// M3allemClick Service Worker — v2
-// Cache-first for assets, network-first for pages, offline fallback
-const CACHE_NAME = 'm3c-v2';
+// M3allemClick Service Worker — v3
+// Cache-first for assets, passthrough for page navigations (Inertia SPA)
+const CACHE_NAME = 'm3c-v3';
 const STATIC_ASSETS = [
   '/',
   '/professionals',
@@ -34,6 +34,9 @@ self.addEventListener('fetch', (e) => {
 
   // Skip non-GET and cross-origin
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+
+  // Skip page navigation requests — Inertia SPA handles routing client-side
+  if (request.mode === 'navigate') return;
 
   // API calls — always network (no cache)
   if (url.pathname.startsWith('/api/')) return;
