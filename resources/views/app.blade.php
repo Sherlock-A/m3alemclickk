@@ -48,14 +48,7 @@
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.tsx'])
 
-    {{-- PWA Service Worker registration --}}
-    <script nonce="{{ request()->attributes->get('csp_nonce', '') }}">
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function () {
-          navigator.serviceWorker.register('/sw.js').catch(function () {});
-        });
-      }
-    </script>
+
 </head>
 <body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-white">
     {{-- Skip to main content (accessibility) --}}

@@ -130,7 +130,7 @@ export function Layout({ children }: { children: ReactNode }) {
           <a
             href={auth.dashboardUrl}
             className={`inline-flex items-center gap-2 rounded-lg ${roleColor} px-4 py-2 text-sm font-semibold text-white transition-colors shadow-sm`}
-            onClick={() => setMobileOpen(false)}
+            onClick={handleNav(auth.dashboardUrl, () => setMobileOpen(false))}
           >
             {roleIcon}
             {auth.role === 'admin' ? t('nav_admin') : auth.role === 'professional' ? t('nav_dashboard') : t('nav_client_space')}
@@ -151,7 +151,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <a
           href="/login"
           className={`${mobile ? 'inline-flex' : 'hidden md:inline-flex'} items-center gap-2 rounded-lg border border-orange-300 px-4 py-2 text-sm font-semibold text-orange-600 hover:bg-orange-50 dark:border-orange-700 dark:text-orange-400 dark:hover:bg-orange-900/20 transition-colors`}
-          onClick={() => setMobileOpen(false)}
+          onClick={handleNav('/login', () => setMobileOpen(false))}
         >
           <Search className="h-4 w-4" />
           {t('nav_search')}
@@ -159,7 +159,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <a
           href="/login"
           className={`${mobile ? 'inline-flex' : 'hidden md:inline-flex'} items-center gap-2 rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white hover:bg-orange-600 transition-colors shadow-sm`}
-          onClick={() => setMobileOpen(false)}
+          onClick={handleNav('/login', () => setMobileOpen(false))}
         >
           <LogIn className="h-4 w-4" />
           {t('nav_login')}
@@ -168,29 +168,38 @@ export function Layout({ children }: { children: ReactNode }) {
     );
   };
 
+  function handleNav(href: string, extra?: () => void) {
+    return (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+      e.preventDefault();
+      extra?.();
+      window.location.href = href;
+    };
+  }
+
   return (
     <div dir={rtl ? 'rtl' : 'ltr'}>
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-slate-800 dark:bg-slate-950/90">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          <a href="/" className="hover:opacity-90 transition-opacity">
+          <a href="/" className="hover:opacity-90 transition-opacity" onClick={handleNav('/')}>
             <JoblyLogo size="md" theme={dark ? 'dark' : 'light'} />
           </a>
 
           <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-            <a href="/" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+            <a href="/" onClick={handleNav('/')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_home')}
             </a>
-            <a href="/professionals" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+            <a href="/professionals" onClick={handleNav('/professionals')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_professionals')}
             </a>
-            <a href="/categories" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+            <a href="/categories" onClick={handleNav('/categories')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_categories')}
             </a>
-            <a href="/how-it-works" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+            <a href="/how-it-works" onClick={handleNav('/how-it-works')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_how_it_works')}
             </a>
-            <a href="/contact" className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+            <a href="/contact" onClick={handleNav('/contact')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_contact')}
             </a>
           </nav>
@@ -227,10 +236,10 @@ export function Layout({ children }: { children: ReactNode }) {
               <LanguageSwitcher compact />
             </div>
             <nav className="flex flex-col gap-3 text-sm font-medium">
-              <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_home')}</a>
-              <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_professionals')}</a>
-              <a href="/how-it-works" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_how_it_works')}</a>
-              <a href="/contact" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={() => setMobileOpen(false)}>{t('nav_contact')}</a>
+              <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/', () => setMobileOpen(false))}>{t('nav_home')}</a>
+              <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/professionals', () => setMobileOpen(false))}>{t('nav_professionals')}</a>
+              <a href="/how-it-works" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/how-it-works', () => setMobileOpen(false))}>{t('nav_how_it_works')}</a>
+              <a href="/contact" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/contact', () => setMobileOpen(false))}>{t('nav_contact')}</a>
               <AuthButtons mobile />
             </nav>
           </div>
@@ -247,7 +256,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
             {/* Colonne 1 — À propos */}
             <div>
-              <a href="/" className="hover:opacity-90 transition-opacity inline-block">
+              <a href="/" onClick={handleNav('/')} className="hover:opacity-90 transition-opacity inline-block">
                 <JoblyLogo size="md" theme="dark" />
               </a>
               <p className="mt-3 text-sm text-slate-400 leading-relaxed">
@@ -279,7 +288,7 @@ export function Layout({ children }: { children: ReactNode }) {
               <ul className="space-y-2">
                 {footerLinks.map((link, i) => (
                   <li key={i}>
-                    <a href={link.url} className="text-sm text-slate-400 hover:text-orange-400 transition-colors">
+                    <a href={link.url} onClick={handleNav(link.url)} className="text-sm text-slate-400 hover:text-orange-400 transition-colors">
                       {rtl ? '←' : '→'} {link.label}
                     </a>
                   </li>
