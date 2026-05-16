@@ -171,9 +171,10 @@ export function Layout({ children }: { children: ReactNode }) {
   function handleNav(href: string, extra?: () => void) {
     return (e: React.MouseEvent<HTMLAnchorElement>) => {
       if (e.ctrlKey || e.metaKey || e.shiftKey) return;
-      e.preventDefault();
+      // Stop Inertia's document-level listener from intercepting — let native <a href> navigate
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
       extra?.();
-      window.location.href = href;
     };
   }
 
