@@ -23,7 +23,8 @@
     RewriteRule ^ - [L]
 
     # Route everything else through Laravel
-    RewriteRule ^ index.php [L]
+    # [END] prevents LiteSpeed from doing a second rewrite pass (which would trigger the index.php redirect)
+    RewriteRule ^ index.php [L,END]
 </IfModule>
 
 # ── Service Worker — jamais caché (le navigateur doit toujours vérifier) ──────
