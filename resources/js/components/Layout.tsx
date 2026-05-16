@@ -336,13 +336,13 @@ export function Layout({ children }: { children: ReactNode }) {
               </button>
             </div>
             <a
-              href="https://shelockdigital.com"
+              href="https://sherlockdigital.com"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-slate-500 hover:text-orange-400 transition-colors"
             >
               <span>{t('footer_made_by')}</span>
-              <span className="font-bold text-orange-400">ShelockDigital</span>
+              <span className="font-bold text-orange-400">SherlockDigital</span>
               <svg className="h-3 w-3 text-orange-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
               </svg>
