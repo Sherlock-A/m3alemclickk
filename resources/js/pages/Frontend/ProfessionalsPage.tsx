@@ -378,9 +378,22 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
                 <ChevronLeft className="w-3.5 h-3.5" />
                 Préc.
               </button>
-              <span className="text-xs font-medium text-slate-400 dark:text-slate-500 tabular-nums">
-                {catPage}/{catTotalPages}
-              </span>
+              <div className="flex gap-1">
+                {Array.from({ length: catTotalPages }, (_, i) => i + 1).map(p => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => setCatPage(p)}
+                    className={`w-5 h-5 rounded text-[10px] font-medium transition-colors ${
+                      p === catPage
+                        ? 'bg-orange-500 text-white'
+                        : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
               <button
                 type="button"
                 onClick={() => setCatPage(p => Math.min(catTotalPages, p + 1))}
