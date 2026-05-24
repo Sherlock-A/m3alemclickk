@@ -944,6 +944,37 @@ export default function ProfessionalDashboardPage() {
               </div>
             )}
 
+            {/* City rank widget */}
+            {!loading && data?.rank && data.rank.total > 1 && (
+              <div className={`rounded-2xl border px-4 py-3 flex items-center gap-3 ${
+                data.rank.position === 1
+                  ? 'border-yellow-200 dark:border-yellow-800 bg-yellow-50/60 dark:bg-yellow-900/10'
+                  : data.rank.position <= 3
+                  ? 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900'
+                  : 'border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900'
+              }`}>
+                <span className="text-2xl shrink-0">
+                  {data.rank.position === 1 ? '🥇' : data.rank.position === 2 ? '🥈' : data.rank.position === 3 ? '🥉' : '🏅'}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Votre classement</p>
+                  <p className="text-sm font-black text-slate-800 dark:text-white">
+                    #{data.rank.position}
+                    {' '}
+                    <span className="font-normal text-slate-500">sur {data.rank.total}</span>
+                    {' '}
+                    {pro?.profession ? `${pro.profession}s` : 'pros'}
+                    {pro?.main_city ? ` à ${pro.main_city}` : ''}
+                  </p>
+                </div>
+                {data.rank.position <= 3 && (
+                  <span className="inline-flex items-center rounded-full bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 text-xs font-bold px-2.5 py-1 shrink-0">
+                    Top {data.rank.position}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* KPI cards */}
             <div className="grid gap-4 grid-cols-3">
               {loading

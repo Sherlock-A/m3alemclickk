@@ -612,12 +612,23 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
                   animate="visible"
                   variants={{ visible: { transition: { staggerChildren: 0.07 } } }}
                 >
-                  {items.map((professional) => (
+                  {items.map((professional, idx) => (
                     <motion.div
                       key={professional.id}
                       variants={{ hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } }}
                       transition={{ duration: 0.35, ease: [0.33, 1, 0.68, 1] }}
+                      className="relative"
                     >
+                      {/* Rank badge — shown only on city×category SEO pages, first 3 results */}
+                      {landing && idx < 3 && page === 1 && (
+                        <div className="absolute -top-2 -left-2 z-10 flex items-center gap-1">
+                          <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-sm shadow-md border-2 border-white dark:border-slate-900 ${
+                            idx === 0 ? 'bg-yellow-400' : idx === 1 ? 'bg-slate-300' : 'bg-orange-300'
+                          }`}>
+                            {idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉'}
+                          </span>
+                        </div>
+                      )}
                       <ProfessionalCard
                         professional={professional}
                         onCompare={toggleCompare}

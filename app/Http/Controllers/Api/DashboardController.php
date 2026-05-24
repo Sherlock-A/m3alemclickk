@@ -75,6 +75,21 @@ class DashboardController extends Controller
             'contacts' => Tracking::where('professional_id', $professional->id)->whereDate('created_at', today())->whereIn('type', ['whatsapp_click', 'call'])->count(),
         ];
 
+        // Rank in city × category (by rating — lower number = better)
+        $rank = null;
+        if ($professional->rating > 0 && $professional->category_id && $professional->main_city) {
+            $betterCount = Professional::approved()
+                ->where('category_id', $professional->category_id)
+                ->whereRaw('LOWER(main_city) LIKE ?', [mb_strtolower($professional->main_city, 'UTF-8')])
+                ->where('rating', '>', $professional->rating)
+                ->count();
+            $totalInCity = Professional::approved()
+                ->where('category_id', $professional->category_id)
+                ->whereRaw('LOWER(main_city) LIKE ?', [mb_strtolower($professional->main_city, 'UTF-8')])
+                ->count();
+            $rank = ['position' => $betterCount + 1, 'total' => $totalInCity];
+        }
+
         return response()->json([
             'professional' => $professional,
             'stats' => [
@@ -83,6 +98,7 @@ class DashboardController extends Controller
                 'calls'          => $professional->calls,
             ],
             'today'        => $today,
+            'rank'         => $rank,
             'weekly'       => $weekly,
             'reviews'      => $reviews,
             'analytics'    => [
