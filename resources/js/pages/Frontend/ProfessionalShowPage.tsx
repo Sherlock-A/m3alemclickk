@@ -87,6 +87,31 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
     }).catch(() => null);
   };
 
+  // Pre-WhatsApp lead capture modal
+  const [showWaModal, setShowWaModal] = useState(false);
+  const [waName, setWaName]           = useState('');
+  const [waNeed, setWaNeed]           = useState('');
+
+  const openWhatsApp = (name?: string, need?: string) => {
+    const params = new URLSearchParams();
+    if (name) params.set('name', name);
+    if (need) params.set('need', need);
+    const qs = params.toString();
+    window.location.href = `/api/whatsapp/${professional.id}${qs ? '?' + qs : ''}`;
+  };
+
+  const handleWhatsAppClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    track('whatsapp_click');
+    if (clientUser) {
+      openWhatsApp(clientUser.name);
+    } else {
+      setWaName('');
+      setWaNeed('');
+      setShowWaModal(true);
+    }
+  };
+
   const [shareCopied, setShareCopied] = useState(false);
   const shareProfile = async () => {
     const url = window.location.href;
@@ -356,14 +381,14 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
 
                 {/* CTA buttons */}
                 <div className="space-y-2.5">
-                  <a
-                    href={`/api/whatsapp/${professional.id}`}
-                    onClick={() => track('whatsapp_click')}
+                  <button
+                    type="button"
+                    onClick={handleWhatsAppClick}
                     aria-label={`${t('show_whatsapp')} — ${professional.name}`}
                     className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 py-4 text-base font-bold text-white transition-colors shadow-lg shadow-emerald-500/20"
                   >
                     <MessageCircle className="h-5 w-5" aria-hidden="true" /> {t('show_whatsapp')}
-                  </a>
+                  </button>
                   <div className="flex gap-2.5">
                     <a
                       href={`tel:${professional.phone}`}
@@ -761,13 +786,13 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
               ) : professional.status === 'available' ? (
                 <div className="rounded-[2rem] border border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-900/10 p-5">
                   <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold mb-3">✅ Disponible maintenant</p>
-                  <a
-                    href={`/api/whatsapp/${professional.id}`}
-                    onClick={() => track('whatsapp_click')}
+                  <button
+                    type="button"
+                    onClick={handleWhatsAppClick}
                     className="flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white py-3 text-sm font-bold transition-colors shadow-md w-full"
                   >
                     <MessageCircle className="h-4 w-4" /> Contacter maintenant
-                  </a>
+                  </button>
                 </div>
               ) : null;
             })()}
@@ -827,6 +852,72 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
           </div>
         )}
       </section>
+      {/* Pre-WhatsApp lead capture modal */}
+      {showWaModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm"
+          onClick={() => setShowWaModal(false)}
+        >
+          <div
+            className="w-full max-w-sm mx-4 rounded-t-3xl sm:rounded-3xl bg-white dark:bg-slate-900 p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-5">
+              <div className="h-10 w-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
+                <MessageCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <p className="font-black text-slate-800 dark:text-white">Contacter {professional.name}</p>
+                <p className="text-xs text-slate-400">via WhatsApp · 2 secondes</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Votre prénom</label>
+                <input
+                  value={waName}
+                  onChange={(e) => setWaName(e.target.value)}
+                  placeholder="Mohammed..."
+                  autoFocus
+                  onKeyDown={(e) => e.key === 'Enter' && openWhatsApp(waName, waNeed)}
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+                  Votre besoin <span className="text-slate-400 font-normal">(optionnel)</span>
+                </label>
+                <input
+                  value={waNeed}
+                  onChange={(e) => setWaNeed(e.target.value)}
+                  placeholder="Ex: fuite d'eau, prise électrique…"
+                  onKeyDown={(e) => e.key === 'Enter' && openWhatsApp(waName, waNeed)}
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-5">
+              <button
+                type="button"
+                onClick={() => setShowWaModal(false)}
+                className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={() => openWhatsApp(waName, waNeed)}
+                className="flex-1 rounded-xl bg-green-500 hover:bg-green-600 text-white py-2.5 text-sm font-bold transition-colors flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="h-4 w-4" /> Envoyer
+              </button>
+            </div>
+            <p className="mt-3 text-center text-[11px] text-slate-400">
+              Votre prénom sera partagé avec l'artisan dans le message WhatsApp
+            </p>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
