@@ -282,6 +282,43 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           </p>
 
           <SearchBar initialCity={geo?.city} />
+
+          {/* Social proof counter */}
+          <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center justify-center gap-3 flex-wrap">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              <strong className="text-slate-700 dark:text-slate-200">{stats.professionals}+</strong>
+              {' '}artisans actifs
+            </span>
+            <span className="text-slate-300 dark:text-slate-600">·</span>
+            <span className="flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <strong className="text-slate-700 dark:text-slate-200">4.8/5</strong>
+            </span>
+            <span className="text-slate-300 dark:text-slate-600">·</span>
+            <span className="font-medium text-orange-600 dark:text-orange-400">{stats.cities}+ villes</span>
+          </p>
+
+          {/* Quick actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
+            <a
+              href="/professionals?availability=1"
+              className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-100 transition-colors dark:border-green-800 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
+            >
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              Disponibles maintenant
+              <ArrowRight className="h-3.5 w-3.5" />
+            </a>
+            <a
+              href="/register/pro"
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+            >
+              Vous êtes artisan ?{' '}
+              <span className="font-semibold text-orange-600 dark:text-orange-400">
+                Créez votre profil gratuit →
+              </span>
+            </a>
+          </div>
         </div>
       </section>
 
@@ -312,6 +349,16 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Stats KPIs ───────────────────────────────────────────────────── */}
+      <section ref={statsRef} className="mx-auto max-w-7xl px-4 py-10">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <StatCard label={t('professionals_registered')} target={stats.professionals} icon={Briefcase}  started={statsVisible} delay={0} />
+          <StatCard label={t('cities_covered')}           target={stats.cities}        icon={MapPin}     started={statsVisible} delay={0.1} />
+          <StatCard label="Contacts ce mois"              target={stats.missions}      icon={Sparkles}   started={statsVisible} delay={0.2} />
+          <StatCard label="Artisans vérifiés"             target={stats.verified}      icon={BadgeCheck} started={statsVisible} delay={0.3} />
         </div>
       </section>
 
