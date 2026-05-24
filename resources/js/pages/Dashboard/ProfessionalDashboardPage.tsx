@@ -892,16 +892,57 @@ export default function ProfessionalDashboardPage() {
                       style={{ width: `${completion}%` }}
                     />
                   </div>
-                  {completion < 80 && (
-                    <p className="mt-1.5 text-xs text-slate-400">
-                      {completion < 50 ? t('dash_completion_low') : t('dash_completion_mid')}
-                      {' '}
-                      <button onClick={() => setTab('profile')} className="text-orange-500 hover:text-orange-600 font-medium">{t('dash_complete_btn')}</button>
-                    </p>
-                  )}
+                  {completion < 100 && (() => {
+                    const src = Object.keys(formValues).some(k => formValues[k as keyof typeof formValues]) ? formValues : pro;
+                    const suggestions = [
+                      { done: !!(src?.photo),                           label: 'Ajoutez une photo de profil',        impact: '+25% de contacts' },
+                      { done: !!(src?.description?.trim()),             label: 'Décrivez votre activité',            impact: '+20% de clics' },
+                      { done: (src?.portfolio ?? []).length > 0,       label: 'Ajoutez des photos de travaux',      impact: '+30% de confiance' },
+                      { done: (src?.languages ?? []).length > 0,       label: 'Indiquez vos langues',               impact: 'Plus de clients' },
+                      { done: (src?.travel_cities ?? []).length > 0,   label: "Zones d'intervention",               impact: 'Visibilité élargie' },
+                    ].filter(s => !s.done);
+                    if (suggestions.length === 0) return null;
+                    return (
+                      <div className="mt-3 space-y-1.5">
+                        {suggestions.slice(0, 2).map((s, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setTab('profile')}
+                            className="w-full flex items-center gap-2 text-left text-xs rounded-lg bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 px-3 py-2 hover:border-orange-200 dark:hover:border-orange-800 transition-colors"
+                          >
+                            <span className="h-1.5 w-1.5 rounded-full bg-orange-400 shrink-0" />
+                            <span className="flex-1 text-slate-600 dark:text-slate-400">{s.label}</span>
+                            <span className="text-orange-500 font-semibold text-[10px] whitespace-nowrap">{s.impact} →</span>
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </div>
+
+            {/* Today's activity banner */}
+            {!loading && data?.today && (data.today.views + data.today.contacts) > 0 && (
+              <div className="rounded-2xl border border-blue-100 dark:border-blue-900/30 bg-blue-50/60 dark:bg-blue-900/10 px-4 py-3 flex items-center gap-3">
+                <span className="text-2xl shrink-0">📊</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-blue-700 dark:text-blue-400">Aujourd'hui</p>
+                  <p className="text-sm font-bold text-slate-800 dark:text-white">
+                    {data.today.views} vue{data.today.views !== 1 ? 's' : ''}
+                    {data.today.contacts > 0 && (
+                      <> · <span className="text-green-600 dark:text-green-400">{data.today.contacts} contact{data.today.contacts !== 1 ? 's' : ''}</span></>
+                    )}
+                  </p>
+                </div>
+                {data.today.contacts > 0 && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold px-2.5 py-1 shrink-0">
+                    🔥 Actif
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* KPI cards */}
             <div className="grid gap-4 grid-cols-3">

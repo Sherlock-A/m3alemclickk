@@ -70,6 +70,11 @@ class DashboardController extends Controller
             }
         }
 
+        $today = [
+            'views'    => Tracking::where('professional_id', $professional->id)->whereDate('created_at', today())->where('type', 'view')->count(),
+            'contacts' => Tracking::where('professional_id', $professional->id)->whereDate('created_at', today())->whereIn('type', ['whatsapp_click', 'call'])->count(),
+        ];
+
         return response()->json([
             'professional' => $professional,
             'stats' => [
@@ -77,6 +82,7 @@ class DashboardController extends Controller
                 'whatsappClicks' => $professional->whatsapp_clicks,
                 'calls'          => $professional->calls,
             ],
+            'today'        => $today,
             'weekly'       => $weekly,
             'reviews'      => $reviews,
             'analytics'    => [
