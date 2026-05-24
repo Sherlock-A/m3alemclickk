@@ -7,6 +7,13 @@ import { CookieConsentProvider } from './contexts/CookieConsentContext';
 import './i18n';
 import axios from 'axios';
 
+// Register service worker for PWA + push notifications
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {});
+  });
+}
+
 // Send cookies (httpOnly JWT) on every request + always expect JSON
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Accept'] = 'application/json';

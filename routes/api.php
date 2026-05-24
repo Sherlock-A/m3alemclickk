@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\ProfessionalController;
 use App\Http\Controllers\Api\ProfessionController;
 use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\PushController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\TrackingController;
@@ -163,6 +164,9 @@ Route::middleware('jwt:professional')->post('/broadcasting/auth', function (\Ill
     return Broadcast::auth($request);
 });
 
+// ─── Push Notifications (public key) ─────────────────────────────────────────
+Route::get('/push/vapid-public-key', [PushController::class, 'vapidPublicKey'])->middleware('throttle:120,1');
+
 // ─── Dashboard Professionnel ───────────────────────────────────────────────────
 Route::middleware('jwt:professional')->group(function () {
     Route::get('/dashboard/professional',              [DashboardController::class, 'professional']);
@@ -174,6 +178,10 @@ Route::middleware('jwt:professional')->group(function () {
     Route::get('/pro/unavailabilities',                [UnavailabilityController::class, 'index']);
     Route::post('/pro/unavailabilities',               [UnavailabilityController::class, 'store']);
     Route::delete('/pro/unavailabilities/{unavailability}', [UnavailabilityController::class, 'destroy']);
+
+    // Push subscriptions
+    Route::post('/push/subscribe',   [PushController::class, 'subscribe'])->middleware('throttle:10,1');
+    Route::post('/push/unsubscribe', [PushController::class, 'unsubscribe'])->middleware('throttle:10,1');
 });
 
 // ─── Dashboard Admin ───────────────────────────────────────────────────────────

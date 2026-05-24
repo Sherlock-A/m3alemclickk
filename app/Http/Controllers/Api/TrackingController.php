@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\PushController;
 use App\Models\Professional;
 use App\Models\Tracking;
 use App\Services\MailService;
@@ -57,11 +58,13 @@ class TrackingController extends Controller
             'meta' => $data['meta'] ?? [],
         ]);
 
-        // Email notification to pro on contact events — throttled: 1/hour/pro/type
+        // Email + push notification to pro on contact events — throttled: 1/hour/pro/type
         if (in_array($data['type'], ['whatsapp_click', 'call']) && $professional->email) {
             $throttleKey = "lead_notif_{$professional->id}_{$data['type']}";
             if (! Cache::has($throttleKey)) {
                 Cache::put($throttleKey, 1, now()->addHour());
+
+                // Email
                 app(MailService::class)->sendContactLeadNotification(
                     proEmail:       $professional->email,
                     proName:        $professional->name,
@@ -73,6 +76,20 @@ class TrackingController extends Controller
                     dashboardUrl:   config('app.url') . '/dashboard/professional',
                     profileUrl:     config('app.url') . '/professionals/' . $professional->slug,
                 );
+
+                // Push notification
+                if ($professional->user_id) {
+                    $emoji     = $data['type'] === 'whatsapp_click' ? '💬' : '📞';
+                    $typeLabel = $data['type'] === 'whatsapp_click' ? 'WhatsApp' : 'Appel';
+                    try {
+                        PushController::sendToUser(
+                            $professional->user_id,
+                            "{$emoji} Nouveau contact {$typeLabel} !",
+                            "Un client depuis {$geoCity} veut vous contacter. Répondez vite !",
+                            '/dashboard/professional',
+                        );
+                    } catch (\Throwable) {}
+                }
             }
         }
 

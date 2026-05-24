@@ -11,13 +11,14 @@ import {
   LogOut, Wrench, Eye, Phone, MessageCircle, Save,
   ToggleLeft, ToggleRight, LayoutDashboard, User, BarChart3,
   ExternalLink, Copy, Star, CheckCircle, AlertCircle,
-  X, Loader2, TrendingUp, Camera, Upload, Trash2, MapPin, Trophy, Zap, Mail,
+  X, Loader2, TrendingUp, Camera, Upload, Trash2, MapPin, Trophy, Zap, Mail, Bell, BellOff,
 } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 import { SentimentDashboard } from '../../components/SentimentDashboard';
 import { QRCodeCard } from '../../components/QRCodeCard';
 import { computeBadges } from '../../components/ProfessionalBadges';
 import { useCatName } from '../../hooks/useCatName';
+import { usePushNotifications } from '../../hooks/usePushNotifications';
 
 // ── Photo upload component ─────────────────────────────────────────────────────
 function PhotoUpload({
@@ -477,6 +478,7 @@ export default function ProfessionalDashboardPage() {
   const [catCreating, setCatCreating] = useState(false);
   const [catCreateErr, setCatCreateErr] = useState('');
   const [notifCount, setNotifCount]   = useState(0);
+  const push = usePushNotifications(token);
 
   const DRAFT_KEY = `pro_draft_${(token ?? '').slice(-10)}`;
 
@@ -972,6 +974,46 @@ export default function ProfessionalDashboardPage() {
                     Top {data.rank.position}
                   </span>
                 )}
+              </div>
+            )}
+
+            {/* Push notification opt-in */}
+            {push.state === 'unsubscribed' && (
+              <div className="rounded-2xl border border-orange-100 dark:border-orange-900/30 bg-orange-50/60 dark:bg-orange-900/10 px-4 py-3 flex items-center gap-3">
+                <span className="text-2xl shrink-0">🔔</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-orange-700 dark:text-orange-400">Notifications push</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Soyez alerté instantanément quand un client vous contacte</p>
+                </div>
+                <button
+                  onClick={push.subscribe}
+                  className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-1.5 transition-colors"
+                >
+                  <Bell className="h-3 w-3" />
+                  Activer
+                </button>
+              </div>
+            )}
+            {push.state === 'subscribed' && (
+              <div className="rounded-2xl border border-green-100 dark:border-green-900/30 bg-green-50/60 dark:bg-green-900/10 px-4 py-3 flex items-center gap-3">
+                <span className="text-2xl shrink-0">🔔</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-green-700 dark:text-green-400">Notifications actives</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">Vous recevez une alerte push à chaque nouveau contact</p>
+                </div>
+                <button
+                  onClick={push.unsubscribe}
+                  className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold px-3 py-1.5 transition-colors"
+                >
+                  <BellOff className="h-3 w-3" />
+                  Désactiver
+                </button>
+              </div>
+            )}
+            {push.state === 'denied' && (
+              <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/20 px-4 py-3 flex items-center gap-3">
+                <BellOff className="h-5 w-5 shrink-0 text-slate-400" />
+                <p className="text-xs text-slate-500 dark:text-slate-400">Notifications bloquées — autorisez-les dans les paramètres du navigateur</p>
               </div>
             )}
 
