@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import {
   Heart, MapPin, MessageCircle, Phone, ShieldCheck,
-  Star, Send, CheckCircle, AlertCircle, Mail, BadgeCheck, LogIn,
+  Star, Send, CheckCircle, AlertCircle, Mail, BadgeCheck, LogIn, Share2,
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { Category, Professional } from '../../types';
@@ -85,6 +85,26 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
       type,
       meta: { slug: professional.slug },
     }).catch(() => null);
+  };
+
+  const [shareCopied, setShareCopied] = useState(false);
+  const shareProfile = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${professional.name} — ${professional.profession} sur Jobly`,
+          text: `Découvrez ${professional.name}, ${professional.profession} à ${professional.main_city}. Profil vérifié sur Jobly !`,
+          url,
+        });
+      } catch { /* user cancelled */ }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+        setShareCopied(true);
+        setTimeout(() => setShareCopied(false), 2000);
+      } catch {}
+    }
   };
 
   const submitReview = async (e: React.FormEvent) => {
@@ -228,6 +248,35 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: seo?.jsonLd ?? JSON.stringify(jsonLd) }} />
       </Head>
       <section className="mx-auto max-w-7xl px-4 py-10">
+        {/* Breadcrumb */}
+        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+          <a href="/" className="hover:text-orange-500 transition-colors">Accueil</a>
+          <span>/</span>
+          {professional.main_city && (
+            <>
+              <a
+                href={`/professionnels/${encodeURIComponent(professional.main_city.toLowerCase())}`}
+                className="hover:text-orange-500 transition-colors"
+              >
+                {professional.main_city}
+              </a>
+              <span>/</span>
+            </>
+          )}
+          {professional.category && (
+            <>
+              <a
+                href={`/professionnels/${encodeURIComponent(professional.main_city.toLowerCase())}/${encodeURIComponent(professional.category.name.toLowerCase())}`}
+                className="hover:text-orange-500 transition-colors"
+              >
+                {professional.category.name}
+              </a>
+              <span>/</span>
+            </>
+          )}
+          <span className="text-slate-700 dark:text-slate-300 font-medium truncate max-w-[160px]">{professional.name}</span>
+        </nav>
+
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
 
           {/* ── Left column ── */}
@@ -306,23 +355,33 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
                 <ProfessionalBadges professional={professional} />
 
                 {/* CTA buttons */}
-                <div className="flex flex-wrap gap-3">
+                <div className="space-y-2.5">
                   <a
                     href={`/api/whatsapp/${professional.id}`}
                     onClick={() => track('whatsapp_click')}
                     aria-label={`${t('show_whatsapp')} — ${professional.name}`}
-                    className="inline-flex items-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition-colors shadow-md"
+                    className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 py-4 text-base font-bold text-white transition-colors shadow-lg shadow-emerald-500/20"
                   >
-                    <MessageCircle className="h-4 w-4" aria-hidden="true" /> {t('show_whatsapp')}
+                    <MessageCircle className="h-5 w-5" aria-hidden="true" /> {t('show_whatsapp')}
                   </a>
-                  <a
-                    href={`tel:${professional.phone}`}
-                    onClick={() => track('call')}
-                    aria-label={`${t('show_call')} ${professional.name}`}
-                    className="inline-flex items-center gap-2 rounded-2xl bg-blue-600 hover:bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition-colors shadow-md"
-                  >
-                    <Phone className="h-4 w-4" aria-hidden="true" /> {t('show_call')}
-                  </a>
+                  <div className="flex gap-2.5">
+                    <a
+                      href={`tel:${professional.phone}`}
+                      onClick={() => track('call')}
+                      aria-label={`${t('show_call')} ${professional.name}`}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-700 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      <Phone className="h-4 w-4" aria-hidden="true" /> {t('show_call')}
+                    </a>
+                    <button
+                      type="button"
+                      onClick={shareProfile}
+                      className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-700 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      <Share2 className="h-4 w-4" aria-hidden="true" />
+                      {shareCopied ? '✓ Copié !' : 'Partager'}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Description */}
@@ -714,6 +773,21 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
             })()}
           </aside>
         </div>
+
+        {/* ── Voir plus dans cette ville ──────────────────────────────────── */}
+        {professional.main_city && professional.category && (
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 rounded-3xl border border-orange-100 dark:border-orange-900/30 bg-orange-50/60 dark:bg-orange-900/10 p-6 text-center">
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              Vous cherchez d'autres <strong>{professional.category.name}s</strong> à <strong>{professional.main_city}</strong> ?
+            </p>
+            <a
+              href={`/professionnels/${encodeURIComponent(professional.main_city.toLowerCase())}/${encodeURIComponent(professional.category.name.toLowerCase())}`}
+              className="inline-flex items-center gap-2 rounded-full bg-orange-500 hover:bg-orange-600 text-white px-5 py-2.5 text-sm font-bold transition-colors whitespace-nowrap"
+            >
+              Voir tous les {professional.category.name}s →
+            </a>
+          </div>
+        )}
 
         {/* ── Pros similaires ────────────────────────────────────────────────── */}
         {similar.length > 0 && (

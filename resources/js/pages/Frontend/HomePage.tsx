@@ -274,7 +274,14 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           )}
 
           <h1 className="text-4xl font-black tracking-tight text-slate-950 dark:text-white md:text-6xl leading-tight">
-            {t('hero')}
+            {geo?.city ? (
+              <>
+                Trouvez votre{' '}
+                <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">artisan</span>
+                {' '}à{' '}
+                <span className="text-orange-500">{geo.city}</span>
+              </>
+            ) : t('hero')}
           </h1>
 
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
