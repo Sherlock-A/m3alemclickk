@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Professional;
 use App\Models\Tracking;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
@@ -46,13 +47,34 @@ class TrackingController extends Controller
             'call'          => $professional->increment('calls'),
         };
 
+        $geoCity = $request->attributes->get('geo.city', 'Casablanca');
+
         $tracking = Tracking::create([
             'professional_id' => $professional->id,
             'type' => $data['type'],
             'ip' => $ip,
-            'city' => $request->attributes->get('geo.city', 'Casablanca'),
+            'city' => $geoCity,
             'meta' => $data['meta'] ?? [],
         ]);
+
+        // Email notification to pro on contact events — throttled: 1/hour/pro/type
+        if (in_array($data['type'], ['whatsapp_click', 'call']) && $professional->email) {
+            $throttleKey = "lead_notif_{$professional->id}_{$data['type']}";
+            if (! Cache::has($throttleKey)) {
+                Cache::put($throttleKey, 1, now()->addHour());
+                app(MailService::class)->sendContactLeadNotification(
+                    proEmail:       $professional->email,
+                    proName:        $professional->name,
+                    type:           $data['type'],
+                    city:           $geoCity,
+                    totalViews:     $professional->views ?? 0,
+                    totalWhatsapp:  $professional->whatsapp_clicks ?? 0,
+                    totalCalls:     $professional->calls ?? 0,
+                    dashboardUrl:   config('app.url') . '/dashboard/professional',
+                    profileUrl:     config('app.url') . '/professionals/' . $professional->slug,
+                );
+            }
+        }
 
         return response()->json(['success' => true, 'tracking' => $tracking]);
     }

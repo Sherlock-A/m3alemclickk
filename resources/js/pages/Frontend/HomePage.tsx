@@ -543,6 +543,62 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           </div>
         </div>
       </section>
+      {/* ── Artisans CTA section ─────────────────────────────────────────── */}
+      <section className="mx-auto max-w-7xl px-4 py-16">
+        <div className="rounded-3xl bg-gradient-to-br from-orange-500 to-orange-700 dark:from-orange-600 dark:to-orange-900 p-8 md:p-12 relative overflow-hidden">
+          {/* Background pattern */}
+          <div className="pointer-events-none absolute inset-0 opacity-10">
+            <div className="absolute top-4 right-8 w-32 h-32 rounded-full bg-white" />
+            <div className="absolute bottom-4 left-12 w-20 h-20 rounded-full bg-white" />
+            <div className="absolute top-1/2 right-1/4 w-16 h-16 rounded-full bg-white" />
+          </div>
+
+          <div className="relative z-10 grid gap-8 md:grid-cols-2 items-center">
+            <div>
+              <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white mb-4">
+                Vous êtes artisan ?
+              </span>
+              <h2 className="text-3xl font-black text-white mb-3 leading-tight">
+                Développez votre activité avec Jobly
+              </h2>
+              <p className="text-orange-100 text-sm mb-6 max-w-md">
+                Rejoignez des centaines d'artisans qui reçoivent des contacts qualifiés directement sur WhatsApp — sans commission, sans abonnement.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="/register/pro"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-orange-600 hover:bg-orange-50 transition-colors shadow-lg"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Créer mon profil gratuitement
+                </a>
+                <a
+                  href="/how-it-works"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
+                >
+                  Comment ça marche <ArrowRight className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { emoji: '📱', title: 'Contact direct', desc: 'Clients vous contactent sur WhatsApp ou par téléphone — sans intermédiaire' },
+                { emoji: '🎯', title: 'Zéro commission', desc: 'Vous gardez 100% de vos revenus. Inscription et visibilité gratuites.' },
+                { emoji: '⭐', title: 'Avis clients', desc: 'Construisez votre réputation avec des avis vérifiés de vrais clients.' },
+                { emoji: '📊', title: 'Statistiques', desc: 'Suivez vos vues, appels et contacts depuis votre dashboard.' },
+              ].map(({ emoji, title, desc }) => (
+                <div key={title} className="rounded-2xl bg-white/15 backdrop-blur-sm p-4 border border-white/20">
+                  <div className="text-2xl mb-2">{emoji}</div>
+                  <h3 className="text-sm font-bold text-white mb-1">{title}</h3>
+                  <p className="text-xs text-orange-100 leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Testimonials ─────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-7xl px-4 py-16">
         <div className="text-center mb-10">

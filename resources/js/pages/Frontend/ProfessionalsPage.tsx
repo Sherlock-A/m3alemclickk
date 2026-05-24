@@ -18,6 +18,7 @@ type Props = {
   filters: Record<string, string>;
   categories: Category[];
   suggestions?: Professional[];
+  available_count?: number;
   seo?: { title?: string; description?: string; canonical?: string; h1?: string };
 };
 
@@ -129,7 +130,7 @@ function EmptyLeadForm({ profession, city, onClear }: { profession?: string; cit
   );
 }
 
-export default function ProfessionalsPage({ professionals, filters, categories, suggestions, seo }: Props) {
+export default function ProfessionalsPage({ professionals, filters, categories, suggestions, available_count, seo }: Props) {
   const { t } = useTranslation();
   const getCatName = useCatName();
   const [items, setItems]       = useState<Professional[]>(professionals.data);
@@ -271,8 +272,23 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
       <div>
         <p className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">{t('pros_availability')}</p>
         <div className="flex flex-wrap gap-2">
-          <FilterButton label={t('available')} active={filters.status === 'available'}
-            onClick={() => navigate({ status: filters.status === 'available' ? undefined : 'available' })} />
+          <button
+            type="button"
+            onClick={() => navigate({ status: filters.status === 'available' ? undefined : 'available' })}
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+              filters.status === 'available'
+                ? 'bg-green-600 text-white'
+                : 'border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+            }`}
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+            {t('available')}
+            {available_count != null && available_count > 0 && (
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${filters.status === 'available' ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'}`}>
+                {available_count}
+              </span>
+            )}
+          </button>
           <FilterButton label={t('busy')} active={filters.status === 'busy'}
             onClick={() => navigate({ status: filters.status === 'busy' ? undefined : 'busy' })} />
         </div>
@@ -433,6 +449,21 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
         <div className="mb-6">
           <SearchBar initialCity={filters.city} initialProfession={filters.profession} />
         </div>
+
+        {/* Disponibles maintenant — quick CTA when no status filter */}
+        {!filters.status && available_count != null && available_count > 0 && (
+          <button
+            type="button"
+            onClick={() => navigate({ status: 'available' })}
+            className="mb-4 w-full flex items-center justify-between gap-3 rounded-2xl border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 px-4 py-3 text-sm font-semibold text-green-700 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+          >
+            <span className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              {available_count} artisan{available_count > 1 ? 's' : ''} disponible{available_count > 1 ? 's' : ''} maintenant
+            </span>
+            <span className="text-xs font-medium opacity-70">Voir →</span>
+          </button>
+        )}
 
         {/* Active filter badges */}
         {activeFilterCount > 0 && (

@@ -177,6 +177,36 @@ class MailService
     }
 
     /**
+     * Notifie le pro qu'un client l'a contacté via WhatsApp ou téléphone.
+     * Throttlée : 1 email max par heure par pro × type pour éviter le spam.
+     */
+    public function sendContactLeadNotification(
+        string $proEmail,
+        string $proName,
+        string $type,
+        string $city,
+        int    $totalViews,
+        int    $totalWhatsapp,
+        int    $totalCalls,
+        string $dashboardUrl,
+        string $profileUrl
+    ): void {
+        if (! $proEmail) return;
+
+        $typeLabel = $type === 'whatsapp_click' ? 'WhatsApp' : 'Appel';
+        $emoji     = $type === 'whatsapp_click' ? '💬' : '📞';
+
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.pro-contact-notification',
+            compact('proName', 'type', 'city', 'totalViews', 'totalWhatsapp', 'totalCalls', 'dashboardUrl', 'profileUrl'),
+            $proEmail,
+            $proName,
+            "{$emoji} Nouveau contact {$typeLabel} sur Jobly — Répondez vite !",
+        );
+    }
+
+    /**
      * Envoie un message de contact (formulaire public → admin).
      */
     public function sendContactMessage(

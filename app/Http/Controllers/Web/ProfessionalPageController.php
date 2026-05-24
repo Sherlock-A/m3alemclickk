@@ -179,14 +179,19 @@ class ProfessionalPageController extends Controller
                 ->get();
         }
 
+        $availableCount = Cache::remember('available_pros_count', 300, fn () =>
+            Professional::approved()->where('is_available', true)->count()
+        );
+
         return Inertia::render('Frontend/ProfessionalsPage', [
-            'professionals' => $paginated,
-            'suggestions'   => $suggestions,
-            'filters'       => $request->only(['city', 'profession', 'search', 'sort', 'status', 'rating_min', 'language', 'lat', 'lon', 'radius_km']),
-            'categories'    => Cache::remember('categories_active', 3600, fn () =>
+            'professionals'  => $paginated,
+            'suggestions'    => $suggestions,
+            'available_count' => $availableCount,
+            'filters'        => $request->only(['city', 'profession', 'search', 'sort', 'status', 'rating_min', 'language', 'lat', 'lon', 'radius_km']),
+            'categories'     => Cache::remember('categories_active', 3600, fn () =>
                 Category::where('active', true)->orderBy('sort_order')->get()
             ),
-            'seo'           => [
+            'seo'            => [
                 'title'       => 'Artisans & Professionnels au Maroc | Jobly',
                 'description' => 'Trouvez le meilleur artisan au Maroc : plombier, électricien, menuisier, peintre et plus. Contact WhatsApp direct. Avis vérifiés. Devis gratuit.',
                 'canonical'   => config('app.url') . '/professionals',

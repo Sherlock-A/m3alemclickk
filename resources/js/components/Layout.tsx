@@ -7,7 +7,8 @@ import { CookieBanner } from './CookieBanner';
 import { ConsentScripts } from './ConsentScripts';
 import { useCookieConsent } from '../contexts/CookieConsentContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Moon, Sun, Menu, X, LogIn, Search, MapPin, Mail, Phone, LayoutDashboard, LogOut, ShieldCheck, User } from 'lucide-react';
+import { Moon, Sun, Menu, X, LogIn, Search, MapPin, Mail, Phone, LayoutDashboard, LogOut, ShieldCheck, User, Home, Heart } from 'lucide-react';
+import { useFavorites } from '../contexts/FavoritesContext';
 
 type FooterLink = { label: string; url: string };
 type Settings = {
@@ -78,6 +79,7 @@ export function Layout({ children }: { children: ReactNode }) {
   const { rtl } = useLanguage();
   const { t } = useTranslation();
   const { resetConsent } = useCookieConsent();
+  const { favorites } = useFavorites();
   const [dark, setDark] = useState(() => {
     try { return localStorage.getItem('jobly_dark') === 'true'; } catch { return false; }
   });
@@ -248,7 +250,7 @@ export function Layout({ children }: { children: ReactNode }) {
       </header>
 
       {/* ── Main content ───────────────────────────────────────────────────── */}
-      <main>{children}</main>
+      <main className="pb-16 md:pb-0">{children}</main>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
       <footer className="bg-slate-900 text-slate-300 mt-16">
@@ -350,6 +352,40 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
         </div>
       </footer>
+
+      {/* ── Mobile bottom nav ─────────────────────────────────────────────── */}
+      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-sm">
+        <div className="flex items-center justify-around h-16">
+          {([
+            { href: '/',             Icon: Home,                  label: t('nav_home') },
+            { href: '/professionals', Icon: Search,               label: t('nav_professionals') },
+            { href: auth?.role === 'client' ? '/dashboard/client' : '/professionals',
+              Icon: Heart,
+              label: 'Favoris',
+              badge: favorites.length },
+            { href: auth ? auth.dashboardUrl : '/login',
+              Icon: auth ? (auth.role === 'admin' ? ShieldCheck : auth.role === 'professional' ? LayoutDashboard : User) : LogIn,
+              label: auth ? (auth.name?.split(' ')[0] ?? 'Compte') : t('nav_login') },
+          ] as { href: string; Icon: React.ElementType; label: string; badge?: number }[]).map(({ href, Icon, label, badge }) => (
+            <a
+              key={label}
+              href={href}
+              onClick={handleNav(href)}
+              className="flex flex-col items-center gap-0.5 px-4 py-2 text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors min-w-0"
+            >
+              <div className="relative">
+                <Icon className="h-5 w-5" />
+                {badge != null && badge > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 h-4 min-w-[1rem] px-0.5 rounded-full bg-orange-500 text-white text-[9px] font-bold flex items-center justify-center leading-none">
+                    {badge > 9 ? '9+' : badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[10px] font-medium leading-none truncate max-w-[56px] text-center">{label}</span>
+            </a>
+          ))}
+        </div>
+      </nav>
 
       <ConsentScripts />
       <ChatBot />
