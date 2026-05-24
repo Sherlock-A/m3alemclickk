@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle, UserCheck, Award, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle, Award, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
 import { Category, Professional } from '../../types';
@@ -288,9 +288,8 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
       {/* ── Trust strip ──────────────────────────────────────────────────── */}
       <section className="border-y border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/40 py-6">
         <div className="mx-auto max-w-7xl px-4">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {[
-              { icon: UserCheck, label: t('trust_verified_label'), sub: t('trust_verified_sub'), color: 'text-blue-600' },
               { icon: ShieldCheck, label: t('trust_reviews_label'), sub: t('trust_reviews_sub'), color: 'text-green-600' },
               { icon: Zap,        label: t('trust_fast_label'),    sub: t('trust_fast_sub'),   color: 'text-orange-500' },
               { icon: Award,      label: t('trust_free_label'),    sub: t('trust_free_sub'),   color: 'text-purple-600' },
