@@ -199,6 +199,106 @@ class ProfessionalPageController extends Controller
         ]);
     }
 
+    // ── SEO Landing page helpers ──────────────────────────────────────────────
+
+    private static function priceEstimate(string $catNorm): ?array
+    {
+        $prices = [
+            'plomb'    => ['min' => 150,  'max' => 600,  'unit' => 'par intervention',    'label' => 'Plomberie'],
+            'electri'  => ['min' => 200,  'max' => 800,  'unit' => 'par intervention',    'label' => 'Électricité'],
+            'peintr'   => ['min' => 25,   'max' => 60,   'unit' => 'par m²',              'label' => 'Peinture'],
+            'climati'  => ['min' => 800,  'max' => 3000, 'unit' => 'installation complète','label' => 'Climatisation'],
+            'menuisi'  => ['min' => 300,  'max' => 2000, 'unit' => 'par projet',           'label' => 'Menuiserie'],
+            'menage'   => ['min' => 100,  'max' => 250,  'unit' => 'par session',          'label' => 'Ménage'],
+            'macon'    => ['min' => 300,  'max' => 1500, 'unit' => 'par m²',              'label' => 'Maçonnerie'],
+            'carrel'   => ['min' => 150,  'max' => 400,  'unit' => 'par m²',              'label' => 'Carrelage'],
+            'jardin'   => ['min' => 150,  'max' => 500,  'unit' => 'par session',          'label' => 'Jardinage'],
+            'informati'=> ['min' => 150,  'max' => 500,  'unit' => 'par intervention',    'label' => 'Informatique'],
+            'demena'   => ['min' => 500,  'max' => 3000, 'unit' => 'selon volume',         'label' => 'Déménagement'],
+            'chauff'   => ['min' => 300,  'max' => 2000, 'unit' => 'selon travaux',        'label' => 'Chauffage'],
+            'serrur'   => ['min' => 100,  'max' => 400,  'unit' => 'par intervention',    'label' => 'Serrurerie'],
+            'nettoy'   => ['min' => 200,  'max' => 600,  'unit' => 'par session',          'label' => 'Nettoyage'],
+        ];
+        foreach ($prices as $key => $data) {
+            if (str_contains($catNorm, $key) || str_starts_with($key, substr($catNorm, 0, 5))) {
+                return $data;
+            }
+        }
+        return null;
+    }
+
+    private static function faqData(string $catNorm, string $catTitle, string $cityTitle): array
+    {
+        $generic = [
+            [
+                'q' => "Comment trouver un {$catTitle} fiable à {$cityTitle} ?",
+                'a' => "Sur Jobly, tous les {$catTitle}s à {$cityTitle} sont vérifiés par notre équipe. Consultez leurs avis clients et contactez-les directement sur WhatsApp ou par téléphone — sans intermédiaire, sans commission.",
+            ],
+            [
+                'q' => "Est-ce gratuit de contacter un {$catTitle} sur Jobly ?",
+                'a' => "Oui, Jobly est 100% gratuit pour les clients. Aucun frais d'inscription, aucune commission sur les travaux. Vous contactez l'artisan directement et négociez les tarifs avec lui.",
+            ],
+        ];
+
+        $specific = match(true) {
+            str_contains($catNorm, 'plomb') => [
+                ['q' => "Quel est le tarif d'un plombier à {$cityTitle} ?",
+                 'a' => "Le tarif d'un plombier à {$cityTitle} varie entre 150 et 600 MAD selon l'intervention. Un dépannage simple (fuite, robinet) coûte généralement 200–350 MAD. Une installation complète peut aller de 500 à 2 000 MAD. Demandez un devis avant toute intervention."],
+                ['q' => "Un plombier intervient-il en urgence à {$cityTitle} ?",
+                 'a' => "Plusieurs plombiers sur Jobly à {$cityTitle} proposent des interventions d'urgence, y compris le week-end. Filtrez par « Disponible maintenant » pour trouver un plombier immédiatement disponible."],
+            ],
+            str_contains($catNorm, 'electri') => [
+                ['q' => "Combien coûte un électricien à {$cityTitle} ?",
+                 'a' => "Le tarif d'un électricien à {$cityTitle} est généralement entre 200 et 800 MAD pour une intervention standard. Une mise aux normes complète peut dépasser 1 500 MAD. Comparez plusieurs devis via Jobly."],
+                ['q' => "Faut-il un électricien certifié pour des travaux à {$cityTitle} ?",
+                 'a' => "Pour des travaux d'installation ou de mise aux normes, faites appel à un électricien qualifié. Les professionnels Jobly à {$cityTitle} sont tous vérifiés et peuvent vous fournir les justificatifs nécessaires."],
+            ],
+            str_contains($catNorm, 'peintr') => [
+                ['q' => "Quel est le prix de la peinture au m² à {$cityTitle} ?",
+                 'a' => "Le prix d'un peintre à {$cityTitle} varie entre 25 et 60 MAD par m² (peinture intérieure, 2 couches). Comptez 40–80 MAD/m² pour des finitions spéciales (stucco, tableau noir, effet béton). Demandez un devis sur Jobly."],
+                ['q' => "Combien de temps dure un chantier de peinture à {$cityTitle} ?",
+                 'a' => "Un appartement de 70 m² prend généralement 2 à 4 jours pour un peintre expérimenté. Les professionnels Jobly à {$cityTitle} peuvent vous fournir un planning précis lors du devis."],
+            ],
+            str_contains($catNorm, 'menage') || str_contains($catNorm, 'nettoy') => [
+                ['q' => "Combien coûte une femme de ménage à {$cityTitle} ?",
+                 'a' => "Le tarif d'une aide ménagère à {$cityTitle} est généralement entre 100 et 250 MAD par session de 3-4h. Pour un ménage complet d'appartement, comptez 200–400 MAD. Certaines professionnelles proposent des forfaits mensuels."],
+                ['q' => "Comment vérifier la fiabilité d'une aide ménagère à {$cityTitle} ?",
+                 'a' => "Sur Jobly, chaque aide ménagère est vérifiée par notre équipe. Consultez les avis clients laissés par de vrais utilisateurs avant de prendre contact. La transparence est notre priorité."],
+            ],
+            str_contains($catNorm, 'climati') => [
+                ['q' => "Quel est le prix d'installation d'un climatiseur à {$cityTitle} ?",
+                 'a' => "L'installation d'un climatiseur à {$cityTitle} coûte entre 800 et 1 500 MAD pour un split system standard. Pour un système multi-split ou cassette de plafond, comptez 2 000–4 000 MAD. La maintenance annuelle est entre 200 et 400 MAD."],
+                ['q' => "Quelle marque de climatiseur recommander pour {$cityTitle} ?",
+                 'a' => "Les installateurs Jobly à {$cityTitle} travaillent avec les grandes marques (Daikin, Mitsubishi, LG, Samsung). Ils peuvent vous conseiller sur la puissance adaptée selon la superficie de votre pièce."],
+            ],
+            default => [
+                ['q' => "Quels sont les tarifs pour {$catTitle} à {$cityTitle} ?",
+                 'a' => "Les tarifs des {$catTitle}s à {$cityTitle} varient selon la complexité des travaux et l'expérience du professionnel. Utilisez Jobly pour comparer plusieurs devis gratuits et choisir l'offre qui correspond à votre budget."],
+                ['q' => "Faut-il demander un devis avant de faire appel à un {$catTitle} à {$cityTitle} ?",
+                 'a' => "Oui, nous recommandons toujours de demander un devis détaillé avant toute intervention. Sur Jobly, vous pouvez envoyer une demande de devis directement depuis le profil de chaque {$catTitle} à {$cityTitle}."],
+            ],
+        };
+
+        return array_merge($specific, $generic);
+    }
+
+    private static function relatedCities(string $currentCity, string $category): array
+    {
+        $topCities = ['casablanca', 'rabat', 'marrakech', 'fes', 'tanger', 'agadir', 'meknes', 'oujda', 'kenitra', 'tetouan'];
+        $base      = config('app.url');
+        $catEnc    = rawurlencode($category);
+        $result    = [];
+        foreach ($topCities as $c) {
+            if (self::norm($c) !== self::norm($currentCity)) {
+                $result[] = [
+                    'city'  => ucfirst($c),
+                    'url'   => "{$base}/professionnels/{$c}/{$catEnc}",
+                ];
+            }
+        }
+        return array_slice($result, 0, 8);
+    }
+
     public function byCity(Request $request, string $city, ?string $category = null)
     {
         // Merge URL segments into request so the shared index() logic applies
@@ -245,14 +345,38 @@ class ProfessionalPageController extends Controller
 
         $canonicalPath = '/professionnels/' . rawurlencode($city) . ($category ? '/' . rawurlencode($category) : '');
 
+        $landing = null;
+        if ($category) {
+            $catNorm  = self::norm($category);
+            $faqs     = self::faqData($catNorm, $category, $cityTitle);
+            $price    = self::priceEstimate($catNorm);
+            $related  = self::relatedCities($city, $category);
+            $faqSchema = [
+                '@context'   => 'https://schema.org',
+                '@type'      => 'FAQPage',
+                'mainEntity' => array_map(fn($item) => [
+                    '@type'          => 'Question',
+                    'name'           => $item['q'],
+                    'acceptedAnswer' => ['@type' => 'Answer', 'text' => $item['a']],
+                ], $faqs),
+            ];
+            $landing = [
+                'faqs'      => $faqs,
+                'price'     => $price,
+                'related'   => $related,
+                'faqSchema' => json_encode($faqSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            ];
+        }
+
         return Inertia::render('Frontend/ProfessionalsPage', [
             'professionals' => $professionals,
             'filters'       => array_filter(['city' => $city, 'profession' => $category]),
             'categories'    => Cache::remember('categories_active', 3600, fn () =>
                 Category::where('active', true)->orderBy('sort_order')->get()
             ),
+            'landing' => $landing,
             'seo' => [
-                'title'     => $seoTitle,
+                'title'       => $seoTitle,
                 'description' => $seoDesc,
                 'canonical'   => config('app.url') . $canonicalPath,
                 'h1'          => $seoTitle,

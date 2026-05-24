@@ -9,9 +9,16 @@ import { SearchBar } from '../../components/SearchBar';
 import { SkeletonCard } from '../../components/SkeletonCard';
 import { getCategoryIcon } from '../../utils/categoryIconMap';
 import { Category, Paginated, Professional } from '../../types';
-import { Filter, X, SlidersHorizontal, Star, MapPin, Loader2, GitCompare, Phone, CheckCircle2, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Filter, X, SlidersHorizontal, Star, MapPin, Loader2, GitCompare, Phone, CheckCircle2, ArrowRight, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { ComparePanel } from '../../components/ComparePanel';
 import { useCatName } from '../../hooks/useCatName';
+
+type LandingData = {
+  faqs: { q: string; a: string }[];
+  price: { min: number; max: number; unit: string; label: string } | null;
+  related: { city: string; url: string }[];
+  faqSchema: string;
+};
 
 type Props = {
   professionals: Paginated<Professional>;
@@ -19,6 +26,7 @@ type Props = {
   categories: Category[];
   suggestions?: Professional[];
   available_count?: number;
+  landing?: LandingData | null;
   seo?: { title?: string; description?: string; canonical?: string; h1?: string };
 };
 
@@ -130,7 +138,30 @@ function EmptyLeadForm({ profession, city, onClear }: { profession?: string; cit
   );
 }
 
-export default function ProfessionalsPage({ professionals, filters, categories, suggestions, available_count, seo }: Props) {
+function FaqAccordion({ items }: { items: { q: string; a: string }[] }) {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <div className="divide-y divide-slate-100 dark:divide-slate-800">
+      {items.map((item, i) => (
+        <div key={i}>
+          <button
+            type="button"
+            onClick={() => setOpen(open === i ? null : i)}
+            className="flex w-full items-center justify-between py-4 text-left text-sm font-semibold text-slate-800 dark:text-white hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+          >
+            {item.q}
+            <ChevronDown className={`h-4 w-4 shrink-0 ml-4 text-slate-400 transition-transform duration-200 ${open === i ? 'rotate-180' : ''}`} />
+          </button>
+          {open === i && (
+            <p className="pb-4 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.a}</p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function ProfessionalsPage({ professionals, filters, categories, suggestions, available_count, landing, seo }: Props) {
   const { t } = useTranslation();
   const getCatName = useCatName();
   const [items, setItems]       = useState<Professional[]>(professionals.data);
@@ -439,6 +470,9 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
         <title>{`${pageTitle} | Jobly`}</title>
         <meta name="description" content={seo?.description ?? `Trouvez les meilleurs ${filters.profession || 'professionnels'} ${filters.city ? `à ${filters.city}` : 'au Maroc'}. Contact WhatsApp direct, avis vérifiés.`} />
         {seo?.canonical && <link rel="canonical" href={seo.canonical} />}
+        {landing?.faqSchema && (
+          <script type="application/ld+json">{landing.faqSchema}</script>
+        )}
       </Head>
       <section className="mx-auto max-w-7xl px-4 py-10">
         {seo?.h1 && (
@@ -600,6 +634,60 @@ export default function ProfessionalsPage({ professionals, filters, categories, 
           </div>
         </div>
       </section>
+
+      {/* SEO landing sections (only on /professionnels/{city}/{category}) */}
+      {landing && (
+        <div className="mx-auto max-w-7xl px-4 pb-16 space-y-10">
+
+          {/* Price estimate */}
+          {landing.price && (
+            <div className="rounded-3xl border border-orange-100 dark:border-orange-900/30 bg-orange-50/60 dark:bg-orange-900/10 px-6 py-5 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="text-4xl shrink-0">💰</div>
+              <div>
+                <p className="text-sm font-semibold text-orange-700 dark:text-orange-400 mb-0.5">
+                  Tarif indicatif — {landing.price.label}
+                </p>
+                <p className="text-2xl font-black text-slate-900 dark:text-white">
+                  {landing.price.min} – {landing.price.max} <span className="text-base font-semibold text-slate-500">MAD</span>
+                  <span className="ml-2 text-sm font-normal text-slate-500 dark:text-slate-400">{landing.price.unit}</span>
+                </p>
+                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                  Prix moyens constatés à {filters.city ? filters.city.charAt(0).toUpperCase() + filters.city.slice(1) : 'votre ville'}. Demandez un devis gratuit aux artisans ci-dessus.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* FAQ */}
+          {landing.faqs.length > 0 && (
+            <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-6">
+              <h2 className="text-lg font-black text-slate-800 dark:text-white mb-4">Questions fréquentes</h2>
+              <FaqAccordion items={landing.faqs} />
+            </div>
+          )}
+
+          {/* Cross-city links */}
+          {landing.related.length > 0 && filters.profession && (
+            <div>
+              <h2 className="text-base font-bold text-slate-700 dark:text-slate-300 mb-3">
+                {filters.profession.charAt(0).toUpperCase() + filters.profession.slice(1)}s dans d'autres villes
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {landing.related.map(({ city, url }) => (
+                  <a
+                    key={city}
+                    href={url}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:border-orange-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
+                  >
+                    <MapPin className="h-3 w-3 opacity-60" />
+                    {city}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Floating compare badge (appears when 1 item selected) */}
       {compareList.length === 1 && (
