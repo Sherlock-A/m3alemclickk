@@ -43,6 +43,7 @@ export function PortfolioLightbox({ images }: Props) {
               src={src}
               alt={`Réalisation ${i + 1}`}
               loading="lazy"
+              decoding="async"
               className="h-full w-full object-cover transition-transform group-hover:scale-105"
               onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
             />
@@ -84,6 +85,7 @@ export function PortfolioLightbox({ images }: Props) {
             src={images[index]}
             alt={`Réalisation ${index + 1}`}
             className="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl"
+            decoding="async"
             onClick={(e) => e.stopPropagation()}
           />
 

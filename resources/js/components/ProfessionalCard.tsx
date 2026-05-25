@@ -23,6 +23,7 @@ function Avatar({ name, photo, size = 48 }: { name: string; photo?: string | nul
         className="rounded-full object-cover border-2 border-orange-200 dark:border-orange-700 shadow-sm shrink-0"
         style={{ width: size, height: size }}
         loading="lazy"
+        decoding="async"
       />
     );
   }

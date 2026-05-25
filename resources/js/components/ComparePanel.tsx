@@ -58,7 +58,7 @@ export function ComparePanel({ pros, onRemove, onClose }: Props) {
                 <div className="flex flex-col items-center gap-1">
                   <div className="relative">
                     {p.photo
-                      ? <img src={p.photo} alt={p.name} className="h-10 w-10 rounded-full object-cover" />
+                      ? <img src={p.photo} alt={p.name} className="h-10 w-10 rounded-full object-cover" loading="lazy" decoding="async" />
                       : <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-black text-sm">{p.name[0]}</div>}
                     {p.verified && <BadgeCheck className="absolute -bottom-1 -right-1 h-4 w-4 text-emerald-500 bg-white rounded-full" />}
                   </div>
