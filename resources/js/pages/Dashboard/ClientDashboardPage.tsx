@@ -3,7 +3,7 @@ import { router } from '@inertiajs/react';
 import axios from 'axios';
 import {
   Heart, LogOut, MapPin, Search, Star, User2,
-  Trash2, ExternalLink, ChevronRight, Mail, Save, CheckCircle, X, ArrowRight,
+  Trash2, ExternalLink, ChevronRight, Mail, Save, CheckCircle, X, ArrowRight, Award,
 } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 
@@ -173,6 +173,12 @@ export default function ClientDashboardPage() {
       .finally(() => setDemandesLoading(false));
   };
 
+  // Load demandes on mount for loyalty level computation
+  useEffect(() => {
+    if (token && demandes.length === 0) loadDemandes();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
   const saveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!token) return;
@@ -297,27 +303,61 @@ export default function ClientDashboardPage() {
         </div>
 
         {/* Tab: Overview */}
-        {activeTab === 'overview' && (
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              { href: '/professionals', label: 'Tous les artisans', sub: 'Parcourir l\'annuaire complet', icon: User2, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
-              { href: '/professionals?sort=rating', label: 'Mieux notés', sub: 'Les artisans les mieux évalués', icon: Star, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-900/20' },
-              { href: '/professionals?status=available', label: 'Disponibles', sub: 'Artisans disponibles maintenant', icon: MapPin, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/20' },
-            ].map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all group"
-              >
-                <div className={`h-10 w-10 rounded-xl ${item.bg} flex items-center justify-center mb-3`}>
-                  <item.icon className={`h-5 w-5 ${item.color}`} />
+        {activeTab === 'overview' && (() => {
+          const contactCount = demandes.length;
+          const loyalty = (() => {
+            if (contactCount >= 25) return { name: 'Expert', emoji: '🏆', color: 'text-amber-600 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/20', border: 'border-amber-200 dark:border-amber-800', progress: 100, next: null };
+            if (contactCount >= 10) return { name: 'Régulier', emoji: '⭐', color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-50 dark:bg-purple-900/20', border: 'border-purple-200 dark:border-purple-800', progress: Math.round((contactCount - 10) / 15 * 100), next: 25 };
+            if (contactCount >= 3)  return { name: 'Explorateur', emoji: '🔍', color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-800', progress: Math.round((contactCount - 3) / 7 * 100), next: 10 };
+            return { name: 'Nouveau', emoji: '🌱', color: 'text-green-600 dark:text-green-400', bg: 'bg-green-50 dark:bg-green-900/20', border: 'border-green-200 dark:border-green-800', progress: Math.round(contactCount / 3 * 100), next: 3 };
+          })();
+
+          return (
+            <div className="space-y-4">
+              {/* Loyalty card */}
+              <div className={`rounded-2xl border ${loyalty.border} ${loyalty.bg} p-4 flex items-center gap-4`}>
+                <div className="text-4xl shrink-0">{loyalty.emoji}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Award className={`h-4 w-4 ${loyalty.color}`} />
+                    <span className={`text-sm font-bold ${loyalty.color}`}>Niveau {loyalty.name}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                    {contactCount} artisan{contactCount !== 1 ? 's' : ''} contacté{contactCount !== 1 ? 's' : ''} via Jobly
+                    {loyalty.next ? ` · encore ${loyalty.next - contactCount} pour ${contactCount >= 10 ? 'Expert' : contactCount >= 3 ? 'Régulier' : 'Explorateur'}` : ' · Niveau maximum atteint !'}
+                  </p>
+                  <div className="h-1.5 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-orange-400 to-orange-500 transition-all duration-700"
+                      style={{ width: `${loyalty.progress}%` }}
+                    />
+                  </div>
                 </div>
-                <h3 className="font-semibold text-slate-800 dark:text-white group-hover:text-orange-500 transition-colors">{item.label}</h3>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{item.sub}</p>
-              </a>
-            ))}
-          </div>
-        )}
+              </div>
+
+              {/* Quick links */}
+              <div className="grid gap-4 sm:grid-cols-3">
+                {[
+                  { href: '/professionals', label: 'Tous les artisans', sub: 'Parcourir l\'annuaire complet', icon: User2, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
+                  { href: '/professionals?sort=rating', label: 'Mieux notés', sub: 'Les artisans les mieux évalués', icon: Star, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-900/20' },
+                  { href: '/professionals?status=available', label: 'Disponibles', sub: 'Artisans disponibles maintenant', icon: MapPin, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/20' },
+                ].map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-5 shadow-sm hover:-translate-y-1 hover:shadow-md transition-all group"
+                  >
+                    <div className={`h-10 w-10 rounded-xl ${item.bg} flex items-center justify-center mb-3`}>
+                      <item.icon className={`h-5 w-5 ${item.color}`} />
+                    </div>
+                    <h3 className="font-semibold text-slate-800 dark:text-white group-hover:text-orange-500 transition-colors">{item.label}</h3>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{item.sub}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Tab: Favorites */}
         {activeTab === 'favorites' && (

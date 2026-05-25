@@ -11,7 +11,7 @@ import {
   LogOut, Wrench, Eye, Phone, MessageCircle, Save,
   ToggleLeft, ToggleRight, LayoutDashboard, User, BarChart3,
   ExternalLink, Copy, Star, CheckCircle, AlertCircle,
-  X, Loader2, TrendingUp, Camera, Upload, Trash2, MapPin, Trophy, Zap, Mail, Bell, BellOff,
+  X, Loader2, TrendingUp, Camera, Upload, Trash2, MapPin, Trophy, Zap, Mail, Bell, BellOff, FileText,
 } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 import { SentimentDashboard } from '../../components/SentimentDashboard';
@@ -1638,7 +1638,7 @@ export default function ProfessionalDashboardPage() {
 
         {/* ── DEVIS ─────────────────────────────────────────────────────────── */}
         {tab === 'devis' && (
-          <DevisTab token={token} />
+          <DevisTab token={token} proName={pro?.name ?? ''} proCity={pro?.main_city ?? ''} proPhone={pro?.phone ?? ''} />
         )}
       </main>
     </div>
@@ -1826,7 +1826,91 @@ type DevisItem = {
   created_at: string;
 };
 
-function DevisTab({ token }: { token: string | null }) {
+function printBonDeCommande(item: DevisItem, proName: string, proCity: string, proPhone: string) {
+  const date = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const num  = `DEV-${Date.now().toString().slice(-6)}`;
+  const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>Devis ${num}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;font-size:13px;color:#1e293b;padding:32px;background:#fff}
+  .header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #f97316;padding-bottom:20px;margin-bottom:24px}
+  .logo{font-size:22px;font-weight:900;color:#f97316}
+  .logo span{color:#1e293b}
+  .doc-title{text-align:right}
+  .doc-title h1{font-size:18px;font-weight:700;color:#f97316;text-transform:uppercase;letter-spacing:1px}
+  .doc-title p{font-size:11px;color:#64748b;margin-top:3px}
+  .parties{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+  .party-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:14px}
+  .party-card h3{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;margin-bottom:8px}
+  .party-card p{margin-bottom:3px;color:#334155}
+  .party-card .name{font-size:15px;font-weight:700;color:#1e293b}
+  table{width:100%;border-collapse:collapse;margin-bottom:20px}
+  th{background:#f97316;color:#fff;padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+  td{padding:10px 12px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  .total-row{background:#fff7ed;font-weight:700}
+  .total-row td{border-top:2px solid #f97316;color:#ea580c;font-size:15px}
+  .footer{margin-top:24px;padding-top:16px;border-top:1px solid #e2e8f0;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  .conditions p{font-size:11px;color:#64748b;line-height:1.6}
+  .signature{text-align:center}
+  .sig-box{border:1px solid #e2e8f0;height:70px;border-radius:8px;margin:8px 0;display:flex;align-items:center;justify-content:center;color:#cbd5e1;font-size:11px}
+  .sig-label{font-size:10px;color:#94a3b8}
+  .badge{display:inline-block;background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;margin-top:10px}
+  .no-print{text-align:center;margin-bottom:20px}
+  .btn{background:#f97316;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+  @media print{.no-print{display:none}body{padding:16px}}
+</style></head><body>
+<div class="no-print"><button class="btn" onclick="window.print()">🖨️ Imprimer / Enregistrer PDF</button></div>
+<div class="header">
+  <div><div class="logo">Jobly<span>.ma</span></div><p style="font-size:11px;color:#64748b;margin-top:4px">Artisans vérifiés au Maroc</p></div>
+  <div class="doc-title"><h1>Bon de commande</h1><p>N° ${num} · ${date}</p></div>
+</div>
+<div class="parties">
+  <div class="party-card">
+    <h3>Prestataire</h3>
+    <p class="name">${proName || 'Votre nom'}</p>
+    <p>${proCity || ''}</p>
+    ${proPhone ? `<p>${proPhone}</p>` : ''}
+    <div class="badge">✓ Vérifié Jobly</div>
+  </div>
+  <div class="party-card">
+    <h3>Client</h3>
+    <p class="name">${item.client_name}</p>
+    ${item.client_email ? `<p>${item.client_email}</p>` : ''}
+    ${item.client_phone ? `<p>${item.client_phone}</p>` : ''}
+  </div>
+</div>
+<table>
+  <thead><tr><th style="width:50%">Description de la prestation</th><th style="width:20%">Qté</th><th style="width:30%">Prix unitaire</th></tr></thead>
+  <tbody>
+    <tr><td>${item.subject || item.message?.slice(0, 80) || 'Prestation à définir'}</td><td>1</td><td>À définir</td></tr>
+    <tr><td colspan="2" style="text-align:right;font-weight:600">Total TTC</td><td style="font-weight:700;color:#f97316">À définir (MAD)</td></tr>
+  </tbody>
+</table>
+<div class="footer">
+  <div class="conditions">
+    <p style="font-weight:700;margin-bottom:6px">Conditions</p>
+    <p>• Validité du devis : 30 jours</p>
+    <p>• Acompte : 30% à la commande</p>
+    <p>• Solde : à la livraison/réception</p>
+    <p>• Garantie travaux : 1 an</p>
+  </div>
+  <div class="signature">
+    <p style="font-size:11px;font-weight:700;color:#475569">Signature du client</p>
+    <div class="sig-box">Lu et approuvé</div>
+    <p class="sig-label">Date : _______________</p>
+    <p class="sig-label" style="margin-top:12px">Signature du prestataire</p>
+    <div class="sig-box"></div>
+  </div>
+</div>
+<p style="font-size:10px;color:#94a3b8;text-align:center;margin-top:20px">Document généré via Jobly.ma — Artisans vérifiés au Maroc</p>
+</body></html>`;
+  const win = window.open('', '_blank');
+  if (win) { win.document.write(html); win.document.close(); }
+}
+
+function DevisTab({ token, proName, proCity, proPhone }: { token: string | null; proName: string; proCity: string; proPhone: string }) {
   const [items, setItems]     = useState<DevisItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -1915,6 +1999,13 @@ function DevisTab({ token }: { token: string | null }) {
                         <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
                       </a>
                     )}
+                    <button
+                      type="button"
+                      onClick={() => printBonDeCommande(item, proName, proCity, proPhone)}
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 px-3 py-1.5 text-xs font-semibold text-orange-700 dark:text-orange-300 hover:bg-orange-100 transition-colors"
+                    >
+                      <FileText className="h-3.5 w-3.5" /> Bon de commande
+                    </button>
                   </div>
                 </div>
               )}
