@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, ElementType, useCallback } from 'react';
+import axios from 'axios';
 import { Head } from '@inertiajs/react';
 import { router } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle, Award, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Briefcase, MapPin, ShieldCheck, Sparkles, ArrowRight, BadgeCheck, Star, Phone, MessageCircle, Award, Zap, ChevronLeft, ChevronRight, AlertTriangle, X, Loader2, CheckCircle } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { SearchBar } from '../../components/SearchBar';
 import { Category, Professional } from '../../types';
@@ -231,6 +232,15 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
   const statsRef = useRef<HTMLDivElement>(null);
   const [statsVisible, setStatsVisible] = useState(false);
   const [catPage, setCatPage] = useState(1);
+
+  // SOS modal state
+  const [showSos, setShowSos]       = useState(false);
+  const [sosCity, setSosCity]       = useState(geo?.city ?? '');
+  const [sosCatId, setSosCatId]     = useState('');
+  const [sosMsg, setSosMsg]         = useState('');
+  const [sosName, setSosName]       = useState('');
+  const [sosSending, setSosSending] = useState(false);
+  const [sosResult, setSosResult]   = useState<string | null>(null);
   const catTotalPages = Math.ceil(categories.length / CAT_PER_PAGE);
   const catPaged = categories.slice((catPage - 1) * CAT_PER_PAGE, catPage * CAT_PER_PAGE);
 
@@ -316,6 +326,12 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
               Disponibles maintenant
               <ArrowRight className="h-3.5 w-3.5" />
             </a>
+            <button
+              onClick={() => { setSosCity(geo?.city ?? ''); setSosResult(null); setShowSos(true); }}
+              className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 transition-colors dark:border-red-800/50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 animate-pulse"
+            >
+              🚨 Besoin urgent
+            </button>
             <a
               href="/register/pro"
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
@@ -673,6 +689,114 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
         </div>
       </section>
 
+
+      {/* ── SOS Urgence modal ─────────────────────────────────────────── */}
+      {showSos && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowSos(false)} />
+
+          <div className="relative w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl p-6 animate-in slide-in-from-bottom-4">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-5">
+              <span className="text-3xl">🚨</span>
+              <div>
+                <h2 className="text-lg font-black text-slate-800 dark:text-white">Besoin urgent d'un artisan</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Alertez tous les artisans disponibles dans votre ville</p>
+              </div>
+              <button onClick={() => setShowSos(false)} className="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {sosResult ? (
+              <div className="text-center py-4 space-y-3">
+                <CheckCircle className="h-12 w-12 text-green-500 mx-auto" />
+                <p className="font-semibold text-slate-800 dark:text-white">{sosResult}</p>
+                <button
+                  onClick={() => setShowSos(false)}
+                  className="mt-4 w-full rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 transition-colors"
+                >
+                  Fermer
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                setSosSending(true);
+                try {
+                  const res = await axios.post('/api/sos', {
+                    city:        sosCity,
+                    category_id: sosCatId || undefined,
+                    message:     sosMsg || undefined,
+                    client_name: sosName || undefined,
+                  });
+                  setSosResult(res.data.message);
+                } catch {
+                  setSosResult('Une erreur est survenue. Essayez à nouveau.');
+                } finally {
+                  setSosSending(false);
+                }
+              }} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Votre ville *</label>
+                  <input
+                    required
+                    value={sosCity}
+                    onChange={e => setSosCity(e.target.value)}
+                    placeholder="Ex: Casablanca"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Type de service</label>
+                  <select
+                    value={sosCatId}
+                    onChange={e => setSosCatId(e.target.value)}
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  >
+                    <option value="">Tous les services</option>
+                    {categories.map(c => (
+                      <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Votre nom (optionnel)</label>
+                  <input
+                    value={sosName}
+                    onChange={e => setSosName(e.target.value)}
+                    placeholder="Ex: Karim"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Description rapide (optionnel)</label>
+                  <textarea
+                    value={sosMsg}
+                    onChange={e => setSosMsg(e.target.value)}
+                    placeholder="Ex: Fuite d'eau dans la cuisine, urgent..."
+                    rows={2}
+                    maxLength={300}
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={sosSending || !sosCity.trim()}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold py-3.5 text-sm transition-colors"
+                >
+                  {sosSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <AlertTriangle className="h-4 w-4" />}
+                  {sosSending ? 'Envoi en cours...' : '🚨 Alerter les artisans disponibles'}
+                </button>
+                <p className="text-center text-[10px] text-slate-400 dark:text-slate-500">
+                  Vos coordonnées ne sont pas transmises — les artisans verront votre demande sur leur dashboard
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
     </Layout>
   );

@@ -30,7 +30,7 @@ class TrackingController extends Controller
             'meta' => ['nullable', 'array'],
         ]);
 
-        $professional = Professional::findOrFail($data['professional_id']);
+        $professional = Professional::with('user')->findOrFail($data['professional_id']);
         $ip           = $request->ip();
 
         // Deduplicate view events: same IP → same pro, once per 30 min
@@ -59,14 +59,18 @@ class TrackingController extends Controller
         ]);
 
         // Email + push notification to pro on contact events — throttled: 1/hour/pro/type
-        if (in_array($data['type'], ['whatsapp_click', 'call']) && $professional->email) {
+        $proUser  = $professional->user;
+        $proEmail = $proUser?->email;
+        $proUserId = $proUser?->id;
+
+        if (in_array($data['type'], ['whatsapp_click', 'call']) && $proEmail) {
             $throttleKey = "lead_notif_{$professional->id}_{$data['type']}";
             if (! Cache::has($throttleKey)) {
                 Cache::put($throttleKey, 1, now()->addHour());
 
                 // Email
                 app(MailService::class)->sendContactLeadNotification(
-                    proEmail:       $professional->email,
+                    proEmail:       $proEmail,
                     proName:        $professional->name,
                     type:           $data['type'],
                     city:           $geoCity,
@@ -78,12 +82,12 @@ class TrackingController extends Controller
                 );
 
                 // Push notification
-                if ($professional->user_id) {
+                if ($proUserId) {
                     $emoji     = $data['type'] === 'whatsapp_click' ? '💬' : '📞';
                     $typeLabel = $data['type'] === 'whatsapp_click' ? 'WhatsApp' : 'Appel';
                     try {
                         PushController::sendToUser(
-                            $professional->user_id,
+                            $proUserId,
                             "{$emoji} Nouveau contact {$typeLabel} !",
                             "Un client depuis {$geoCity} veut vous contacter. Répondez vite !",
                             '/dashboard/professional',

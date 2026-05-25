@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\ProfessionController;
 use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PushController;
+use App\Http\Controllers\Api\SosController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\TrackingController;
@@ -166,6 +167,7 @@ Route::middleware('jwt:professional')->post('/broadcasting/auth', function (\Ill
 
 // ─── Push Notifications (public key) ─────────────────────────────────────────
 Route::get('/push/vapid-public-key', [PushController::class, 'vapidPublicKey'])->middleware('throttle:120,1');
+Route::post('/sos', [SosController::class, 'send'])->middleware('throttle:5,1');
 
 // ─── Dashboard Professionnel ───────────────────────────────────────────────────
 Route::middleware('jwt:professional')->group(function () {

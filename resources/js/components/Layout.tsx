@@ -86,11 +86,25 @@ export function Layout({ children }: { children: ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
   const [auth, setAuth] = useState<AuthState>(null);
+  const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
+  const [showInstall, setShowInstall] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', dark);
     try { localStorage.setItem('jobly_dark', String(dark)); } catch {}
   }, [dark]);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem('pwa_install_dismissed');
+    if (dismissed) return;
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      setShowInstall(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
 
   useEffect(() => {
     setAuth(localAuthHint());
@@ -390,6 +404,34 @@ export function Layout({ children }: { children: ReactNode }) {
       <ConsentScripts />
       <ChatBot />
       <CookieBanner />
+
+      {/* PWA install prompt — bottom bar on mobile */}
+      {showInstall && (
+        <div className="fixed bottom-0 inset-x-0 z-50 sm:hidden">
+          <div className="mx-3 mb-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-2xl px-4 py-3 flex items-center gap-3">
+            <img src="/icons/icon-192.png" alt="Jobly" className="h-10 w-10 rounded-xl shrink-0 object-cover" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-slate-800 dark:text-white">Installer l'app Jobly</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">Accès rapide depuis votre écran d'accueil</p>
+            </div>
+            <button
+              onClick={() => {
+                (installPrompt as any)?.prompt?.();
+                setShowInstall(false);
+              }}
+              className="shrink-0 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-2 transition-colors"
+            >
+              Installer
+            </button>
+            <button
+              onClick={() => { setShowInstall(false); localStorage.setItem('pwa_install_dismissed', '1'); }}
+              className="shrink-0 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

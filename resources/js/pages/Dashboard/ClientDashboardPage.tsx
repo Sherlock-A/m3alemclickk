@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { router } from '@inertiajs/react';
+import axios from 'axios';
 import {
   Heart, LogOut, MapPin, Search, Star, User2,
-  Trash2, ExternalLink, ChevronRight, Mail, Save, CheckCircle,
+  Trash2, ExternalLink, ChevronRight, Mail, Save, CheckCircle, X, ArrowRight,
 } from 'lucide-react';
 import { JoblyLogo } from '../../components/JoblyLogo';
 
@@ -57,6 +58,17 @@ export default function ClientDashboardPage() {
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileSaved, setProfileSaved]   = useState(false);
 
+  // Onboarding wizard
+  const isOnboarding = new URLSearchParams(window.location.search).get('onboarding') === '1';
+  const [onboardingDone, setOnboardingDone]     = useState(() => !!localStorage.getItem('client_onboarding_done'));
+  const [showOnboarding, setShowOnboarding]     = useState(isOnboarding && !localStorage.getItem('client_onboarding_done'));
+  const [onboardStep, setOnboardStep]           = useState(0);
+  const [onboardCity, setOnboardCity]           = useState('');
+  const [onboardCatId, setOnboardCatId]         = useState('');
+  const [onboardCatSlug, setOnboardCatSlug]     = useState('');
+  const [onboardWhen, setOnboardWhen]           = useState('');
+  const [onboardCategories, setOnboardCategories] = useState<{id:number; name:string; icon:string; slug:string}[]>([]);
+
   useEffect(() => {
     if (!token) {
       // Try to restore from httpOnly cookie
@@ -99,6 +111,28 @@ export default function ClientDashboardPage() {
       });
     return () => controller.abort();
   }, [token]);
+
+  // Load categories for onboarding wizard
+  useEffect(() => {
+    if (!showOnboarding) return;
+    axios.get('/api/categories').then(r => setOnboardCategories(r.data)).catch(() => {});
+  }, [showOnboarding]);
+
+  const finishOnboarding = () => {
+    localStorage.setItem('client_onboarding_done', '1');
+    setShowOnboarding(false);
+    setOnboardingDone(true);
+    // Clean URL
+    window.history.replaceState({}, '', '/dashboard/client');
+    // Redirect to matching professionals
+    if (onboardCity && onboardCatSlug) {
+      window.location.href = `/professionnels/${encodeURIComponent(onboardCity.toLowerCase())}/${onboardCatSlug}`;
+    } else if (onboardCity) {
+      window.location.href = `/professionals?city=${encodeURIComponent(onboardCity)}`;
+    } else if (onboardCatSlug) {
+      window.location.href = `/professionals?profession=${encodeURIComponent(onboardCatSlug)}`;
+    }
+  };
 
   // Load favorites from localStorage → API
   useEffect(() => {
@@ -438,6 +472,107 @@ export default function ClientDashboardPage() {
         )}
 
       </main>
+
+      {/* ── Onboarding wizard overlay ──────────────────────────────────── */}
+      {showOnboarding && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 shadow-2xl overflow-hidden">
+            {/* Progress bar */}
+            <div className="h-1 bg-slate-100 dark:bg-slate-800">
+              <div
+                className="h-1 bg-orange-500 transition-all duration-300"
+                style={{ width: `${((onboardStep + 1) / 3) * 100}%` }}
+              />
+            </div>
+
+            <div className="p-6 space-y-5">
+              <button onClick={() => { setShowOnboarding(false); localStorage.setItem('client_onboarding_done','1'); window.history.replaceState({}, '', '/dashboard/client'); }}
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="text-center">
+                <div className="text-4xl mb-2">{onboardStep === 0 ? '🌍' : onboardStep === 1 ? '🔧' : '⏰'}</div>
+                <h2 className="text-xl font-black text-slate-800 dark:text-white">
+                  {onboardStep === 0 && 'Dans quelle ville êtes-vous ?'}
+                  {onboardStep === 1 && 'Quel service cherchez-vous ?'}
+                  {onboardStep === 2 && 'Pour quand en avez-vous besoin ?'}
+                </h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Étape {onboardStep + 1} / 3</p>
+              </div>
+
+              {onboardStep === 0 && (
+                <input
+                  autoFocus
+                  value={onboardCity}
+                  onChange={e => setOnboardCity(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && onboardCity.trim()) setOnboardStep(1); }}
+                  placeholder="Ex: Casablanca, Rabat, Marrakech..."
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                />
+              )}
+
+              {onboardStep === 1 && (
+                <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-1">
+                  {onboardCategories.map(c => (
+                    <button
+                      key={c.id}
+                      onClick={() => { setOnboardCatId(String(c.id)); setOnboardCatSlug(c.slug ?? c.name.toLowerCase().replace(/\s+/g, '-')); setOnboardStep(2); }}
+                      className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition-colors ${
+                        onboardCatId === String(c.id)
+                          ? 'border-orange-400 bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400'
+                          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-orange-300'
+                      }`}
+                    >
+                      <span>{c.icon}</span>
+                      <span className="truncate">{c.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {onboardStep === 2 && (
+                <div className="space-y-2">
+                  {[
+                    { key: 'now',  label: '🚨 Maintenant — besoin urgent', },
+                    { key: 'week', label: '📅 Cette semaine', },
+                    { key: 'month',label: '🗓️ Ce mois-ci', },
+                    { key: 'later',label: '💭 Je compare juste', },
+                  ].map(opt => (
+                    <button
+                      key={opt.key}
+                      onClick={() => { setOnboardWhen(opt.key); finishOnboarding(); }}
+                      className="w-full flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/10 px-4 py-3 text-sm font-medium text-slate-700 dark:text-slate-200 transition-colors"
+                    >
+                      {opt.label}
+                      <ArrowRight className="h-4 w-4 text-orange-400 shrink-0" />
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Navigation buttons */}
+              <div className="flex gap-3 pt-1">
+                {onboardStep > 0 && (
+                  <button onClick={() => setOnboardStep(s => s - 1)}
+                    className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    ← Retour
+                  </button>
+                )}
+                {onboardStep < 2 && (
+                  <button
+                    onClick={() => setOnboardStep(s => s + 1)}
+                    disabled={onboardStep === 0 && !onboardCity.trim()}
+                    className="flex-1 rounded-xl bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-bold py-2.5 text-sm transition-colors"
+                  >
+                    {onboardStep === 0 ? 'Continuer →' : 'Peu importe →'}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

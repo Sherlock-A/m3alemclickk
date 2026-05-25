@@ -105,7 +105,7 @@ export default function ClientRegisterPage() {
       }
       localStorage.setItem('client_token', data.token);
       localStorage.setItem('auth_role', 'client');
-      window.location.href = '/dashboard/client';
+      window.location.href = '/dashboard/client?onboarding=1';
     } catch {
       setError('Erreur réseau. Vérifiez votre connexion internet.');
     } finally {
