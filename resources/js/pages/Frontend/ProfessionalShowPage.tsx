@@ -398,6 +398,12 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
                     <div className="mb-1 flex items-center gap-2">
                       <h1 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white">{professional.name}</h1>
                       {professional.verified && <ShieldCheck className="h-5 w-5 text-emerald-500 shrink-0" />}
+                      {professional.subscription_plan === 'premium' && (
+                        <span className="inline-flex items-center rounded-full bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 px-2.5 py-0.5 text-xs font-bold">Premium</span>
+                      )}
+                      {professional.subscription_plan === 'pro' && (
+                        <span className="inline-flex items-center rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 px-2.5 py-0.5 text-xs font-bold">Pro</span>
+                      )}
                     </div>
                     <p className="text-slate-500 dark:text-slate-400 mb-2">
                       {professional.profession} &bull; <span className="text-slate-700 dark:text-slate-300 font-medium">{professional.main_city}</span>

@@ -888,6 +888,32 @@ export default function ProfessionalDashboardPage() {
                 </div>
               </div>
 
+              {/* Subscription plan badge */}
+              {!loading && pro && (
+                <div className="mt-3 flex items-center gap-2">
+                  {pro.subscription_plan === 'premium' && (
+                    <span className="inline-flex items-center rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-3 py-1 text-xs font-bold">
+                      ✨ Plan Premium
+                    </span>
+                  )}
+                  {pro.subscription_plan === 'pro' && (
+                    <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-3 py-1 text-xs font-bold">
+                      ⚡ Plan Pro
+                    </span>
+                  )}
+                  {(!pro.subscription_plan || pro.subscription_plan === 'free') && (
+                    <span className="inline-flex items-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 px-3 py-1 text-xs font-medium">
+                      Plan Free
+                    </span>
+                  )}
+                  {pro.subscription_expires_at && pro.subscription_plan !== 'free' && (
+                    <span className="text-xs text-slate-400">
+                      jusqu&apos;au {new Date(pro.subscription_expires_at).toLocaleDateString('fr-FR')}
+                    </span>
+                  )}
+                </div>
+              )}
+
               {/* Profile completion */}
               {!loading && (
                 <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">

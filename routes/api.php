@@ -211,6 +211,7 @@ Route::middleware('jwt:admin')->group(function () {
     Route::put('/admin/professionals/{user}/status',      [AdminController::class, 'updateProfessionalStatus']);
     Route::patch('/admin/professionals/{user}/profile',   [AdminController::class, 'updateProfessionalProfile']);
     Route::delete('/admin/professionals/{user}',          [AdminController::class, 'deleteProfessional']);
+    Route::put('/admin/professionals/{user}/subscription', [AdminController::class, 'updateSubscription']);
 
     // Modération avis
     Route::get('/admin/reviews',                          [AdminController::class, 'reviews']);

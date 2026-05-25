@@ -39,6 +39,8 @@ class Professional extends Model
         'longitude',
         'facebook_url',
         'instagram_url',
+        'subscription_plan',
+        'subscription_expires_at',
     ];
 
     protected function casts(): array
@@ -48,9 +50,10 @@ class Professional extends Model
             'portfolio'     => 'array',
             'verified'      => 'boolean',
             'is_available'  => 'boolean',
-            'rating'        => 'float',
-            'latitude'      => 'float',
-            'longitude'     => 'float',
+            'rating'                  => 'float',
+            'latitude'                => 'float',
+            'longitude'               => 'float',
+            'subscription_expires_at' => 'datetime',
         ];
     }
 

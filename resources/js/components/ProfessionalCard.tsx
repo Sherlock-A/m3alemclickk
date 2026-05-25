@@ -76,6 +76,12 @@ export function ProfessionalCard({ professional, onCompare, inCompare, compareDi
                   {t('verified')}
                 </span>
               )}
+              {professional.subscription_plan === 'premium' && (
+                <span className="inline-flex items-center shrink-0 rounded-full bg-purple-100 dark:bg-purple-900/30 px-1.5 py-0.5 text-[10px] font-bold text-purple-700 dark:text-purple-300">Premium</span>
+              )}
+              {professional.subscription_plan === 'pro' && (
+                <span className="inline-flex items-center shrink-0 rounded-full bg-blue-100 dark:bg-blue-900/30 px-1.5 py-0.5 text-[10px] font-bold text-blue-700 dark:text-blue-300">Pro</span>
+              )}
             </div>
             <p className="text-sm text-orange-600 font-medium truncate">{professional.profession}</p>
             <p className="flex items-center gap-0.5 text-xs text-slate-500 dark:text-slate-400 mt-0.5">

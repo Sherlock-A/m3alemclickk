@@ -171,6 +171,9 @@ class ProfessionalController extends Controller
             $geoApplied = true;
         }
 
+        // Premium/Pro always surface first, then user-chosen sort
+        $query->orderByRaw("FIELD(professionals.subscription_plan, 'premium', 'pro', 'free')");
+
         if (! $geoApplied) {
             $sort = $request->string('sort')->toString() ?: 'latest';
             match ($sort) {

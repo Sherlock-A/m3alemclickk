@@ -119,6 +119,26 @@ class AdminController extends Controller
         return response()->json(['success' => true, 'user' => $user->load('professional')]);
     }
 
+    public function updateSubscription(Request $request, User $user)
+    {
+        abort_if($user->role !== 'professional', 403, 'Action non autorisée.');
+        $data = $request->validate([
+            'subscription_plan'       => ['required', 'in:free,pro,premium'],
+            'subscription_expires_at' => ['nullable', 'date'],
+        ]);
+
+        $pro = $user->professional;
+        abort_if(! $pro, 404, 'Profil professionnel introuvable.');
+
+        $pro->update([
+            'subscription_plan'       => $data['subscription_plan'],
+            'subscription_expires_at' => $data['subscription_expires_at'] ?? null,
+        ]);
+        Cache::flush();
+
+        return response()->json(['success' => true, 'professional' => $pro->fresh()]);
+    }
+
     // ── Avis ──────────────────────────────────────────────────────────────────
 
     public function reviews(Request $request)

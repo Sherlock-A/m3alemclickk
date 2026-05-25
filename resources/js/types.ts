@@ -42,6 +42,8 @@ export type Professional = {
   longitude?: number | null;
   facebook_url?: string | null;
   instagram_url?: string | null;
+  subscription_plan?: 'free' | 'pro' | 'premium';
+  subscription_expires_at?: string | null;
   reviews?: Review[];
   category?: Category | null;
   categories?: Category[];

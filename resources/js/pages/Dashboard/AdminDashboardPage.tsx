@@ -414,6 +414,9 @@ function SectionProfessionals({ headers }: { headers: any }) {
   const [editForm, setEditForm]   = useState({ name: '', profession: '', main_city: '' });
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState('');
+  const [subForm, setSubForm]     = useState({ subscription_plan: 'free', subscription_expires_at: '' });
+  const [subSaving, setSubSaving] = useState(false);
+  const [subError, setSubError]   = useState('');
 
   const load = useCallback(() => {
     const params = new URLSearchParams({ page: String(page) });
@@ -446,6 +449,13 @@ function SectionProfessionals({ headers }: { headers: any }) {
       profession: u.professional?.profession ?? '',
       main_city:  u.professional?.main_city  ?? '',
     });
+    setSubForm({
+      subscription_plan:       u.professional?.subscription_plan ?? 'free',
+      subscription_expires_at: u.professional?.subscription_expires_at
+        ? u.professional.subscription_expires_at.slice(0, 10)
+        : '',
+    });
+    setSubError('');
   };
 
   const saveEdit = async () => {
@@ -461,6 +471,29 @@ function SectionProfessionals({ headers }: { headers: any }) {
     } finally {
       setEditSaving(false);
     }
+  };
+
+  const saveSubscription = async () => {
+    if (!editingId) return;
+    setSubSaving(true);
+    setSubError('');
+    try {
+      await axios.put(`/api/admin/professionals/${editingId}/subscription`, {
+        subscription_plan:       subForm.subscription_plan,
+        subscription_expires_at: subForm.subscription_expires_at || null,
+      }, { headers });
+      load();
+    } catch (e: any) {
+      setSubError(e.response?.data?.message || 'Erreur lors de la mise à jour.');
+    } finally {
+      setSubSaving(false);
+    }
+  };
+
+  const subBadge = (plan: string) => {
+    if (plan === 'premium') return <span className="inline-flex items-center rounded-full bg-purple-100 text-purple-700 px-2 py-0.5 text-xs font-bold">Premium</span>;
+    if (plan === 'pro')     return <span className="inline-flex items-center rounded-full bg-blue-100 text-blue-700 px-2 py-0.5 text-xs font-bold">Pro</span>;
+    return <span className="inline-flex items-center rounded-full bg-slate-100 text-slate-500 px-2 py-0.5 text-xs">Free</span>;
   };
 
   const statusBadge = (s: string) => {
@@ -501,7 +534,7 @@ function SectionProfessionals({ headers }: { headers: any }) {
           <table className="w-full text-sm">
             <thead className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
               <tr>
-                {['Nom', 'Email', 'Métier', 'Ville', 'Statut', 'Inscrit le', 'Actions'].map(h => (
+                {['Nom', 'Email', 'Métier', 'Ville', 'Statut', 'Plan', 'Inscrit le', 'Actions'].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">{h}</th>
                 ))}
               </tr>
@@ -515,6 +548,7 @@ function SectionProfessionals({ headers }: { headers: any }) {
                     <td className="px-4 py-3 text-slate-500">{u.professional?.profession ?? '—'}</td>
                     <td className="px-4 py-3 text-slate-500">{u.professional?.main_city ?? '—'}</td>
                     <td className="px-4 py-3">{statusBadge(u.status)}</td>
+                    <td className="px-4 py-3">{subBadge(u.professional?.subscription_plan ?? 'free')}</td>
                     <td className="px-4 py-3 text-slate-400 text-xs">{new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
                     <td className="px-4 py-3">
                       <div className="flex gap-1 flex-wrap">
@@ -555,7 +589,8 @@ function SectionProfessionals({ headers }: { headers: any }) {
                   </tr>
                   {editingId === u.id && (
                     <tr key={`edit-${u.id}`} className="bg-blue-50 dark:bg-blue-900/10">
-                      <td colSpan={7} className="px-4 py-3">
+                      <td colSpan={8} className="px-4 py-3 space-y-3">
+                        {/* Profil edit */}
                         <div className="flex flex-wrap gap-3 items-end">
                           <div>
                             <label className="block text-xs text-slate-500 mb-1">Nom</label>
@@ -576,14 +611,41 @@ function SectionProfessionals({ headers }: { headers: any }) {
                             className="flex items-center gap-1 rounded-lg bg-blue-600 px-3 py-1.5 text-xs text-white hover:bg-blue-700 disabled:opacity-50">
                             {editSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Enregistrer
                           </button>
-                          <button onClick={() => { setEditingId(null); setEditError(''); }}
+                          <button onClick={() => { setEditingId(null); setEditError(''); setSubError(''); }}
                             className="flex items-center gap-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-100">
                             Annuler
                           </button>
                         </div>
                         {editError && (
-                          <div className="mt-2 text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 flex items-center gap-1">
+                          <div className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 flex items-center gap-1">
                             <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {editError}
+                          </div>
+                        )}
+                        {/* Subscription edit */}
+                        <div className="border-t border-blue-100 pt-3 flex flex-wrap gap-3 items-end">
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Plan abonnement</label>
+                            <select value={subForm.subscription_plan} onChange={e => setSubForm(f => ({ ...f, subscription_plan: e.target.value }))}
+                              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:border-purple-400 focus:outline-none">
+                              <option value="free">Free</option>
+                              <option value="pro">Pro</option>
+                              <option value="premium">Premium</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block text-xs text-slate-500 mb-1">Expire le</label>
+                            <input type="date" value={subForm.subscription_expires_at}
+                              onChange={e => setSubForm(f => ({ ...f, subscription_expires_at: e.target.value }))}
+                              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:border-purple-400 focus:outline-none" />
+                          </div>
+                          <button onClick={saveSubscription} disabled={subSaving}
+                            className="flex items-center gap-1 rounded-lg bg-purple-600 px-3 py-1.5 text-xs text-white hover:bg-purple-700 disabled:opacity-50">
+                            {subSaving ? <RefreshCw className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Sauv. abonnement
+                          </button>
+                        </div>
+                        {subError && (
+                          <div className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 flex items-center gap-1">
+                            <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {subError}
                           </div>
                         )}
                       </td>
@@ -592,7 +654,7 @@ function SectionProfessionals({ headers }: { headers: any }) {
                 </>
               ))}
               {(data?.data ?? []).length === 0 && (
-                <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-400">Aucun résultat.</td></tr>
+                <tr><td colSpan={8} className="px-4 py-8 text-center text-slate-400">Aucun résultat.</td></tr>
               )}
             </tbody>
           </table>
