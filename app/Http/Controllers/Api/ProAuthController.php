@@ -69,6 +69,11 @@ class ProAuthController extends Controller
 
     public function register(Request $request)
     {
+        // Honey-pot: bots fill this field, humans don't
+        if ($request->filled('_hp')) {
+            return response()->json(['message' => 'Inscription non autorisée.'], 422);
+        }
+
         $data = $request->validate([
             'name'         => ['required', 'string', 'max:100', 'regex:/^[^<>{}\/\\\\]+$/u'],
             'email'        => ['required', 'email', 'max:254', 'unique:users,email'],

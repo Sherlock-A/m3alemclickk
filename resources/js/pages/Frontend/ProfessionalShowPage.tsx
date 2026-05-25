@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Heart, MapPin, MessageCircle, Phone, ShieldCheck,
   Star, Send, CheckCircle, AlertCircle, Mail, BadgeCheck, LogIn, Share2, Sparkles,
+  CalendarDays, X,
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { Category, Professional } from '../../types';
@@ -228,6 +229,42 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
     }
   };
 
+  // Booking modal state
+  const [showBooking, setShowBooking] = useState(false);
+  const [bkName,      setBkName]      = useState('');
+  const [bkPhone,     setBkPhone]     = useState('');
+  const [bkEmail,     setBkEmail]     = useState('');
+  const [bkService,   setBkService]   = useState('');
+  const [bkDate,      setBkDate]      = useState('');
+  const [bkTime,      setBkTime]      = useState('');
+  const [bkNotes,     setBkNotes]     = useState('');
+  const [bkSending,   setBkSending]   = useState(false);
+  const [bkDone,      setBkDone]      = useState(false);
+  const [bkError,     setBkError]     = useState('');
+
+  const submitBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bkName.trim() || !bkPhone.trim()) { setBkError('Nom et téléphone requis.'); return; }
+    setBkSending(true);
+    setBkError('');
+    try {
+      await axios.post(`/api/professionals/${professional.id}/book`, {
+        client_name: bkName.trim(),
+        client_phone: bkPhone.trim(),
+        client_email: bkEmail.trim() || undefined,
+        service: bkService.trim() || undefined,
+        preferred_date: bkDate || undefined,
+        preferred_time: bkTime || undefined,
+        notes: bkNotes.trim() || undefined,
+      });
+      setBkDone(true);
+    } catch {
+      setBkError('Erreur lors de l\'envoi. Veuillez réessayer.');
+    } finally {
+      setBkSending(false);
+    }
+  };
+
   const seoTitle = `${professional.name} — ${professional.profession} à ${professional.main_city} | Jobly`;
   const seoDesc  = professional.description
     ? professional.description.slice(0, 155)
@@ -405,6 +442,13 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
                     className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 py-4 text-base font-bold text-white transition-colors shadow-lg shadow-emerald-500/20"
                   >
                     <MessageCircle className="h-5 w-5" aria-hidden="true" /> {t('show_whatsapp')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { setBkDone(false); setBkError(''); setShowBooking(true); }}
+                    className="flex w-full items-center justify-center gap-2.5 rounded-2xl bg-orange-500 hover:bg-orange-600 py-3.5 text-sm font-bold text-white transition-colors shadow-md shadow-orange-500/20"
+                  >
+                    <CalendarDays className="h-4 w-4" aria-hidden="true" /> Prendre un rendez-vous
                   </button>
                   <div className="flex gap-2.5">
                     <a
@@ -943,6 +987,129 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
             <p className="mt-3 text-center text-[11px] text-slate-400">
               Votre prénom sera partagé avec l'artisan dans le message WhatsApp
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Booking modal ── */}
+      {showBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
+            <button
+              onClick={() => setShowBooking(false)}
+              className="absolute top-4 right-4 h-8 w-8 rounded-full flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              <X className="h-4 w-4 text-slate-500" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-5">
+              <div className="h-10 w-10 rounded-xl bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
+                <CalendarDays className="h-5 w-5 text-orange-500" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-slate-900 dark:text-white">Prendre un rendez-vous</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{professional.name} · {professional.profession}</p>
+              </div>
+            </div>
+
+            {bkDone ? (
+              <div className="py-8 text-center">
+                <CheckCircle className="h-12 w-12 text-emerald-500 mx-auto mb-3" />
+                <p className="font-bold text-slate-900 dark:text-white mb-1">Demande envoyée !</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{professional.name} vous contactera pour confirmer le rendez-vous.</p>
+                <button
+                  onClick={() => setShowBooking(false)}
+                  className="mt-4 px-5 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-sm font-bold transition-colors"
+                >
+                  Fermer
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={submitBooking} className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Prénom *</label>
+                    <input
+                      value={bkName}
+                      onChange={e => setBkName(e.target.value)}
+                      placeholder="Votre prénom"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Téléphone *</label>
+                    <input
+                      value={bkPhone}
+                      onChange={e => setBkPhone(e.target.value)}
+                      placeholder="06 XX XX XX XX"
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Email (optionnel)</label>
+                  <input
+                    type="email"
+                    value={bkEmail}
+                    onChange={e => setBkEmail(e.target.value)}
+                    placeholder="email@exemple.com"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Service souhaité</label>
+                  <input
+                    value={bkService}
+                    onChange={e => setBkService(e.target.value)}
+                    placeholder={`Ex. Réparation fuite, installation...`}
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Date préférée</label>
+                    <input
+                      type="date"
+                      value={bkDate}
+                      onChange={e => setBkDate(e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Moment préféré</label>
+                    <select
+                      value={bkTime}
+                      onChange={e => setBkTime(e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    >
+                      <option value="">Peu importe</option>
+                      <option value="matin">Matin</option>
+                      <option value="après-midi">Après-midi</option>
+                      <option value="soir">Soir</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Notes (optionnel)</label>
+                  <textarea
+                    value={bkNotes}
+                    onChange={e => setBkNotes(e.target.value)}
+                    placeholder="Décrivez votre problème..."
+                    rows={2}
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
+                  />
+                </div>
+                {bkError && <p className="text-red-500 text-xs">{bkError}</p>}
+                <button
+                  type="submit"
+                  disabled={bkSending}
+                  className="w-full rounded-xl bg-orange-500 hover:bg-orange-600 disabled:opacity-60 text-white py-3 text-sm font-bold transition-colors flex items-center justify-center gap-2"
+                >
+                  {bkSending ? 'Envoi...' : <><CalendarDays className="h-4 w-4" /> Confirmer la demande</>}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}

@@ -45,6 +45,10 @@ class ClientAuthController extends Controller
 
     public function register(Request $request)
     {
+        if ($request->filled('_hp')) {
+            return response()->json(['message' => 'Inscription non autorisée.'], 422);
+        }
+
         $data = $request->validate([
             'name'     => ['required', 'string', 'max:100', 'regex:/^[^<>{}\/\\\\]+$/u'],
             'email'    => ['required', 'email', 'max:254', 'unique:users,email'],

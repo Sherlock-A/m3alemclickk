@@ -26,6 +26,7 @@ Route::get('/top-artisans/{city}/{category}', [LeaderboardController::class, 'sh
 Route::get('/guides',        [BlogController::class, 'index'])->name('guides');
 Route::get('/guides/{slug}', [BlogController::class, 'show'])->name('guide.show');
 Route::get('/how-it-works', fn () => Inertia::render('Frontend/HowItWorksPage'))->name('how-it-works');
+Route::get('/tarifs',       fn () => Inertia::render('Frontend/TarifsPage'))->name('tarifs');
 Route::get('/contact',      fn () => Inertia::render('Frontend/ContactPage'))->name('contact');
 
 // ─── Page de connexion unifiée ─────────────────────────────────────────────────

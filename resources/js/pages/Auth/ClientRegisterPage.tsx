@@ -39,6 +39,7 @@ export default function ClientRegisterPage() {
   const { t } = useTranslation();
   const { rtl } = useLanguage();
   const [cities, setCities] = useState<City[]>([]);
+  const [honeypot, setHoneypot] = useState('');
   const [form, setForm]     = useState({
     name: '', email: '', password: '', password_confirmation: '',
     phone: '', city: '',
@@ -93,7 +94,7 @@ export default function ClientRegisterPage() {
       const res  = await fetch('/api/client/register', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body:    JSON.stringify({ ...form, avatar }),
+        body:    JSON.stringify({ ...form, avatar, _hp: honeypot }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -224,6 +225,8 @@ export default function ClientRegisterPage() {
 
               {/* Form */}
               <form onSubmit={handleRegister} className="space-y-4">
+                {/* honeypot */}
+                <input type="text" name="website" value={honeypot} onChange={e => setHoneypot(e.target.value)} tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }} autoComplete="off" />
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">{t('name')} <span className="text-red-400">*</span></label>
                   <input value={form.name} onChange={set('name')} required placeholder="Ahmed El Fassi" autoFocus className={inp} />

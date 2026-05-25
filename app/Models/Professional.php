@@ -119,6 +119,11 @@ class Professional extends Model
         return $this->hasMany(ProfessionalUnavailability::class);
     }
 
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
+
     /**
      * Returns the next availability date if currently in an unavailability period, or null if available.
      */

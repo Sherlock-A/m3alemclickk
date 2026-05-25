@@ -46,6 +46,7 @@ export default function ProRegisterPage() {
   ];
 
   const [step, setStep]           = useState<Step>(1);
+  const [honeypot, setHoneypot]   = useState('');
   const [form, setForm]           = useState({
     name: '', email: '', password: '', password_confirmation: '',
     phone: '', profession: '', main_city: '',
@@ -175,7 +176,7 @@ export default function ProRegisterPage() {
       const res  = await fetch('/api/pro/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({ ...form, category_ids: selectedCatIds }),
+        body: JSON.stringify({ ...form, category_ids: selectedCatIds, _hp: honeypot }),
       });
       const data = await res.json();
       if (res.ok) {
@@ -360,6 +361,8 @@ export default function ProRegisterPage() {
               )}
 
               <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); next(); }} className="space-y-4">
+                {/* honeypot — hidden from humans, filled by bots */}
+                <input type="text" name="website" value={honeypot} onChange={e => setHoneypot(e.target.value)} tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }} autoComplete="off" />
 
                 {/* ── Step 1 ── */}
                 {step === 1 && <>

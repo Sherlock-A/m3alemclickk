@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\VerificationController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\PushController;
 use App\Http\Controllers\Api\SosController;
+use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ReviewSummaryController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\ReviewController;
@@ -154,6 +155,7 @@ Route::post('/favorites/sync',[FavoriteController::class, 'sync'])->middleware('
 Route::post('/reviews',                        [ReviewController::class, 'store'])->middleware('throttle:10,1');
 Route::post('/reviews/{review}/report',        [ReviewController::class, 'report'])->middleware('throttle:5,1');
 Route::post('/professionals/{professional}/contact', [ContactRequestController::class, 'store'])->middleware('throttle:5,1');
+Route::post('/professionals/{professional}/book',   [BookingController::class, 'store'])->middleware('throttle:5,1');
 Route::get('/settings',       [SettingsController::class, 'show'])->middleware('throttle:60,1');
 
 // ─── Demandes de contact client ───────────────────────────────────────────────
@@ -182,6 +184,8 @@ Route::middleware('jwt:professional')->group(function () {
     Route::get('/pro/unavailabilities',                [UnavailabilityController::class, 'index']);
     Route::post('/pro/unavailabilities',               [UnavailabilityController::class, 'store']);
     Route::delete('/pro/unavailabilities/{unavailability}', [UnavailabilityController::class, 'destroy']);
+    Route::get('/pro/bookings',                        [BookingController::class, 'forProfessional']);
+    Route::patch('/pro/bookings/{booking}/status',     [BookingController::class, 'updateStatus']);
 
     // Push subscriptions
     Route::post('/push/subscribe',   [PushController::class, 'subscribe'])->middleware('throttle:10,1');
