@@ -515,6 +515,216 @@ class BlogController extends Controller
                 'prix-artisan-maroc-2026',
             ],
         ],
+
+        'serrurier-maroc-guide' => [
+            'slug'        => 'serrurier-maroc-guide',
+            'title'       => "Trouver un serrurier fiable au Maroc en 2026",
+            'description' => "Guide complet pour choisir un serrurier au Maroc : urgences, tarifs, ouverture de porte et comment éviter les faux serruriers.",
+            'category'    => 'Serrurerie',
+            'city'        => null,
+            'readTime'    => 5,
+            'date'        => '2026-05-25',
+            'intro'       => "Urgence serrure, clé perdue, serrure bloquée — la serrurerie est l'un des métiers où les arnaques sont les plus fréquentes, surtout en urgence. Voici comment trouver un serrurier honnête au Maroc.",
+            'sections'    => [
+                [
+                    'title'   => "1. Types d'interventions en serrurerie",
+                    'content' => "**Urgences courantes :**\n- Ouverture de porte claquée (clé oubliée à l'intérieur)\n- Ouverture de porte bloquée (serrure cassée ou grippée)\n- Clé cassée dans la serrure\n- Serrure forcée après tentative de cambriolage\n\n**Travaux planifiés :**\n- Remplacement de serrure (upgrade sécurité)\n- Installation de verrous supplémentaires\n- Blindage de porte\n- Copie de clé (certaines serrures à protections spéciales)\n\n*Règle d'or : en urgence, vous êtes en position de faiblesse. C'est là que les arnaques sont les plus fréquentes. Préparez-vous en amont.*",
+                ],
+                [
+                    'title'   => "2. Tarifs indicatifs au Maroc (2026)",
+                    'content' => "| Prestation | Prix indicatif |\n|-----------|---------------|\n| Ouverture de porte (copie de clé possible) | 200–400 MAD |\n| Ouverture de porte (serrure à remplacer) | 300–600 MAD |\n| Remplacement serrure standard | 300–700 MAD |\n| Serrure 3 points (haute sécurité) | 600–1 500 MAD |\n| Blindage de porte | 1 500–4 000 MAD |\n| Copie de clé simple | 20–50 MAD |\n| Copie de clé sécurisée | 80–200 MAD |\n| Majoration urgence nuit/week-end | +50–100% |\n\n*Hors matériaux si remplacement de serrure.*",
+                ],
+                [
+                    'title'   => "3. Comment repérer un faux serrurier",
+                    'content' => "**Les signaux d'alarme :**\n\n❌ Annonce un prix très bas au téléphone (50–100 MAD) puis facture 5× plus cher sur place\n❌ Refuse de donner un devis avant d'intervenir\n❌ Détruit la serrure \"obligatoirement\" alors que l'ouverture était possible sans dégâts\n❌ Présente une facture manuscrite sans identité d'entreprise\n❌ Insiste pour être payé immédiatement en cash\n❌ Son numéro est un numéro de téléphone portable inconnu (pas une entreprise locale)\n\n**Bons signes :**\n✅ Donne un fourchette de prix claire au téléphone\n✅ Présente une carte de visite ou un devis écrit\n✅ Essaie d'abord d'ouvrir sans dégâts (crochetage)\n✅ Disponible sur Jobly avec des avis clients vérifiés",
+                ],
+                [
+                    'title'   => "4. Ce que vous pouvez faire vous-même",
+                    'content' => "Avant d'appeler un serrurier, vérifiez :\n\n- **Porte claquée** : y a-t-il une fenêtre ou un autre accès non verrouillé ?\n- **Clé cassée** : si le bout dépasse, des pinces fines peuvent parfois l'extraire\n- **Serrure grippée** : une goutte d'huile de lubrification (type WD-40) peut suffire\n- **Verrou de sûreté** : vérifiez que vous n'avez pas activé par erreur un verrou intérieur\n\n*Si vous devez appeler : prenez le numéro d'un serrurier de confiance AVANT d'en avoir besoin. En urgence à 23h, vous aurez moins de recul.*",
+                ],
+                [
+                    'title'   => "5. Améliorer la sécurité de votre logement",
+                    'content' => "**Investissements recommandés (par priorité) :**\n\n1. **Serrure 3 points** (environ 800–1 200 MAD) : le standard pour une sécurité sérieuse au Maroc\n2. **Verrou de sûreté supplémentaire** (200–400 MAD) : simple et efficace\n3. **Judas digital** (200–400 MAD) : voir qui sonne sans ouvrir\n4. **Blindage de porte** (2 000–4 000 MAD) : uniquement si zone à risque ou appartement de valeur\n\n**Conseils pratiques :**\n- Ne laissez jamais votre clé sous le paillasson ou dans une cachette évidente\n- Gardez le contact d'un serrurier de confiance dans votre téléphone\n- Faites copier vos clés uniquement chez un serrurier connu (certaines serrures sécurisées interdisent la copie sans autorisation)\n\n*Sur Jobly, les serruriers sont vérifiés et leurs tarifs sont consultables avant de les contacter.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un serrurier vérifié au Maroc",
+                'url'   => '/professionals?profession=Serrurier',
+                'label' => 'Voir les serruriers',
+            ],
+            'related' => [
+                'prix-artisan-maroc-2026',
+                'choisir-plombier-casablanca',
+            ],
+        ],
+
+        'electricien-casablanca' => [
+            'slug'        => 'electricien-casablanca',
+            'title'       => "Électricien à Casablanca : guide et tarifs 2026",
+            'description' => "Comment trouver un électricien qualifié à Casablanca : tarifs 2026 par quartier, urgences électriques, travaux courants et comment éviter les arnaques dans la métropole.",
+            'category'    => 'Électricité',
+            'city'        => 'Casablanca',
+            'readTime'    => 5,
+            'date'        => '2026-05-25',
+            'intro'       => "Casablanca, avec ses 4 millions d'habitants et ses immeubles d'âges très variés, présente des besoins électriques spécifiques. Voici comment trouver un électricien fiable dans la métropole économique du Maroc.",
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs à Casablanca en 2026",
+                    'content' => "| Prestation | Prix indicatif |\n|-----------|---------------|\n| Diagnostic panne électrique | 100–200 MAD |\n| Remplacement prise / interrupteur | 80–180 MAD |\n| Pose d'un luminaire | 120–250 MAD |\n| Mise aux normes tableau électrique | 500–1 000 MAD |\n| Installation climatisation (circuit dédié) | 400–800 MAD |\n| Rénovation électrique complète appartement | 4 000–10 000 MAD |\n| Urgence (soir, week-end) | +40–60% |\n\n*Les tarifs à Maarif, Gauthier, Anfa et Hay Riad sont généralement 10–20% plus élevés qu'à Hay Hassani, Sidi Moumen ou Ain Sebaa.*",
+                ],
+                [
+                    'title'   => "2. Problèmes électriques fréquents à Casablanca",
+                    'content' => "**Immeubles anciens (Médina, Derb Sultan, Roches Noires) :**\n- Installations vétustes sans mise à la terre\n- Câblage en aluminium (dangereux, doit être remplacé)\n- Tableaux électriques sous-dimensionnés (pas prévu pour la clim, lave-vaisselle, etc.)\n\n**Résidences modernes (Californie, Bouskoura, CIL) :**\n- Disjoncteurs qui sautent à cause de climatisations mal dimensionnées\n- Problèmes de mise à la terre dans les salles de bain\n- Câblage de mauvaise qualité dans certaines résidences récentes (promoteurs peu scrupuleux)\n\n**Conseils :**\n- Si vous emménagez, faites faire un diagnostic complet de l'installation\n- Vérifiez que votre tableau a un disjoncteur différentiel (sécurité personnes)\n- Signalez toute odeur de brûlé à un professionnel immédiatement",
+                ],
+                [
+                    'title'   => "3. Urgences électriques : que faire",
+                    'content' => "**Disjoncteur général qui saute :**\n1. Débranchez tous les appareils de la pièce concernée\n2. Remettez le disjoncteur — s'il resaute, l'appareil fautif est encore branché\n3. Testez appareil par appareil pour identifier le coupable\n4. Si ça continue sans appareil branché : appelez un électricien\n\n**Court-circuit ou odeur de brûlé :**\n1. Coupez le disjoncteur général immédiatement\n2. N'intervenez pas vous-même\n3. Ouvrez les fenêtres\n4. Appelez un électricien d'urgence via Jobly\n\n**Électrocution (contact électrique) :**\n1. Coupez d'abord le courant — ne touchez pas la personne avant\n2. Appelez le 15 (SAMU) ou le 19\n3. Si la personne est inconsciente : appliquer les premiers secours",
+                ],
+                [
+                    'title'   => "4. Choisir son électricien à Casablanca",
+                    'content' => "**Ce qu'il faut vérifier :**\n- Travaille-t-il dans votre quartier ? (certains refusent de venir en Médina ou à Sidi Moumen)\n- A-t-il de l'expérience avec votre type d'immeuble (ancien, neuf, villa) ?\n- Peut-il intervenir le jour même ou le lendemain ?\n\n**Questions clés à poser :**\n- Quel est votre tarif de déplacement à Casablanca ?\n- Faites-vous la mise à la terre ?\n- Garantissez-vous votre travail ? Sur quelle durée ?\n- Pouvez-vous me remettre un devis avant d'intervenir ?\n\n**Où trouver un bon électricien à Casablanca :**\n- Sur Jobly : filtrez par ville \"Casablanca\" et profession \"Électricien\"\n- Consultez les avis récents (moins de 3 mois) — les professionnels évoluent\n- Demandez un devis comparatif à 2–3 électriciens",
+                ],
+                [
+                    'title'   => "5. Travaux de rénovation électrique",
+                    'content' => "Si vous rénovez votre appartement à Casablanca, voici les étapes recommandées pour l'électricité :\n\n**Phase planning :**\n- Listez tous vos besoins (nombre de prises, points lumineux, circuits spéciaux)\n- Consultez un électricien AVANT les travaux de maçonnerie/peinture\n\n**Phase exécution :**\n1. Passage des gaines dans les murs (avant enduit)\n2. Câblage et distribution dans le tableau\n3. Pose des prises et interrupteurs (après enduit)\n4. Connexion du tableau et test général\n5. Mise à la terre et test de continuité\n\n**Coût d'une rénovation électrique complète à Casablanca :**\n- Studio (< 50 m²) : 2 500–5 000 MAD\n- F3 (80–90 m²) : 5 000–10 000 MAD\n- Villa (150–200 m²) : 12 000–25 000 MAD\n\n*Demandez toujours un schéma électrique du tableau à la fin des travaux.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un électricien vérifié à Casablanca",
+                'url'   => '/professionnels/casablanca/electricite',
+                'label' => 'Voir les électriciens de Casablanca',
+            ],
+            'related' => [
+                'choisir-electricien-maroc',
+                'climatisation-maroc-guide',
+            ],
+        ],
+
+        'plombier-marrakech' => [
+            'slug'        => 'plombier-marrakech',
+            'title'       => "Plombier à Marrakech : tarifs et conseils 2026",
+            'description' => "Comment trouver un plombier fiable à Marrakech : tarifs actualisés, problèmes spécifiques aux riads et villas, urgences et conseils pratiques.",
+            'category'    => 'Plomberie',
+            'city'        => 'Marrakech',
+            'readTime'    => 5,
+            'date'        => '2026-05-25',
+            'intro'       => "Marrakech présente des défis plomberie uniques : riads avec installations centenaires, villas de luxe avec piscines, forte chaleur estivale qui sollicite les chauffe-eaux. Voici comment trouver le bon plombier dans la Ville Ocre.",
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des plombiers à Marrakech (2026)",
+                    'content' => "| Prestation | Prix indicatif |\n|-----------|---------------|\n| Fuite robinet | 150–300 MAD |\n| Débouchage évier / WC | 200–450 MAD |\n| Remplacement mécanisme WC | 150–280 MAD |\n| Installation point d'eau | 300–600 MAD |\n| Remplacement chauffe-eau | 400–900 MAD (hors matériel) |\n| Intervention chauffe-eau solaire | 300–700 MAD |\n| Urgence soir / week-end | +40–60% |\n\n*Les tarifs sont similaires à Casablanca. Les villas de Palmeraie et les hôtels peuvent payer jusqu'à 30% de plus pour un service réactif et de qualité.*",
+                ],
+                [
+                    'title'   => "2. Spécificités de Marrakech",
+                    'content' => "**Riads de la médina :**\n- Tuyauteries souvent centenaires, mélange de plomb et cuivre\n- Pas d'accès camion → matériel portatif obligatoire\n- Cours intérieures complexes → devis de visite avant intervention\n- Risque de rouille et tartre élevé (eau de Marrakech calcaire)\n\n**Villas et résidences (Palmeraie, Agdal, Guéliz) :**\n- Souvent des chauffe-eaux solaires (panneaux sur toit) → spécialité locale\n- Piscines : risques de fuites sur le circuit hydraulique\n- Jardins avec arrosage automatique : vérifiez les robinets de zone régulièrement\n\n**Maisons traditionnelles :**\n- Fosses septiques fréquentes (connexion réseau pas toujours faite)\n- Problèmes de débouchage annuels recommandés\n- Eau de puits dans certains quartiers → calcaire intense",
+                ],
+                [
+                    'title'   => "3. Chauffe-eaux solaires : problèmes courants",
+                    'content' => "Marrakech étant une des villes les plus ensoleillées du Maroc, les chauffe-eaux solaires sont très répandus. Problèmes courants :\n\n**En été :**\n- Eau trop chaude → prévoir un mitigeur thermique (90–150 MAD)\n- Pression excessive → soupape de sécurité à vérifier\n\n**En hiver :**\n- Chauffe-eau d'appoint électrique qui ne fonctionne plus → résistance à remplacer\n- Gel du fluide caloporteur (nuits froides) → vidanger et recharger en antigel\n\n**Entretien annuel recommandé :**\n- Vérification du circuit solaire (fuites, pression)\n- Nettoyage des capteurs (poussière de Marrakech)\n- Vérification du ballon (tartre, anode)\n\n*Un technicien spécialisé en solaire thermique facture généralement 200–500 MAD pour un entretien complet.*",
+                ],
+                [
+                    'title'   => "4. Trouver un plombier fiable à Marrakech",
+                    'content' => "**Vérifications essentielles :**\n- Intervient-il en médina ? (certains refusent à cause de l'accès difficile)\n- A-t-il de l'expérience avec les chauffe-eaux solaires ?\n- Peut-il se déplacer en zone Palmeraie ou Agdal ?\n\n**Questions importantes :**\n- Quel est votre tarif de déplacement (en médina vs. Guéliz) ?\n- Avez-vous de l'expérience avec les installations de riad ?\n- Proposez-vous un contrat d'entretien annuel ?\n\n**Pour les locations saisonnières (Airbnb, etc.) :**\n- Avoir un plombier de confiance joignable rapidement est indispensable\n- Certains pros Jobly proposent une disponibilité prioritaire pour les gérants de propriétés\n- Entretenez la relation : payez vite, donnez des avis, fidélisez-vous un bon artisan",
+                ],
+                [
+                    'title'   => "5. Eau et calcaire à Marrakech : conseils durables",
+                    'content' => "L'eau de Marrakech est parmi les plus calcaires du Maroc. Cela accélère l'usure de toute la plomberie.\n\n**Protections recommandées :**\n- **Adoucisseur d'eau** (1 500–5 000 MAD) : essentiel dans les villas avec équipements haut de gamme\n- **Filtre anticalcaire magnétique** (200–500 MAD) : solution économique pour les appartements\n- **Détartrant régulier** pour les robinets, pommes de douche et chauffe-eau\n\n**Signes d'un problème calcaire :**\n- Pression qui baisse progressivement dans la douche\n- Chauffe-eau qui prend de plus en plus de temps à chauffer\n- Taches blanches sur les robinets et la robinetterie\n- Son de \"craquement\" dans le chauffe-eau (dépôt de calcaire)\n\n*Sur Jobly, consultez les avis des clients à Marrakech avant de choisir votre plombier.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un plombier vérifié à Marrakech",
+                'url'   => '/professionnels/marrakech/plomberie',
+                'label' => 'Voir les plombiers de Marrakech',
+            ],
+            'related' => [
+                'choisir-plombier-casablanca',
+                'jardinage-marrakech',
+            ],
+        ],
+
+        'carreleur-maroc-guide' => [
+            'slug'        => 'carreleur-maroc-guide',
+            'title'       => "Trouver un carreleur au Maroc : guide complet 2026",
+            'description' => "Guide pour choisir un carreleur qualifié au Maroc : tarifs de pose, types de carrelage, questions clés et erreurs à éviter pour vos travaux de carrelage.",
+            'category'    => 'Maçonnerie',
+            'city'        => null,
+            'readTime'    => 5,
+            'date'        => '2026-05-25',
+            'intro'       => "Le carrelage est un choix à long terme : une pose mal réalisée se voit immédiatement et dure des décennies. Voici comment choisir un carreleur compétent au Maroc et obtenir un résultat irréprochable.",
+            'sections'    => [
+                [
+                    'title'   => "1. Types de carrelage et utilisations",
+                    'content' => "**Carrelage sol :**\n- **Grès cérame** (le plus résistant) : idéal pour les salons, cuisines et extérieurs\n- **Marbre marocain** (beldi) : traditionnel et élégant, entretien délicat\n- **Carreaux de ciment** (zellige moderne) : tendance, bonnes finitions\n- **Grès rustique** : antidérapant, idéal pour les terrasses\n\n**Carrelage mural (faïence) :**\n- **Faïence standard** : cuisine, salle de bain, douche\n- **Zellige artisanal** : spécialité marocaine, style traditionnel\n- **Grand format (80×80, 120×60)** : effet moderne minimaliste\n\n**Conseil** : La taille du carrelage doit être proportionnelle à la pièce. Un grand carrelage dans un couloir étroit agrandit l'espace ; un petit carrelage dans un grand salon le rapetisse.",
+                ],
+                [
+                    'title'   => "2. Tarifs de pose au Maroc (2026)",
+                    'content' => "| Type de pose | Prix main-d'œuvre |\n|-------------|-------------------|\n| Carrelage sol standard | 80–150 MAD/m² |\n| Carrelage sol grand format (> 60×60) | 120–200 MAD/m² |\n| Faïence murale standard | 100–180 MAD/m² |\n| Zellige artisanal | 200–400 MAD/m² |\n| Marbre beldi | 150–300 MAD/m² |\n| Depose d'ancien carrelage | 50–100 MAD/m² |\n| Ragréage (préparation du sol) | 30–60 MAD/m² |\n\n*Hors matériaux. Rajoutez 20–30% pour Casablanca et Rabat. Le zellige et le marbre nécessitent des artisans expérimentés → ne lésinez pas sur la qualité.*",
+                ],
+                [
+                    'title'   => "3. Comment évaluer la qualité d'un carreleur",
+                    'content' => "**Ce qu'il faut observer :**\n- **Les joints** : réguliers, alignés, sans espace ni écart variable\n- **L'aplomb** : les carreaux sont-ils parfaitement plats ? Testez en posant une règle\n- **Les coupes** : propres, précises, sans ébréchures visibles\n- **Le rendement** : un carreleur expérimenté pose 8–12 m²/jour en sol standard\n\n**Demandez à voir des réalisations :**\n- Visitez un chantier en cours ou récemment terminé\n- Regardez particulièrement les angles et les départs (autour des WC, vasques)\n- Vérifiez les raccords entre deux pièces (couloir → salon)\n\n**Questions clés :**\n- Utilisez-vous un croisillon (pour joints réguliers) ?\n- Faites-vous un calepinage (plan de pose) avant de commencer ?\n- Comment gérez-vous les chutes et pertes de carrelage ?",
+                ],
+                [
+                    'title'   => "4. Ce qu'il faut préparer avant la pose",
+                    'content' => "**Préparation du support (essentielle) :**\n- Le sol doit être propre, sec et plan (tolérance : 3 mm sur 2 m)\n- Si l'ancien carrelage est en mauvais état → dépose obligatoire\n- Ragréage si le sol n'est pas plan\n- Imperméabilisation (étanchéité) obligatoire dans les douches et salles de bain\n\n**Avant de commander le carrelage :**\n- Mesurez précisément et ajoutez 10–15% pour les chutes et casses\n- Commandez tout d'un seul lot (les nuances de couleur varient entre lots)\n- Choisissez le format ET la couleur des joints avant la pose\n\n**Ce que doit inclure le devis :**\n- Surface à carreler (m²) précise\n- Type de colle et joint utilisés\n- Préparation du support incluse ou non\n- Traitement des plinthes et finitions",
+                ],
+                [
+                    'title'   => "5. Erreurs fréquentes à éviter",
+                    'content' => "**Erreurs des clients :**\n\n❌ **Choisir sur le prix uniquement** — une différence de 20 MAD/m² peut cacher une absence d'étanchéité dans la douche (moisissures dans 2 ans)\n\n❌ **Acheter le carrelage avant le devis** — le carreleur calcule les pertes selon le plan de pose, pas vous\n\n❌ **Imposer un délai trop court** — un carrelage posé à la hâte (sans respecter le temps de séchage de la colle) se décollera\n\n❌ **Négliger l'étanchéité** — dans une douche, l'étanchéité sous le carrelage est obligatoire, pas optionnelle\n\n❌ **Payer 100% à l'avance** — maximum 30–40% d'acompte, solde à la fin\n\n**Conseil final :** Marchandez le prix sur les matériaux plutôt que sur la main-d'œuvre. Une pose de qualité protège votre investissement carrelage pendant 20 ans.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un carreleur vérifié au Maroc",
+                'url'   => '/professionals?profession=Carreleur',
+                'label' => 'Voir les carreleurs',
+            ],
+            'related' => [
+                'maconnerie-maroc-guide',
+                'prix-artisan-maroc-2026',
+            ],
+        ],
+
+        'peintre-casablanca' => [
+            'slug'        => 'peintre-casablanca',
+            'title'       => "Peintre à Casablanca : tarifs et conseils 2026",
+            'description' => "Comment trouver un peintre fiable à Casablanca : tarifs 2026 par quartier, types de peinture adaptés au climat casablancais et erreurs à éviter.",
+            'category'    => 'Peinture',
+            'city'        => 'Casablanca',
+            'readTime'    => 5,
+            'date'        => '2026-05-25',
+            'intro'       => "Casablanca, première ville du Maroc, concentre une demande massive en travaux de peinture — appartements à rénover, locaux commerciaux, façades à ravaler. Voici comment trouver le bon peintre dans la métropole.",
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des peintres à Casablanca (2026)",
+                    'content' => "| Type de travaux | Prix indicatif |\n|----------------|---------------|\n| Peinture murale intérieure (2 couches) | 20–40 MAD/m² |\n| Peinture plafond | 25–45 MAD/m² |\n| Enduit + peinture (3 couches) | 45–80 MAD/m² |\n| Peinture façade extérieure | 35–70 MAD/m² |\n| Local commercial (murs + plafond) | 25–50 MAD/m² |\n| Tadelakt (douche, cuisine) | 150–350 MAD/m² |\n\n*Tarifs plus élevés dans les quartiers Maarif, Gauthier, Anfa et Hay Riad (+15–25%). Médina et Hay Hassani : tarifs courants.*",
+                ],
+                [
+                    'title'   => "2. Spécificités du climat casablancais",
+                    'content' => "Casablanca a un climat atlantique humide qui impacte directement le choix de la peinture :\n\n**Façades :**\n- Choisissez obligatoirement une peinture **façade respirante** (classe II minimum)\n- La peinture acrylique standard ne tient pas plus de 3–4 ans face à l'humidité atlantique\n- Vérifiez l'état des fissures avant de peindre (reprendre avec enduit de rebouchage)\n\n**Intérieurs :**\n- Cuisine et salle de bain : peinture **satinée** obligatoire (résistante à l'humidité)\n- Pièces de vie : peinture **mate lavable** recommandée\n- Sous-sol ou caves : peinture **anti-humidité** (traitement préalable si traces)\n\n**Moisissures :**\nCasablanca étant humide, les moisissures sont fréquentes. Si vous en avez, un traitement fongicide doit précéder la peinture — un peintre qui peint par-dessus sans traitement ne règle rien.",
+                ],
+                [
+                    'title'   => "3. Comment choisir son peintre à Casablanca",
+                    'content' => "**Vérifications essentielles :**\n- Travaille-t-il dans votre quartier ? (certains refusent la Médina ou les banlieues éloignées)\n- A-t-il de l'expérience avec les façades ou le tadelakt si c'est votre besoin ?\n- Peut-il commencer en semaine (évitez les peintres qui travaillent uniquement le week-end)\n\n**Questions clés :**\n- Quelle marque de peinture utilisez-vous ? (Valentine, Tollens, StoColor — pas de marques génériques inconnues)\n- Le prix comprend-il le lessivage et l'impression ?\n- Protégez-vous les sols et fenêtres ?\n- Combien de jours pour mon appartement de X m² ?\n\n**Red flags :**\n❌ Refuse de préciser la marque de peinture\n❌ Devis verbal seulement\n❌ Prix trop bas (< 15 MAD/m² murs : c'est une couche unique sans préparation)",
+                ],
+                [
+                    'title'   => "4. Rénovation vs. rafraîchissement",
+                    'content' => "**Rafraîchissement (1–2 couches sur existant propre) :**\n- Idéal si la peinture est en bon état, juste vieillie\n- 1–2 jours pour un F3\n- Prix : 15–30 MAD/m²\n\n**Rénovation complète (grattage + enduit + peinture) :**\n- Nécessaire si fissures, décollements, taches de nicotine, humidité\n- 3–5 jours pour un F3\n- Prix : 40–80 MAD/m²\n\n**Avant de commander :**\n- Vérifiez l'état exact des murs avec le peintre lors de la visite de devis\n- Ne vous contentez pas d'un devis par téléphone pour les travaux importants\n- Si vous avez un doute sur l'humidité : demandez un diagnostic avant peinture\n\n*Un peintre sérieux refuse de peindre sur une surface non préparée — c'est bon signe.*",
+                ],
+                [
+                    'title'   => "5. Travaux en logement occupé vs. vide",
+                    'content' => "**Logement vide (idéal) :**\n- Pas de protection de meubles → travail plus rapide et plus propre\n- Peintre peut travailler en toute pièce sans contrainte\n- Prix identique mais résultat souvent meilleur\n\n**Logement occupé :**\n- Protection obligatoire de tous les meubles et sols\n- Travail pièce par pièce (délai plus long)\n- Ventilez bien pendant et après (24–48h pour séchage complet)\n- Évitez les enfants en bas âge pendant les travaux (vapeurs de solvants)\n\n**Conseils pratiques à Casablanca :**\n- Évitez de peindre pendant les mois de forte humidité (décembre–mars) si possible\n- Si vous avez un balcon donnant sur rue : la façade est sous responsabilité du syndic, pas la vôtre\n- Préparez votre appartement (déménager ce que vous pouvez) pour gagner du temps et de l'argent\n\n*Jobly vous permet de comparer 2–3 peintres à Casablanca et de lire leurs avis avant de choisir.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un peintre vérifié à Casablanca",
+                'url'   => '/professionnels/casablanca/peinture',
+                'label' => 'Voir les peintres de Casablanca',
+            ],
+            'related' => [
+                'peintre-maroc-guide',
+                'prix-artisan-maroc-2026',
+            ],
+        ],
     ];
 
     public function index(): \Inertia\Response

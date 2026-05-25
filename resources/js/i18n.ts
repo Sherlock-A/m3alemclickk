@@ -590,6 +590,8 @@ const resources = {
       testi_title: 'Ce que disent nos clients',
       testi_sub: 'Des milliers de familles ont trouvé leur artisan de confiance sur Jobly',
       testi_by: 'via',
+      top_pros_title: 'Les meilleurs artisans par ville',
+      top_pros_sub: 'Découvrez le classement des professionnels les mieux notés dans votre ville',
 
       // Categories page
       cat_page_head: 'Catégories — Jobly',
@@ -1204,6 +1206,8 @@ const resources = {
       testi_title: 'ما يقوله عملاؤنا',
       testi_sub: 'آلاف العائلات وجدت حرفيها الموثوق على Jobly',
       testi_by: 'عبر',
+      top_pros_title: 'أفضل الحرفيين حسب المدينة',
+      top_pros_sub: 'اكتشف تصنيف المهنيين الأعلى تقييماً في مدينتك',
 
       // Categories page
       cat_page_head: 'الفئات — Jobly',
@@ -1364,6 +1368,8 @@ const resources = {
       testi_title: 'What our clients say',
       testi_sub: 'Thousands of families found their trusted craftsman on Jobly',
       testi_by: 'via',
+      top_pros_title: 'Top craftsmen by city',
+      top_pros_sub: 'Discover the highest-rated professionals in your city',
       empty_title: 'No {{profession}} yet',
       empty_sub: 'Leave your number — we\'ll call you back within 24h with the right craftsman.',
       empty_sent_title: 'Message sent!',

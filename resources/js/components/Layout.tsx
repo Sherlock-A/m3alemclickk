@@ -120,13 +120,16 @@ export function Layout({ children }: { children: ReactNode }) {
 
   // Always use translated links — server links are hardcoded in French
   const footerLinks = [
-    { label: t('nav_home'),            url: '/' },
-    { label: t('nav_professionals'),   url: '/professionals' },
-    { label: 'Guides & Conseils',      url: '/guides' },
-    { label: 'Tarifs',                 url: '/tarifs' },
-    { label: t('nav_how_it_works'),    url: '/how-it-works' },
-    { label: t('footer_pro_register'), url: '/pro/register' },
-    { label: t('nav_contact'),         url: '/contact' },
+    { label: t('nav_home'),                      url: '/' },
+    { label: t('nav_professionals'),             url: '/professionals' },
+    { label: 'Toutes les catégories',            url: '/categories' },
+    { label: '🏆 Top plombiers Casablanca',      url: '/top-artisans/casablanca/plomberie' },
+    { label: '🏆 Top électriciens Rabat',        url: '/top-artisans/rabat/electricite' },
+    { label: 'Guides & Conseils',                url: '/guides' },
+    { label: 'Tarifs',                           url: '/tarifs' },
+    { label: t('nav_how_it_works'),              url: '/how-it-works' },
+    { label: t('footer_pro_register'),           url: '/pro/register' },
+    { label: t('nav_contact'),                   url: '/contact' },
   ];
 
   const AuthButtons = ({ mobile = false }: { mobile?: boolean }) => {

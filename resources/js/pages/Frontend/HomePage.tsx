@@ -690,6 +690,43 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
       </section>
 
 
+      {/* ── Top Artisans Leaderboard links ───────────────────────────── */}
+      <section className="border-t border-slate-100 dark:border-slate-800 bg-gradient-to-b from-orange-50/50 to-transparent dark:from-orange-950/10 py-12">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+              🏆 {t('top_pros_title')}
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">{t('top_pros_sub')}</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { city: 'Casablanca', cat: 'plomberie',     label: 'Plombiers',     emoji: '🔧', slug: 'plomberie' },
+              { city: 'Casablanca', cat: 'electricite',   label: 'Électriciens',  emoji: '⚡', slug: 'electricite' },
+              { city: 'Casablanca', cat: 'menage',        label: 'Aide ménagère', emoji: '🧹', slug: 'menage' },
+              { city: 'Rabat',      cat: 'plomberie',     label: 'Plombiers',     emoji: '🔧', slug: 'plomberie' },
+              { city: 'Rabat',      cat: 'electricite',   label: 'Électriciens',  emoji: '⚡', slug: 'electricite' },
+              { city: 'Marrakech',  cat: 'climatisation', label: 'Climatisation', emoji: '❄️', slug: 'climatisation' },
+            ].map(({ city, cat, label, emoji, slug }) => (
+              <a
+                key={`${city}-${cat}`}
+                href={`/top-artisans/${city.toLowerCase()}/${slug}`}
+                className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 hover:border-orange-300 hover:shadow-sm dark:hover:border-orange-700 transition-all group"
+              >
+                <span className="text-2xl shrink-0">{emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-800 dark:text-white truncate">
+                    Top 10 {label}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{city}</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-orange-400 shrink-0 group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── SOS Urgence modal ─────────────────────────────────────────── */}
       {showSos && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
