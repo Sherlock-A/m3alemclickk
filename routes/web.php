@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\LeaderboardController;
 use App\Http\Controllers\Web\ProfessionalPageController;
 use App\Http\Controllers\Api\SocialAuthController;
 use App\Models\Category;
@@ -20,6 +21,7 @@ Route::get('/professionals/{slug}', [ProfessionalPageController::class, 'show'])
 Route::get('/professionnels/{city}',           [ProfessionalPageController::class, 'byCity'])->name('professionals.city');
 Route::get('/professionnels/{city}/{category}', [ProfessionalPageController::class, 'byCity'])->name('professionals.city.category');
 Route::get('/categories', \App\Http\Controllers\Web\CategoryPageController::class)->name('categories');
+Route::get('/top-artisans/{city}/{category}', [LeaderboardController::class, 'show'])->name('leaderboard');
 Route::get('/how-it-works', fn () => Inertia::render('Frontend/HowItWorksPage'))->name('how-it-works');
 Route::get('/contact',      fn () => Inertia::render('Frontend/ContactPage'))->name('contact');
 

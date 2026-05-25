@@ -149,6 +149,9 @@ class AdminController extends Controller
         Professional::where('id', $review->professional_id)
             ->update(['rating' => round($avg, 2)]);
 
+        // Invalidate AI review summary cache
+        \Illuminate\Support\Facades\Cache::forget("review_summary_{$review->professional_id}");
+
         return response()->json(['success' => true]);
     }
 

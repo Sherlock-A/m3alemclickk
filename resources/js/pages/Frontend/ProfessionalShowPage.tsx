@@ -4,7 +4,7 @@ import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 import {
   Heart, MapPin, MessageCircle, Phone, ShieldCheck,
-  Star, Send, CheckCircle, AlertCircle, Mail, BadgeCheck, LogIn, Share2,
+  Star, Send, CheckCircle, AlertCircle, Mail, BadgeCheck, LogIn, Share2, Sparkles,
 } from 'lucide-react';
 import { Layout } from '../../components/Layout';
 import { Category, Professional } from '../../types';
@@ -60,6 +60,16 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
       .then(r => setClientUser({ name: r.data.name, email: r.data.email }))
       .catch(() => {});
   }, []);
+
+  // AI review summary
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  useEffect(() => {
+    const reviews = professional.reviews || [];
+    if (reviews.filter((r: any) => r.approved && r.comment).length < 3) return;
+    axios.get(`/api/professionals/${professional.id}/review-summary`)
+      .then(r => { if (r.data.summary) setAiSummary(r.data.summary); })
+      .catch(() => {});
+  }, [professional.id]);
 
   // Review form state
   const [showForm, setShowForm] = useState(false);
@@ -512,6 +522,17 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
             </div>
 
             {/* Reviews */}
+            {/* AI review summary */}
+            {aiSummary && (
+              <div className="rounded-2xl border border-violet-100 dark:border-violet-900/30 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/10 dark:to-purple-900/10 px-5 py-4 flex gap-3">
+                <Sparkles className="h-5 w-5 shrink-0 text-violet-500 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-violet-600 dark:text-violet-400 mb-1">Synthèse IA des avis</p>
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed italic">"{aiSummary}"</p>
+                </div>
+              </div>
+            )}
+
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900">
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-xl font-black text-slate-800 dark:text-white">{t('show_reviews_title', { n: reviews.length })}</h2>
