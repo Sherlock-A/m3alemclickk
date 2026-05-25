@@ -7,6 +7,9 @@
     @inertiaHead
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="fr" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="ar" href="{{ url()->current() }}">
+    <link rel="alternate" hreflang="x-default" href="{{ url()->current() }}">
 
     {{-- PWA --}}
     <link rel="manifest" href="/manifest.json">

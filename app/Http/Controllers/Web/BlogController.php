@@ -722,7 +722,253 @@ class BlogController extends Controller
             ],
             'related' => [
                 'peintre-maroc-guide',
-                'prix-artisan-maroc-2026',
+                'peintre-casablanca',
+            ],
+        ],
+
+        'climatiseur-casablanca' => [
+            'slug'        => 'climatiseur-casablanca',
+            'title'       => "Climatiseur à Casablanca : installation et réparation 2026",
+            'description' => "Tout savoir sur l'installation et la réparation de climatiseurs à Casablanca : marques, tarifs, entretien annuel et techniciens vérifiés.",
+            'category'    => 'Climatisation',
+            'city'        => 'Casablanca',
+            'readTime'    => 6,
+            'date'        => '2026-05-20',
+            'sections'    => [
+                [
+                    'title'   => "1. Quel climatiseur choisir à Casablanca",
+                    'content' => "**Les marques fiables sur le marché marocain :**\n- Gree, Midea, Samsung, LG, Daikin (haut de gamme)\n- Modèle Inverter : économise 30–40% d'énergie vs. non-inverter\n\n**Capacités recommandées :**\n- Chambre (15–20 m²) : 9 000 BTU\n- Salon (25–35 m²) : 12 000–18 000 BTU\n- Plateau ou open space : 24 000 BTU minimum\n\nÀ Casablanca, le climat atlantique humide rend la climatisation réversible (chaud/froid) particulièrement intéressante.",
+                ],
+                [
+                    'title'   => "2. Tarifs d'installation à Casablanca en 2026",
+                    'content' => "**Prix d'installation standard (matériel non inclus) :**\n- Split 9 000 BTU : 800–1 200 MAD\n- Split 12 000–18 000 BTU : 1 000–1 500 MAD\n- Cassette de plafond : 2 000–3 500 MAD\n- Gainable : 4 000–8 000 MAD\n\n**Inclus dans l'installation :** pose des unités, liaison frigorifique, mise en service, percée des murs.\n\n**Non inclus :** câblage électrique dédié (300–500 MAD en plus si absent).",
+                ],
+                [
+                    'title'   => "3. Entretien annuel : pourquoi et combien",
+                    'content' => "Un climatiseur non entretenu perd 20–30% d'efficacité par an.\n\n**Entretien annuel basique :**\n- Nettoyage des filtres (tous les 3 mois par l'utilisateur)\n- Nettoyage complet (serpentin, bac, ventilateur) : 300–500 MAD\n- Vérification du niveau de gaz : 200–400 MAD si recharge\n\n**Signes d'urgence :**\n- Eau qui coule à l'intérieur (bouchon de condensats)\n- Bruit inhabituel (palier moteur ou manque de gaz)\n- L'appareil ne refroidit plus (fuite de gaz probable)",
+                ],
+                [
+                    'title'   => "4. Réparations fréquentes et leurs coûts",
+                    'content' => "**Pannes fréquentes à Casablanca :**\n\n| Panne | Coût approximatif |\n|-------|------------------|\n| Recharge gaz R32 | 400–700 MAD |\n| Carte électronique | 800–1 500 MAD |\n| Moteur ventilateur | 500–900 MAD |\n| Bac condensats bouché | 200–400 MAD |\n| Télécommande de remplacement | 100–300 MAD |\n\nSi la réparation dépasse 60% du prix d'un appareil neuf : envisagez le remplacement.",
+                ],
+                [
+                    'title'   => "5. Comment choisir un bon technicien climatiseur",
+                    'content' => "**À vérifier avant de confier votre appareil :**\n- Intervient-il dans votre quartier de Casablanca ?\n- Utilise-t-il des pièces d'origine ?\n- Propose-t-il une garantie sur l'intervention ?\n\n**Red flags :**\n❌ Prix d'installation < 700 MAD tout inclus\n❌ Refus de devis écrit pour une réparation\n❌ Ne teste pas l'appareil après intervention\n\nSur Jobly, les techniciens en climatisation sont vérifiés et notés par leurs clients.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un technicien climatiseur à Casablanca",
+                'url'   => '/professionnels/casablanca/climatisation',
+                'label' => 'Voir les techniciens climatiseur',
+            ],
+            'related' => [
+                'climatisation-maroc-guide',
+                'choisir-electricien-maroc',
+            ],
+        ],
+
+        'electricien-rabat-guide' => [
+            'slug'        => 'electricien-rabat-guide',
+            'title'       => "Électricien à Rabat : tarifs et conseils 2026",
+            'description' => "Guide complet pour trouver un électricien fiable à Rabat : tarifs des interventions, normes électriques marocaines, et artisans vérifiés.",
+            'category'    => 'Électricité',
+            'city'        => 'Rabat',
+            'readTime'    => 5,
+            'date'        => '2026-05-21',
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des électriciens à Rabat en 2026",
+                    'content' => "**Interventions courantes :**\n\n| Prestation | Tarif indicatif |\n|-----------|----------------|\n| Déplacement + diagnostic | 150–250 MAD |\n| Remplacement prise/interrupteur | 100–200 MAD |\n| Installation tableau électrique | 1 500–4 000 MAD |\n| Mise aux normes appartement | 3 000–8 000 MAD |\n| Pose luminaire/plafonnier | 150–300 MAD |\n| Installation chauffe-eau électrique | 300–600 MAD |\n\nCes tarifs s'entendent main d'œuvre uniquement pour Rabat intra-muros.",
+                ],
+                [
+                    'title'   => "2. Normes électriques à respecter au Maroc",
+                    'content' => "**Les normes marocaines (NM 07.5.110) exigent :**\n- Prise de terre obligatoire dans les pièces humides (cuisine, salle de bain)\n- Disjoncteur différentiel 30mA sur les circuits salle de bain et cuisine\n- Section des fils adaptée à la puissance : 1,5 mm² éclairage, 2,5 mm² prises, 6 mm² four/chauffe-eau\n\n**Un appartement non mis aux normes risque :**\n- Refus de l'assurance en cas d'incendie d'origine électrique\n- Risque d'électrocution (surtout pour les enfants)\n- Compteur ONEE refusé lors d'une location ou vente",
+                ],
+                [
+                    'title'   => "3. Problèmes électriques fréquents à Rabat",
+                    'content' => "**Les pannes les plus courantes :**\n- Disjoncteur qui saute : surcharge de circuit ou court-circuit (ne réarmez pas sans diagnostic)\n- Prises sans terre dans les anciennes médinas et appartements des années 70–80\n- Câblage vieillissant dans les immeubles de l'époque coloniale (agdal, Hassan, Océan)\n- Problèmes d'humidité dans les sous-sols (caves, parking souterrain)\n\n**À Rabat, les vieux appartements du Quartier des Ministères** nécessitent souvent une mise aux normes complète — prévoir entre 5 000 et 12 000 MAD.",
+                ],
+                [
+                    'title'   => "4. Questions à poser avant de recruter un électricien",
+                    'content' => "**Avant de signer un devis :**\n- Le devis distingue-t-il bien la main d'œuvre du matériel ?\n- L'électricien travaille-t-il seul ou avec un apprenti ?\n- Peut-il fournir une attestation de conformité après travaux ?\n- A-t-il de l'expérience sur le type de travaux concerné (neuf vs. rénovation) ?\n\n**Ce que doit inclure un devis sérieux :**\n- Descriptif précis des travaux\n- Références du matériel utilisé (marque, section)\n- Délai d'intervention estimé\n- Conditions de paiement (jamais 100% en avance)",
+                ],
+                [
+                    'title'   => "5. Urgence électrique à Rabat : que faire",
+                    'content' => "**En cas de panne électrique totale :**\n1. Vérifiez le tableau de distribution (disjoncteur principal sauté ?)\n2. Vérifiez si vos voisins sont également touchés (problème ONEE ?)\n3. Appelez un électricien d'urgence si le problème vient de votre installation\n\n**En cas de court-circuit avec odeur de brûlé :**\n- Coupez le disjoncteur général immédiatement\n- N'utilisez aucun appareil avant l'intervention d'un électricien\n\nSur Jobly, filtrez les électriciens **Disponibles maintenant** à Rabat pour une intervention rapide.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un électricien à Rabat",
+                'url'   => '/professionnels/rabat/electricite',
+                'label' => 'Voir les électriciens de Rabat',
+            ],
+            'related' => [
+                'choisir-electricien-maroc',
+                'plombier-rabat-guide',
+            ],
+        ],
+
+        'peintre-marrakech' => [
+            'slug'        => 'peintre-marrakech',
+            'title'       => "Peintre à Marrakech : trouver le meilleur en 2026",
+            'description' => "Guide pour choisir un peintre à Marrakech : tarifs, tadelakt, enduits décoratifs, spécificités du climat chaud et artisans vérifiés.",
+            'category'    => 'Peinture',
+            'city'        => 'Marrakech',
+            'readTime'    => 6,
+            'date'        => '2026-05-21',
+            'sections'    => [
+                [
+                    'title'   => "1. Prix des peintres à Marrakech en 2026",
+                    'content' => "**Tarifs indicatifs à Marrakech :**\n\n| Type de travaux | Prix au m² |\n|----------------|------------|\n| Peinture intérieure (2 couches) | 20–40 MAD |\n| Peinture façade extérieure | 35–60 MAD |\n| Tadelakt (enduit décoratif) | 150–350 MAD |\n| Béton ciré | 120–250 MAD |\n| Chaux aérienne traditionnelle | 60–120 MAD |\n\nLes artisans de Marrakech sont souvent spécialisés dans les finitions traditionnelles (tadelakt, zellij enduit), ce qui justifie des tarifs plus élevés que la moyenne nationale.",
+                ],
+                [
+                    'title'   => "2. Spécificités du climat de Marrakech pour la peinture",
+                    'content' => "Marrakech a un climat semi-aride chaud avec des étés très secs (jusqu'à 45°C). Cela impacte directement les choix de peinture :\n\n**Façades :**\n- Peinture **siliconate** ou **minérale** recommandée (résiste aux UV mieux que l'acrylique)\n- Évitez les couleurs foncées sur façades exposées au sud/ouest (absorption de chaleur)\n- La chaux traditionnelle reste un excellent choix pour les riads (respire, thermo-régule)\n\n**Intérieurs :**\n- En été, les appartements s'échauffent vite : peinture réfléchissante ou couleurs claires recommandées\n- Salle de bain : tadelakt marocain traditionnel est imperméable et décoratif",
+                ],
+                [
+                    'title'   => "3. Tadelakt et enduits décoratifs : ce qu'il faut savoir",
+                    'content' => "Le tadelakt est une technique marrakchie traditionnelle. Voici ce qu'il faut savoir avant de commander :\n\n**Ce que c'est :**\n- Enduit à base de chaux savonnée, poli à la pierre\n- Imperméable naturellement — parfait pour les salles de bain et hammams\n- Dure 20–30 ans si bien posé\n\n**Ce que ça coûte :**\n- 150 à 350 MAD/m² selon complexité et artisan\n- Compter 3–5 couches d'application sur 3–5 jours de séchage\n\n**Attention :**\n- Réparation difficile en cas de choc ou fissure\n- Nécessite un artisan vraiment expérimenté — vérifiez des photos de réalisations avant de commander",
+                ],
+                [
+                    'title'   => "4. Peinture pour riads et maisons traditionnelles",
+                    'content' => "**Les riads ont des contraintes spécifiques :**\n- Murs en pisé (terre comprimée) : incompatibles avec la peinture plastique — utilisez la chaux uniquement\n- Boiseries (portes, moucharabieh, zouak) : peinture glycéro spéciale bois, jamais acrylique\n- Enduits à la chaux : ne s'associent qu'avec d'autres produits chaux\n\n**Peintre polyvalent vs. peintre maâlem :**\nPour un riad traditionnel, préférez un *maâlem* (maître-artisan) spécialisé en finitions marocaines plutôt qu'un peintre généraliste. La différence de qualité est majeure.",
+                ],
+                [
+                    'title'   => "5. Comment trouver un bon peintre à Marrakech",
+                    'content' => "**Questions clés avant de recruter :**\n- A-t-il de l'expérience avec le tadelakt ou la chaux ?\n- Peut-il vous montrer des photos de réalisations similaires ?\n- Travaille-t-il dans votre quartier ? (Guéliz, Médina, Palmeraie ont des dynamiques différentes)\n- Le prix inclut-il la préparation des supports ?\n\n**Red flags :**\n❌ Peintre qui propose d'appliquer de la peinture acrylique sur des murs en pisé\n❌ Devis au téléphone sans visite du chantier\n❌ Prix trop bas pour du tadelakt (< 100 MAD/m² : mauvaise qualité garantie)",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un peintre à Marrakech",
+                'url'   => '/professionnels/marrakech/peinture',
+                'label' => 'Voir les peintres de Marrakech',
+            ],
+            'related' => [
+                'peintre-maroc-guide',
+                'jardinage-marrakech',
+            ],
+        ],
+
+        'demenagement-rabat' => [
+            'slug'        => 'demenagement-rabat',
+            'title'       => "Déménagement à Rabat : guide et prix 2026",
+            'description' => "Guide complet pour déménager à Rabat ou depuis Rabat : prix des déménageurs, astuces d'organisation, ce qu'il faut vérifier avant de signer.",
+            'category'    => 'Déménagement',
+            'city'        => 'Rabat',
+            'readTime'    => 6,
+            'date'        => '2026-05-22',
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des déménageurs à Rabat en 2026",
+                    'content' => "**Prix indicatifs selon la taille du logement :**\n\n| Logement | Déménagement local (Rabat) | Rabat → Casablanca |\n|----------|--------------------------|--------------------|\n| Studio | 800–1 500 MAD | 1 500–2 500 MAD |\n| F2 (2 pièces) | 1 200–2 200 MAD | 2 000–3 500 MAD |\n| F3 (3 pièces) | 1 800–3 500 MAD | 3 000–5 000 MAD |\n| F4 et + | 2 500–5 000 MAD | 4 000–7 000 MAD |\n\nCes prix incluent généralement la main d'œuvre et le camion. L'emballage est souvent en supplément (150–400 MAD).",
+                ],
+                [
+                    'title'   => "2. Spécificités des déménagements à Rabat",
+                    'content' => "**Quartiers avec contraintes particulières :**\n- **Médina et Kasbah des Oudayas** : rues étroites, camions de plus de 3,5T impossibles → prévoir véhicule léger + allers-retours\n- **Hassan, Agdal, Hay Riad** : stationnement limité le matin — arrivez tôt ou obtenez une autorisation provisoire\n- **Salé et Bettana** : prévoir le coût du franchissement du pont ou de la navette\n\n**Horaires recommandés :**\n- Évitez 7h30–9h00 et 17h00–19h00 (embouteillages entre Rabat et Salé)\n- Le vendredi matin est généralement plus fluide",
+                ],
+                [
+                    'title'   => "3. Comment comparer les devis de déménageurs",
+                    'content' => "**Un bon devis de déménagement doit préciser :**\n- Nombre de déménageurs (minimum 2 pour un F3)\n- Capacité du camion en m³\n- Couverture en cas de casse (assurance ou non ?)\n- Prix de l'emballage si demandé\n- Délai de livraison si garde-meuble nécessaire\n\n**Méfiez-vous des devis trop bas :**\nUn déménagement à 600 MAD pour un F3 signifie souvent 1 seul déménageur inexpérimenté, pas d'assurance, et des allers-retours interminables.\n\nDemandez toujours une confirmation écrite du prix total avant le jour J.",
+                ],
+                [
+                    'title'   => "4. Organisation d'un déménagement réussi",
+                    'content' => "**J-30 avant le déménagement :**\n- Obtenez 3 devis comparatifs\n- Commandez vos cartons (20–40 selon logement)\n- Déclarez le changement d'adresse à la poste\n\n**J-7 :**\n- Commencez par les affaires peu utilisées (livres, décoration)\n- Étiquetez chaque carton (pièce de destination + contenu fragile)\n\n**Jour J :**\n- Faites un état des lieux de l'ancien logement avant le départ\n- Vérifiez que rien n'est oublié dans les placards hauts et la cave\n- Comptez vos cartons à l'arrivée\n\n**J+7 :**\n- Vérifiez l'état du mobilier — signalez toute casse dans les 48h",
+                ],
+                [
+                    'title'   => "5. Choisir un déménageur fiable à Rabat",
+                    'content' => "**Vérifications essentielles :**\n- L'entreprise est-elle déclarée ? (évitez les particuliers sans référence)\n- Propose-t-elle une assurance casse ? (même partielle)\n- A-t-elle des avis clients vérifiés ?\n\n**Pour les déménagements vers l'étranger :**\n- Prévoyez 3–4 semaines de délai\n- Demandez une liste de colisage pour la douane\n- Renseignez-vous sur les droits de douane du pays de destination\n\nSur Jobly, les déménageurs à Rabat sont évalués par des clients réels — comparez leurs notes avant de choisir.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un déménageur à Rabat",
+                'url'   => '/professionnels/rabat/demenagement',
+                'label' => 'Voir les déménageurs de Rabat',
+            ],
+            'related' => [
+                'demenagement-casablanca',
+                'plombier-rabat-guide',
+            ],
+        ],
+
+        'jardinier-casablanca' => [
+            'slug'        => 'jardinier-casablanca',
+            'title'       => "Jardinier à Casablanca : entretien jardin 2026",
+            'description' => "Trouver un jardinier à Casablanca : tarifs d'entretien, travaux de création, arrosage automatique et jardins méditerranéens adaptés au climat atlantic.",
+            'category'    => 'Jardinage',
+            'city'        => 'Casablanca',
+            'readTime'    => 5,
+            'date'        => '2026-05-22',
+            'sections'    => [
+                [
+                    'title'   => "1. Prix des jardiniers à Casablanca en 2026",
+                    'content' => "**Tarifs d'entretien régulier :**\n\n| Prestation | Tarif indicatif |\n|-----------|----------------|\n| Tonte pelouse (forfait visite) | 150–300 MAD |\n| Taille haies et arbustes | 200–500 MAD |\n| Entretien mensuel (petit jardin) | 400–800 MAD/mois |\n| Entretien mensuel (grand jardin) | 800–2 000 MAD/mois |\n| Création gazon (semis ou plaquage) | 40–80 MAD/m² |\n| Pose système d'arrosage automatique | 1 500–5 000 MAD |\n\nLes prix varient selon la surface, la complexité et le quartier (Anfa, Ain Diab, Bouskoura ont des jardins plus grands).",
+                ],
+                [
+                    'title'   => "2. Plantes adaptées au climat de Casablanca",
+                    'content' => "Le climat atlantique de Casablanca est doux (11–25°C) avec peu de gel et une pluviométrie modérée. Des plantes idéales :\n\n**Arbustes et haies :**\n- Bougainvillée (résistante, fleurit en été)\n- Oleander (laurier-rose) — attention, toxique pour les enfants\n- Pittosporum et photinia (haies structurées)\n- Jasmin (parfumé, rapide)\n\n**Gazon :**\n- Ray-grass anglais (résiste à la chaleur modérée)\n- Bermuda (résiste à la sécheresse estivale, moins vert en hiver)\n- Kikuyu (croissance rapide, demande peu d'eau)\n\n**Potager :**\n- Tomates, poivrons, courgettes en été\n- Carottes, choux, laitues d'octobre à mai",
+                ],
+                [
+                    'title'   => "3. Entretien saisonnier du jardin casablancais",
+                    'content' => "**Printemps (mars–mai) :**\n- Taille de forme des arbustes avant la pousse\n- Semis de gazon ou remplacement des zones mortes\n- Installation ou vérification de l'arrosage automatique\n\n**Été (juin–septembre) :**\n- Arrosage intensifié (tôt le matin ou le soir)\n- Tonte fréquente (toutes les 2–3 semaines)\n- Paillage pour conserver l'humidité du sol\n\n**Automne (octobre–novembre) :**\n- Plantation d'arbustes et arbres (bonne saison pour le sol)\n- Taille des rosiers et fruitiers\n\n**Hiver (décembre–février) :**\n- Réduction de l'arrosage\n- Protection des plantes sensibles au froid (rares gels à Casa, mais ça arrive)",
+                ],
+                [
+                    'title'   => "4. Arrosage automatique : vaut-il l'investissement ?",
+                    'content' => "À Casablanca, l'été sec et chaud justifie pleinement l'arrosage automatique pour un jardin de plus de 50 m².\n\n**Avantages :**\n- Économie d'eau de 30–50% (arrosage précis aux racines)\n- Jardin entretenu même pendant les vacances d'été\n- Gain de temps considérable\n\n**Coûts d'installation :**\n- Petit jardin (50–100 m²) : 1 500–3 000 MAD\n- Jardin moyen (100–300 m²) : 3 000–7 000 MAD\n- Grand jardin avec multiple zones : 7 000–15 000 MAD\n\n**Retour sur investissement :** environ 2–3 saisons avec l'économie d'eau et du temps de jardinage.",
+                ],
+                [
+                    'title'   => "5. Choisir un bon jardinier à Casablanca",
+                    'content' => "**Questions clés avant de recruter :**\n- Intervient-il régulièrement dans votre quartier ?\n- A-t-il de l'expérience avec les pelouses en climat atlantique ?\n- Apporte-t-il son propre matériel (tondeuse, taille-haie) ?\n- Peut-il proposer un contrat d'entretien mensuel avec planning ?\n\n**Red flags :**\n❌ Jardinier qui arrose en plein midi (évaporation immédiate)\n❌ Taille agressive des arbres fruitiers en dehors de la saison correcte\n❌ Pas de connaissance des espèces locales marocaines\n\nSur Jobly, les jardiniers à Casablanca sont vérifiés et notés. Comparez leurs profils avant de choisir.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un jardinier à Casablanca",
+                'url'   => '/professionnels/casablanca/jardinage',
+                'label' => 'Voir les jardiniers de Casablanca',
+            ],
+            'related' => [
+                'jardinage-marrakech',
+                'femme-de-menage-casablanca',
+            ],
+        ],
+
+        'menuisier-casablanca' => [
+            'slug'        => 'menuisier-casablanca',
+            'title'       => "Menuisier à Casablanca : bois, aluminium, PVC 2026",
+            'description' => "Guide pour trouver un menuisier à Casablanca : tarifs des portes et fenêtres, comparatif bois vs aluminium vs PVC, et artisans vérifiés.",
+            'category'    => 'Menuiserie',
+            'city'        => 'Casablanca',
+            'readTime'    => 6,
+            'date'        => '2026-05-23',
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des menuisiers à Casablanca en 2026",
+                    'content' => "**Prix indicatifs :**\n\n| Prestation | Tarif indicatif |\n|-----------|----------------|\n| Porte intérieure bois (pose) | 300–600 MAD |\n| Fenêtre aluminium (fourniture + pose) | 1 500–4 000 MAD |\n| Porte d'entrée blindée (fourniture + pose) | 3 000–8 000 MAD |\n| Placard sur mesure (par ml) | 800–2 500 MAD/ml |\n| Parquet stratifié (pose seule) | 40–80 MAD/m² |\n| Vérandas et pergolas alu | 5 000–20 000 MAD |\n\nCes prix varient selon la marque des matériaux et la complexité de la pose.",
+                ],
+                [
+                    'title'   => "2. Bois, aluminium ou PVC : quel choix pour Casablanca ?",
+                    'content' => "**Aluminium (recommandé pour Casablanca) :**\n- Résiste à l'humidité atlantique (pas de gonflement ni de pourriture)\n- Excellent pour les façades (double vitrage, isolation thermique)\n- Durée de vie 30–50 ans\n- Entretien quasi nul\n- Prix moyen à élevé\n\n**PVC :**\n- Bon isolant thermique et phonique\n- Moins cher que l'aluminium\n- Moins résistant aux impacts (façades exposées)\n- Durée de vie 20–30 ans\n\n**Bois :**\n- Esthétique chaleureux, idéal pour les intérieurs\n- À Casablanca : nécessite traitement antifongique régulier (humidité atlantique)\n- Coût d'entretien plus élevé que l'alu ou le PVC\n- Parfait pour les meubles sur mesure et escaliers",
+                ],
+                [
+                    'title'   => "3. Fenêtres et portes : double vitrage ou simple ?",
+                    'content' => "**À Casablanca, le double vitrage est recommandé pour :**\n- Les appartements donnant sur des rues passantes (isolation phonique)\n- Les façades exposées à l'ouest ou au nord (isolation thermique en hiver)\n- Les logements en altitude (Ain Diab, Californie) où le vent atlantique est fort\n\n**Le double vitrage vaut-il l'investissement ?**\n- Surcoût : +300–800 MAD par fenêtre vs. simple vitrage\n- Économie sur la climatisation et le chauffage : 15–25%\n- Retour sur investissement : 3–5 ans pour les appartements bien exposés\n\n**Simple vitrage suffisant pour :**\n- Fenêtres intérieures (donnant sur patio ou couloir)\n- Zones peu exposées au bruit et au vent",
+                ],
+                [
+                    'title'   => "4. Placards et rangements sur mesure",
+                    'content' => "**Les meubles sur mesure à Casablanca :**\nUn menuisier casablancais peut réaliser vos placards, cuisines et dressings sur mesure à des prix souvent inférieurs aux grandes enseignes.\n\n**Délais typiques :**\n- Placard simple (1 semaine de fabrication)\n- Cuisine complète (2–4 semaines)\n- Dressing complexe avec miroirs (2–3 semaines)\n\n**Matériaux courants :**\n- MDF mélaminé (économique, bon rendu)\n- Contreplaqué bois (plus solide, plus cher)\n- Bois massif (haut de gamme, sur demande)\n\n**Garantie :** Un bon menuisier garantit sa fabrication 1–2 ans — demandez-le par écrit.",
+                ],
+                [
+                    'title'   => "5. Comment choisir son menuisier à Casablanca",
+                    'content' => "**Vérifications essentielles :**\n- A-t-il de l'expérience avec le matériau de votre choix (alu, bois, PVC) ?\n- Peut-il fournir des photos de réalisations récentes ?\n- Le devis inclut-il la fourniture ET la pose ?\n- Propose-t-il une garantie après installation ?\n\n**Red flags :**\n❌ Menuisier qui ne prend pas de mesures précises sur place\n❌ Devis sans détail des matériaux utilisés\n❌ Prix trop bas pour de l'aluminium (risque de profilés de mauvaise qualité)\n\nSur Jobly, comparez les menuisiers de Casablanca avec leurs notes et avis clients avant de choisir.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un menuisier à Casablanca",
+                'url'   => '/professionnels/casablanca/menuiserie',
+                'label' => 'Voir les menuisiers de Casablanca',
+            ],
+            'related' => [
+                'menuiserie-bois-maroc',
+                'carreleur-maroc-guide',
             ],
         ],
     ];
