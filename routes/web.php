@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Web\BlogController;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\LeaderboardController;
 use App\Http\Controllers\Web\ProfessionalPageController;
@@ -22,6 +23,8 @@ Route::get('/professionnels/{city}',           [ProfessionalPageController::clas
 Route::get('/professionnels/{city}/{category}', [ProfessionalPageController::class, 'byCity'])->name('professionals.city.category');
 Route::get('/categories', \App\Http\Controllers\Web\CategoryPageController::class)->name('categories');
 Route::get('/top-artisans/{city}/{category}', [LeaderboardController::class, 'show'])->name('leaderboard');
+Route::get('/guides',        [BlogController::class, 'index'])->name('guides');
+Route::get('/guides/{slug}', [BlogController::class, 'show'])->name('guide.show');
 Route::get('/how-it-works', fn () => Inertia::render('Frontend/HowItWorksPage'))->name('how-it-works');
 Route::get('/contact',      fn () => Inertia::render('Frontend/ContactPage'))->name('contact');
 
@@ -80,7 +83,13 @@ Route::get('/sitemap.xml', function () {
             '/how-it-works'  => ['monthly', '0.7'],
             '/contact'       => ['monthly', '0.6'],
             '/pro/register'  => ['weekly',  '0.7'],
+            '/guides'        => ['monthly', '0.7'],
         ];
+
+        // Blog/guide articles
+        foreach (\App\Http\Controllers\Web\BlogController::allSlugs() as $slug) {
+            $urls->push("<url><loc>{$base}/guides/{$slug}</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>");
+        }
         foreach ($staticPages as $path => [$freq, $prio]) {
             $urls->push("<url><loc>{$base}{$path}</loc><changefreq>{$freq}</changefreq><priority>{$prio}</priority></url>");
         }
@@ -93,6 +102,7 @@ Route::get('/sitemap.xml', function () {
             foreach ($cats as $cat) {
                 $catSlug = rawurlencode(mb_strtolower($cat->name));
                 $urls->push("<url><loc>{$base}/professionnels/{$citySlug}/{$catSlug}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>");
+                $urls->push("<url><loc>{$base}/top-artisans/{$citySlug}/{$catSlug}</loc><changefreq>daily</changefreq><priority>0.7</priority></url>");
             }
         }
 

@@ -103,6 +103,13 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
   const [waNeed, setWaNeed]           = useState('');
 
   const openWhatsApp = (name?: string, need?: string) => {
+    // Fire-and-forget lead capture before WhatsApp redirect
+    if (name?.trim()) {
+      axios.post(`/api/professionals/${professional.id}/contact`, {
+        client_name: name.trim(),
+        message: need?.trim() || 'Bonjour, je souhaite vous contacter via Jobly.',
+      }).catch(() => {});
+    }
     const params = new URLSearchParams();
     if (name) params.set('name', name);
     if (need) params.set('need', need);
