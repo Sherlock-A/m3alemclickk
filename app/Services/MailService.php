@@ -234,6 +234,30 @@ class MailService
     }
 
     /**
+     * Notifie le pro d'une nouvelle demande de rendez-vous.
+     */
+    public function sendBookingNotification(
+        string $proEmail,
+        string $proName,
+        string $clientName,
+        string $clientPhone,
+        string $service,
+        string $preferredDate,
+        string $dashboardUrl
+    ): void {
+        if (! $proEmail) return;
+
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.booking-notification',
+            compact('proName', 'clientName', 'clientPhone', 'service', 'preferredDate', 'dashboardUrl'),
+            $proEmail,
+            $proName,
+            "📅 Nouvelle demande de RDV — {$clientName}",
+        );
+    }
+
+    /**
      * Choisit le bon mailer selon la config .env.
      * Priorité : MAIL_MAILER explicite → resend si clé présente → gmail si dispo → log
      */

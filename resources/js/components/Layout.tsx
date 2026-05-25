@@ -120,11 +120,13 @@ export function Layout({ children }: { children: ReactNode }) {
 
   // Always use translated links — server links are hardcoded in French
   const footerLinks = [
-    { label: t('nav_home'),         url: '/' },
-    { label: t('nav_professionals'), url: '/professionals' },
-    { label: t('nav_how_it_works'), url: '/how-it-works' },
+    { label: t('nav_home'),            url: '/' },
+    { label: t('nav_professionals'),   url: '/professionals' },
+    { label: 'Guides & Conseils',      url: '/guides' },
+    { label: 'Tarifs',                 url: '/tarifs' },
+    { label: t('nav_how_it_works'),    url: '/how-it-works' },
     { label: t('footer_pro_register'), url: '/pro/register' },
-    { label: t('nav_contact'),      url: '/contact' },
+    { label: t('nav_contact'),         url: '/contact' },
   ];
 
   const AuthButtons = ({ mobile = false }: { mobile?: boolean }) => {
@@ -210,8 +212,8 @@ export function Layout({ children }: { children: ReactNode }) {
             <a href="/professionals" onClick={handleNav('/professionals')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_professionals')}
             </a>
-            <a href="/categories" onClick={handleNav('/categories')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
-              {t('nav_categories')}
+            <a href="/guides" onClick={handleNav('/guides')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
+              Guides
             </a>
             <a href="/how-it-works" onClick={handleNav('/how-it-works')} className="text-slate-600 hover:text-orange-500 dark:text-slate-300 dark:hover:text-orange-400 transition-colors">
               {t('nav_how_it_works')}
@@ -255,7 +257,9 @@ export function Layout({ children }: { children: ReactNode }) {
             <nav className="flex flex-col gap-3 text-sm font-medium">
               <a href="/" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/', () => setMobileOpen(false))}>{t('nav_home')}</a>
               <a href="/professionals" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/professionals', () => setMobileOpen(false))}>{t('nav_professionals')}</a>
+              <a href="/guides" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/guides', () => setMobileOpen(false))}>Guides</a>
               <a href="/how-it-works" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/how-it-works', () => setMobileOpen(false))}>{t('nav_how_it_works')}</a>
+              <a href="/tarifs" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/tarifs', () => setMobileOpen(false))}>Tarifs</a>
               <a href="/contact" className="text-slate-700 hover:text-orange-500 dark:text-slate-300" onClick={handleNav('/contact', () => setMobileOpen(false))}>{t('nav_contact')}</a>
               <AuthButtons mobile />
             </nav>

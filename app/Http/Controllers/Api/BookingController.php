@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Professional;
+use App\Services\MailService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
+    public function __construct(private MailService $mail) {}
+
     /** POST /api/professionals/{professional}/book — public */
     public function store(Request $request, Professional $professional): JsonResponse
     {
@@ -24,6 +27,20 @@ class BookingController extends Controller
         ]);
 
         $booking = $professional->bookings()->create($data);
+
+        // Notify the pro by email (best-effort)
+        $proUser = $professional->user;
+        if ($proUser?->email) {
+            $this->mail->sendBookingNotification(
+                proEmail:      $proUser->email,
+                proName:       $professional->name,
+                clientName:    $data['client_name'],
+                clientPhone:   $data['client_phone'],
+                service:       $data['service'] ?? '',
+                preferredDate: isset($data['preferred_date']) ? \Carbon\Carbon::parse($data['preferred_date'])->format('d/m/Y') . ($data['preferred_time'] ? ' — ' . $data['preferred_time'] : '') : '',
+                dashboardUrl:  config('app.url') . '/dashboard/professional',
+            );
+        }
 
         return response()->json(['message' => 'Réservation enregistrée.', 'id' => $booking->id], 201);
     }
