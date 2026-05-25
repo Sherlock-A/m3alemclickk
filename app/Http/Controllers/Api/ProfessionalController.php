@@ -111,10 +111,14 @@ class ProfessionalController extends Controller
             });
         }
 
-        // ── Status ────────────────────────────────────────────────────────────
+        // ── Availability (availability pseudo-status → is_available column) ──
         if ($request->filled('status')) {
-            $status = mb_strtolower($request->string('status')->toString(), 'UTF-8');
-            $query->whereRaw('LOWER(professionals.status) LIKE ?', ["%{$status}%"]);
+            $status = $request->string('status')->toString();
+            if ($status === 'available') {
+                $query->where('professionals.is_available', true);
+            } elseif ($status === 'busy') {
+                $query->where('professionals.is_available', false);
+            }
         }
 
         // ── General search (search box: name / profession / desc / category) ─

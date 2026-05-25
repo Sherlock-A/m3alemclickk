@@ -319,7 +319,7 @@ export default function HomePage({ categories, featured, stats, geo }: Props) {
           {/* Quick actions */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
             <a
-              href="/professionals?availability=1"
+              href="/professionals?status=available"
               className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-100 transition-colors dark:border-green-800 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
             >
               <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />

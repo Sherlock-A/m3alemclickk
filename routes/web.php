@@ -85,6 +85,7 @@ Route::get('/sitemap.xml', function () {
             '/contact'       => ['monthly', '0.6'],
             '/pro/register'  => ['weekly',  '0.7'],
             '/guides'        => ['monthly', '0.7'],
+            '/tarifs'        => ['monthly', '0.5'],
         ];
 
         // Blog/guide articles

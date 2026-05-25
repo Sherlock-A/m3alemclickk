@@ -124,8 +124,12 @@ class ProfessionalPageController extends Controller
             });
         }
 
-        if ($status = $request->string('status')->toString()) {
-            $query->where('status', $status);
+        // Map availability pseudo-status → is_available column
+        $status = $request->string('status')->toString();
+        if ($status === 'available') {
+            $query->where('professionals.is_available', true);
+        } elseif ($status === 'busy') {
+            $query->where('professionals.is_available', false);
         }
 
         if ($request->filled('rating_min')) {
