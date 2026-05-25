@@ -19,7 +19,7 @@ class BlogController extends Controller
             'intro'       => "Trouver un plombier fiable à Casablanca peut s'avérer difficile : nombreux prestataires non vérifiés, tarifs opaques, et risque d'arnaques. Ce guide vous donne toutes les clés pour faire le bon choix.",
             'sections'    => [
                 [
-                    'title'   => '1. Vérifiez l'identité et les références',
+                    'title'   => "1. Vérifiez l'identité et les références",
                     'content' => "Avant tout contact, assurez-vous que le plombier est joignable sur un numéro marocain stable. Demandez sa CIN ou son RC (registre de commerce) si c'est une entreprise. Sur Jobly, tous les artisans passent une vérification d'identité + appel de confirmation — un gage de sérieux.\n\n**À demander :**\n- Avez-vous des références de clients à Casablanca ?\n- Êtes-vous affilié à une chambre des métiers ?\n- Pouvez-vous me montrer des photos de vos travaux récents ?",
                 ],
                 [
@@ -53,7 +53,7 @@ class BlogController extends Controller
         'choisir-electricien-maroc' => [
             'slug'        => 'choisir-electricien-maroc',
             'title'       => 'Comment choisir un électricien fiable au Maroc en 2026',
-            'description' => 'Guide pratique pour sélectionner un électricien qualifié au Maroc : habilitations, tarifs, questions à poser et signaux d'alarme à éviter.',
+            'description' => "Guide pratique pour sélectionner un électricien qualifié au Maroc : habilitations, tarifs, questions à poser et signaux d'alarme à éviter.",
             'category'    => 'Électricité',
             'city'        => null,
             'readTime'    => 6,
@@ -73,7 +73,7 @@ class BlogController extends Controller
                     'content' => "Avant de confier vos travaux, posez ces questions :\n\n**Sécurité :**\n- Connaissez-vous la norme NM C15-100 ?\n- Coupez-vous le disjoncteur général avant d'intervenir ?\n- Testez-vous l'installation après les travaux ?\n\n**Administratif :**\n- Pouvez-vous me remettre une facture ?\n- Garantissez-vous votre travail ? Sur quelle durée ?\n\n**Pratique :**\n- Combien de temps durent ces travaux ?\n- Avez-vous déjà réalisé ce type d'installation ?",
                 ],
                 [
-                    'title'   => '4. Signaux d'alarme',
+                    'title'   => "4. Signaux d'alarme",
                     'content' => "**Ne faites pas confiance à un électricien qui :**\n\n❌ Ne coupe pas le courant avant d'intervenir (danger mortel)\n❌ Laisse des fils dénudés non protégés\n❌ Ne vérifie pas la mise à la terre\n❌ Refuse de donner un devis écrit\n❌ Demande un paiement cash intégral avant les travaux\n❌ Ne peut pas expliquer ce qu'il fait en termes simples\n\n**Bons signes de professionnalisme :**\n✅ Arrive avec son propre matériel de test (multimètre, testeur de phase)\n✅ Prend des photos avant/après les travaux\n✅ Explique le problème clairement\n✅ Mentionne les risques si les travaux ne sont pas faits correctement",
                 ],
                 [
@@ -141,7 +141,7 @@ class BlogController extends Controller
         'femme-de-menage-casablanca' => [
             'slug'        => 'femme-de-menage-casablanca',
             'title'       => 'Trouver une femme de ménage fiable à Casablanca en 2026',
-            'description' => 'Comment trouver une femme de ménage de confiance à Casablanca : tarifs, questions essentielles, contrat et ce qu'il faut vérifier avant d'embaucher.',
+            'description' => "Comment trouver une femme de ménage de confiance à Casablanca : tarifs, questions essentielles, contrat et ce qu'il faut vérifier avant d'embaucher.",
             'category'    => 'Général',
             'city'        => 'Casablanca',
             'readTime'    => 5,
@@ -237,7 +237,7 @@ class BlogController extends Controller
                     'content' => "La puissance d'un climatiseur se mesure en BTU (British Thermal Unit) ou en kW :\n\n| Surface de la pièce | Puissance recommandée |\n|---|---|\n| Jusqu'à 15 m² | 9 000 BTU (1 chevaux) |\n| 15–25 m² | 12 000 BTU (1,5 chevaux) |\n| 25–35 m² | 18 000 BTU (2 chevaux) |\n| 35–50 m² | 24 000 BTU (3 chevaux) |\n\n*Note : si votre pièce est très exposée au soleil ou mal isolée, montez d'une puissance.*\n\n**Conseil :** Préférez un modèle **Inverter** — plus silencieux, jusqu'à 40% d'économies d'énergie.",
                 ],
                 [
-                    'title'   => '2. Tarifs d'installation au Maroc (2026)',
+                    'title'   => "2. Tarifs d'installation au Maroc (2026)",
                     'content' => "| Prestation | Prix indicatif |\n|---|---|\n| Installation split 9 000 BTU | 600–1 200 MAD |\n| Installation split 12 000 BTU | 700–1 400 MAD |\n| Installation split 18 000–24 000 BTU | 900–1 800 MAD |\n| Passage de câble en goulotte | 100–300 MAD |\n| Entretien annuel (nettoyage + gaz) | 300–600 MAD |\n\n*Hors prix de l'appareil. Un split 1 cheval (LG, Samsung, Midea) coûte 2 000–4 000 MAD selon la gamme.*",
                 ],
                 [
