@@ -257,6 +257,23 @@ class MailService
         );
     }
 
+    public function sendProAutoSuspended(string $toEmail, string $toName, float $rating): void
+    {
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.pro-auto-suspended',
+            [
+                'proName'    => $toName,
+                'proEmail'   => $toEmail,
+                'rating'     => $rating,
+                'contactUrl' => config('app.url') . '/contact',
+            ],
+            $toEmail,
+            $toName,
+            "Jobly — Votre compte a été suspendu automatiquement",
+        );
+    }
+
     /**
      * Choisit le bon mailer selon la config .env.
      * Priorité : MAIL_MAILER explicite → resend si clé présente → gmail si dispo → log

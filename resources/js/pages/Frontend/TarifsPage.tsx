@@ -120,6 +120,42 @@ export default function TarifsPage() {
                 </div>
 
                 <div className="max-w-5xl mx-auto px-4 py-14">
+                    {/* Prix moyens */}
+                    <div className="mb-14">
+                        <h2 className="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-2">Prix moyens des artisans au Maroc</h2>
+                        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mb-8">Estimations indicatives — varient selon la ville et la complexité des travaux</p>
+                        <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <table className="w-full text-sm">
+                                <thead className="bg-orange-50 dark:bg-orange-900/20 border-b border-slate-200 dark:border-slate-700">
+                                    <tr>
+                                        <th className="px-5 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">Métier</th>
+                                        <th className="px-5 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">Intervention / Dépannage</th>
+                                        <th className="px-5 py-3 text-left font-semibold text-slate-700 dark:text-slate-300">Installation / Journée</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-900">
+                                    {[
+                                        { metier: '🔧 Plombier',         intervention: '200 – 500 MAD',     installation: '800 – 2 000 MAD' },
+                                        { metier: '⚡ Électricien',      intervention: '150 – 400 MAD',     installation: '1 000 – 3 000 MAD' },
+                                        { metier: '🏠 Femme de ménage',  intervention: '80 – 150 MAD/h',    installation: '—' },
+                                        { metier: '🎨 Peintre',          intervention: '25 – 60 MAD/m²',    installation: '500 – 1 500 MAD/jour' },
+                                        { metier: '🪵 Menuisier',        intervention: '—',                 installation: '800 – 2 500 MAD/jour' },
+                                        { metier: '🧱 Carreleur',        intervention: '80 – 150 MAD/m²',   installation: '—' },
+                                        { metier: '❄️ Climatisation',    intervention: '500 – 1 500 MAD',   installation: '2 000 – 5 000 MAD' },
+                                        { metier: '🚚 Déménagement',     intervention: '800 – 2 500 MAD',   installation: '—' },
+                                    ].map(row => (
+                                        <tr key={row.metier} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                            <td className="px-5 py-3.5 font-semibold text-slate-800 dark:text-white">{row.metier}</td>
+                                            <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">{row.intervention}</td>
+                                            <td className="px-5 py-3.5 text-slate-600 dark:text-slate-300">{row.installation}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <p className="text-xs text-slate-400 text-center mt-3">* Prix moyens indicatifs à Casablanca — peuvent varier selon la ville et la complexité des travaux.</p>
+                    </div>
+
                     {/* FAQ */}
                     <div className="mb-14">
                         <h2 className="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Questions fréquentes</h2>

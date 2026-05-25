@@ -41,6 +41,8 @@ class Professional extends Model
         'instagram_url',
         'subscription_plan',
         'subscription_expires_at',
+        'referral_code',
+        'referred_by',
     ];
 
     protected function casts(): array

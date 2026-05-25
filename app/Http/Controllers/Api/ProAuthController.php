@@ -83,12 +83,14 @@ class ProAuthController extends Controller
             'main_city'    => ['required', 'string', 'max:100'],
             'category_ids'   => ['nullable', 'array', 'max:3'],
             'category_ids.*' => ['integer', 'exists:categories,id'],
+            'referral_code'  => ['nullable', 'string', 'max:20'],
         ]);
 
-        $categoryIds = $data['category_ids'] ?? [];
+        $categoryIds  = $data['category_ids'] ?? [];
+        $referralCode = strtoupper(trim($data['referral_code'] ?? ''));
 
         try {
-            [$professional, $user] = DB::transaction(function () use ($data, $categoryIds) {
+            [$professional, $user] = DB::transaction(function () use ($data, $categoryIds, $referralCode) {
                 $professional = Professional::create([
                     'name'               => $data['name'],
                     'phone'              => $data['phone'],
@@ -103,6 +105,23 @@ class ProAuthController extends Controller
                     'calls'              => 0,
                     'completed_missions' => 0,
                 ]);
+
+                // Générer un code parrainage unique
+                $letters = strtoupper(preg_replace('/[^a-zA-Z]/', '', $data['name']));
+                $prefix  = substr($letters, 0, 5) ?: 'PRO';
+                $code    = $prefix . '-' . str_pad((string) rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+                while (Professional::where('referral_code', $code)->exists()) {
+                    $code = $prefix . '-' . str_pad((string) rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+                }
+                $professional->update(['referral_code' => $code]);
+
+                // Attribuer le parrain si le code fourni est valide
+                if ($referralCode !== '') {
+                    $referrer = Professional::where('referral_code', $referralCode)->first();
+                    if ($referrer) {
+                        $professional->update(['referred_by' => $referrer->id]);
+                    }
+                }
 
                 if (! empty($categoryIds)) {
                     $professional->categories()->sync($categoryIds);

@@ -44,6 +44,8 @@ export type Professional = {
   instagram_url?: string | null;
   subscription_plan?: 'free' | 'pro' | 'premium';
   subscription_expires_at?: string | null;
+  referral_code?: string | null;
+  referred_by?: number | null;
   reviews?: Review[];
   category?: Category | null;
   categories?: Category[];

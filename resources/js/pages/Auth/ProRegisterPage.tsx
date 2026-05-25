@@ -49,7 +49,7 @@ export default function ProRegisterPage() {
   const [honeypot, setHoneypot]   = useState('');
   const [form, setForm]           = useState({
     name: '', email: '', password: '', password_confirmation: '',
-    phone: '', profession: '', main_city: '',
+    phone: '', profession: '', main_city: '', referral_code: '',
   });
   const [showPwd, setShowPwd]         = useState(false);
   const [loading, setLoading]             = useState(false);
@@ -76,6 +76,9 @@ export default function ProRegisterPage() {
       .then((r) => r.ok ? r.json() : [])
       .then((data: Category[]) => setCategories(data))
       .catch(() => {});
+    // Pre-fill referral code from URL ?ref=CODE
+    const ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref) setForm(f => ({ ...f, referral_code: ref.toUpperCase() }));
   }, []);
 
   useEffect(() => {
@@ -533,6 +536,17 @@ export default function ProRegisterPage() {
                     {!fieldErrors.password_confirmation && form.password_confirmation && form.password !== form.password_confirmation && (
                       <p className="text-xs text-red-500 mt-1.5">{t('reg_pwd_no_match')}</p>
                     )}
+                  </div>
+
+                  {/* Referral code — optional */}
+                  <div>
+                    <label className="block text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+                      Code parrain <span className="text-xs text-slate-400">(optionnel)</span>
+                    </label>
+                    <input type="text" value={form.referral_code}
+                      onChange={e => setForm(f => ({ ...f, referral_code: e.target.value.toUpperCase() }))}
+                      placeholder="Ex: RAHID-4821" maxLength={20}
+                      className="w-full rounded-xl border-2 border-slate-200 dark:border-slate-700 px-4 py-3 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 transition-colors" />
                   </div>
                 </>}
 

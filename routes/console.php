@@ -19,6 +19,9 @@ Schedule::command('queue:prune-failed --hours=720')->weekly();
 // ─── Rapport hebdomadaire aux professionnels actifs ──────────────────────────
 Schedule::command('pros:weekly-report')->weekly()->mondays()->at('08:00');
 
+// ─── Auto-suspension des pros avec note < 3/5 après 10+ avis ─────────────────
+Schedule::command('pros:auto-suspend')->dailyAt('02:00');
+
 // ─── Traitement de la queue toutes les minutes (si pas de worker dédié) ──────
 // Décommentez la ligne ci-dessous uniquement sur un hébergement sans worker process
 // Schedule::command('queue:work --stop-when-empty')->everyMinute()->withoutOverlapping();
