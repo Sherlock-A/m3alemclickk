@@ -108,7 +108,33 @@ class DashboardController extends Controller
                 'views30'       => $views30,
                 'contacts30'    => $contacts30,
             ],
+            'completion'   => $this->profileCompletion($professional),
         ]);
+    }
+
+    private function profileCompletion(Professional $professional): array
+    {
+        $fields = [
+            ['weight' => 20, 'done' => !empty($professional->photo),                  'tip' => "Ajoutez une photo de profil"],
+            ['weight' => 20, 'done' => strlen((string)$professional->description) > 80,'tip' => "Rédigez une description d'au moins 80 caractères"],
+            ['weight' => 15, 'done' => !empty($professional->profession),              'tip' => "Précisez votre métier"],
+            ['weight' => 15, 'done' => $professional->categories->isNotEmpty(),        'tip' => "Sélectionnez au moins une catégorie"],
+            ['weight' => 10, 'done' => !empty($professional->main_city),               'tip' => "Renseignez votre ville principale"],
+            ['weight' => 10, 'done' => !empty($professional->phone),                   'tip' => "Ajoutez votre numéro de téléphone"],
+            ['weight' => 10, 'done' => !empty($professional->portfolio_images),        'tip' => "Ajoutez des photos de vos réalisations"],
+        ];
+
+        $score = (int) array_sum(array_map(
+            fn($f) => $f['done'] ? $f['weight'] : 0,
+            $fields
+        ));
+
+        $tips = array_values(array_map(
+            fn($f) => $f['tip'],
+            array_filter($fields, fn($f) => !$f['done'])
+        ));
+
+        return ['score' => $score, 'tips' => array_slice($tips, 0, 3)];
     }
 
     public function notificationsCount(Request $request)

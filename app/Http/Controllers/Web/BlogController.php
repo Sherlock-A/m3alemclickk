@@ -263,6 +263,258 @@ class BlogController extends Controller
                 'prix-artisan-maroc-2026',
             ],
         ],
+
+        'maconnerie-maroc-guide' => [
+            'slug'        => 'maconnerie-maroc-guide',
+            'title'       => "Trouver un maçon qualifié au Maroc en 2026",
+            'description' => "Guide complet pour choisir un maçon fiable au Maroc : qualifications, tarifs, questions à poser et erreurs à éviter pour vos travaux de maçonnerie.",
+            'category'    => 'Maçonnerie',
+            'city'        => null,
+            'readTime'    => 6,
+            'date'        => '2026-05-20',
+            'intro'       => "La maçonnerie est l'un des corps de métier les plus demandés au Maroc — et l'un des plus complexes à évaluer. Un bon maçon peut transformer un logement ; un mauvais peut causer des dégâts structurels coûteux. Voici comment faire le bon choix.",
+            'sections'    => [
+                [
+                    'title'   => "1. Les spécialités de la maçonnerie",
+                    'content' => "La maçonnerie regroupe plusieurs métiers distincts :\n\n**Gros œuvre :**\n- **Maçon** : construction de murs, dalles, fondations\n- **Coffreur** : pose des coffrages pour le béton armé\n- **Ferrailleur** : assemblage des armatures en acier\n\n**Second œuvre :**\n- **Carreleur** : pose de carrelage et faïence\n- **Enduiseur** : application d'enduits, crépis\n- **Façadier** : travaux de ravalement\n\n*Conseil : avant de contacter un artisan, identifiez précisément le type de travaux dont vous avez besoin — cela vous permettra de cibler le bon profil.*",
+                ],
+                [
+                    'title'   => "2. Tarifs indicatifs 2026",
+                    'content' => "| Prestation | Prix indicatif |\n|-----------|---------------|\n| Pose carrelage sol | 80–150 MAD/m² |\n| Pose faïence murale | 100–200 MAD/m² |\n| Construction mur parpaing | 300–600 MAD/m² |\n| Enduit intérieur | 50–100 MAD/m² |\n| Ravalement façade | 70–150 MAD/m² |\n| Démolition cloison | 200–500 MAD |\n| Réparation fissure | 150–400 MAD |\n\n*Hors matériaux. Tarifs plus élevés à Casablanca et Rabat (+15–20%).*",
+                ],
+                [
+                    'title'   => "3. Comment évaluer la qualité d'un maçon",
+                    'content' => "**Demandez à voir des réalisations récentes :**\n- Finitions des joints de carrelage (réguliers, propres)\n- Aplomb des murs et angles à 90°\n- Absence de fissures dans les enduits\n\n**Testez sa connaissance technique :**\n- Quel type de ciment pour ce travail ?\n- Comment traitez-vous les joints de dilatation ?\n- Utilisez-vous un niveau laser ou à bulle ?\n\n**Vérifiez son organisation :**\n- Arrive-t-il à l'heure au rendez-vous d'évaluation ?\n- Mesure-t-il correctement avant de chiffrer ?\n- Vous remet-il un devis détaillé par écrit ?",
+                ],
+                [
+                    'title'   => "4. Devis et contrat : ce qu'il faut vérifier",
+                    'content' => "Un devis de maçonnerie sérieux doit préciser :\n\n- La surface exacte à traiter (m²)\n- Le type de matériaux (marque du ciment, type de carrelage si fourni)\n- La main-d'œuvre et les matériaux séparément\n- Le délai de réalisation\n- Les conditions de nettoyage du chantier\n- La garantie décennale (obligatoire pour le gros œuvre)\n\n**Red flags :**\n- Devis global sans détail des postes\n- Refus de séparer main-d'œuvre et matériaux\n- Demande de 100% d'acompte avant démarrage\n- Pas de délai précis",
+                ],
+                [
+                    'title'   => "5. Précautions spécifiques au Maroc",
+                    'content' => "**Avant de commencer :**\n- Pour tout travail structurel (murs porteurs, fondations, dalles), demandez un avis à un ingénieur structure\n- Vérifiez que les travaux ne nécessitent pas de permis de construire (travaux > 50 m² en général)\n- Assurez-vous que le maçon connaît les normes parasismiques locales\n\n**Pendant le chantier :**\n- Visitez régulièrement le chantier pour valider l'avancement\n- Ne payez que par tranches liées aux étapes (fondations, élévation, finitions)\n- Photographiez chaque étape pour avoir une trace\n\n*Sur Jobly, les maçons sont vérifiés et notés par leurs clients. Consultez les avis avant de choisir.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un maçon vérifié au Maroc",
+                'url'   => '/professionals?profession=Maçon',
+                'label' => 'Voir les maçons',
+            ],
+            'related' => [
+                'prix-artisan-maroc-2026',
+                'choisir-plombier-casablanca',
+            ],
+        ],
+
+        'menuiserie-bois-maroc' => [
+            'slug'        => 'menuiserie-bois-maroc',
+            'title'       => "Choisir un menuisier bois au Maroc : guide 2026",
+            'description' => "Tout savoir pour choisir un menuisier bois qualifié au Maroc : spécialités, tarifs, questions clés et comment évaluer la qualité d'un artisan.",
+            'category'    => 'Menuiserie',
+            'city'        => null,
+            'readTime'    => 5,
+            'date'        => '2026-05-22',
+            'intro'       => "La menuiserie bois est un art qui demande technique et savoir-faire. Que vous ayez besoin de portes, fenêtres, placards ou d'une cuisine sur mesure, choisir le bon menuisier fait toute la différence.",
+            'sections'    => [
+                [
+                    'title'   => "1. Les différents types de menuisiers",
+                    'content' => "**Menuisier d'atelier (ébéniste) :**\n- Fabrique des meubles et agencements sur mesure\n- Travaille principalement en atelier\n- Adapté pour : cuisines, dressings, bibliothèques, tables\n\n**Menuisier poseur :**\n- Installe des éléments préfabriqués\n- Travaille principalement sur chantier\n- Adapté pour : pose de portes, fenêtres, parquet, plafonds\n\n**Menuisier aluminium / PVC :**\n- Spécialiste des ouvertures modernes\n- Adapté pour : fenêtres double-vitrage, volets roulants, vérandas\n\n*Au Maroc, beaucoup de menuisiers maîtrisent à la fois le bois massif et le bois reconstitué (MDF, contreplaqué). Précisez votre besoin avant de contacter.*",
+                ],
+                [
+                    'title'   => "2. Tarifs de la menuiserie au Maroc (2026)",
+                    'content' => "| Prestation | Prix indicatif |\n|-----------|---------------|\n| Pose porte intérieure | 200–400 MAD |\n| Fabrication porte bois sur mesure | 800–2 000 MAD |\n| Placard 1 porte sur mesure | 600–1 500 MAD |\n| Dressing complet (3m linéaires) | 3 000–8 000 MAD |\n| Cuisine équipée MDF | 8 000–25 000 MAD |\n| Parquet stratifié (pose) | 60–100 MAD/m² |\n| Fenêtre bois double-vitrage | 800–2 000 MAD |\n| Escalier bois sur mesure | 4 000–12 000 MAD |\n\n*Hors matériaux. Les prix varient selon la qualité du bois (pin, chêne, hêtre) et la complexité des finitions.*",
+                ],
+                [
+                    'title'   => "3. Comment évaluer la qualité du travail",
+                    'content' => "**En atelier ou sur des réalisations :**\n- Observez la régularité des assemblages (joints serrés, sans espace visible)\n- Testez les ouvrants : portes et tiroirs doivent glisser sans accroc\n- Vérifiez la finition : ponçage uniforme, peinture ou vernis sans coulures\n\n**Questions à poser :**\n- Quel type de bois utilisez-vous ? (bois massif vs. MDF/contreplaqué)\n- Les quincailleries sont-elles de marque ? (charnières, glissières, poignées)\n- Quelle est la garantie sur votre travail ?\n- Pouvez-vous me montrer des photos de réalisations similaires ?",
+                ],
+                [
+                    'title'   => "4. Bois massif vs. MDF : que choisir ?",
+                    'content' => "| Critère | Bois massif | MDF / Contreplaqué |\n|---------|-------------|-------------------|\n| Durabilité | 30–50 ans | 10–20 ans |\n| Prix | Élevé | Abordable |\n| Résistance humidité | Moyenne | Faible (sauf traité) |\n| Aspect naturel | ✓ Chaleureux | Variable selon finition |\n| Personnalisation | Totale | Limitée |\n\n**Recommandation pour le Maroc :**\n- Cuisine, salle de bain → MDF hydrofuge ou PVC (humidité)\n- Chambre, salon → Bois massif ou MDF de qualité\n- Escalier, parquet → Bois massif obligatoire",
+                ],
+                [
+                    'title'   => "5. Délais et planification du chantier",
+                    'content' => "La menuiserie sur mesure prend du temps. Anticipez :\n\n**Délais moyens au Maroc :**\n- Porte simple → 3–7 jours\n- Placard sur mesure → 1–2 semaines\n- Cuisine équipée → 3–6 semaines\n- Dressing complet → 2–4 semaines\n\n**Conseils pratiques :**\n- Validez les plans et dimensions AVANT la fabrication (les erreurs sont coûteuses)\n- Prévoyez une visite de prise de mesures précises\n- Ne payez le solde qu'après livraison et vérification complète\n- Demandez que les finitions soient faites après pose (ponçage, vernis) pour un résultat professionnel\n\n*Sur Jobly, consultez le portfolio du menuisier avant de le contacter — les photos parlent mieux que les mots.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un menuisier vérifié au Maroc",
+                'url'   => '/professionals?profession=Menuisier',
+                'label' => 'Voir les menuisiers',
+            ],
+            'related' => [
+                'prix-artisan-maroc-2026',
+                'peintre-maroc-guide',
+            ],
+        ],
+
+        'demenagement-casablanca' => [
+            'slug'        => 'demenagement-casablanca',
+            'title'       => "Déménagement à Casablanca : guide complet 2026",
+            'description' => "Comment organiser votre déménagement à Casablanca : choisir un déménageur fiable, tarifs, checklist et conseils pour éviter les mauvaises surprises.",
+            'category'    => 'Déménagement',
+            'city'        => 'Casablanca',
+            'readTime'    => 6,
+            'date'        => '2026-05-22',
+            'intro'       => "Déménager à Casablanca peut vite tourner au cauchemar sans une bonne préparation. Entre les embouteillages, les immeubles sans ascenseur et les déménageurs peu scrupuleux, mieux vaut être bien informé. Ce guide vous donne toutes les clés.",
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des déménageurs à Casablanca (2026)",
+                    'content' => "Les prix dépendent de la distance, du volume et de l'accès :\n\n| Type de déménagement | Prix indicatif |\n|---------------------|---------------|\n| Studio (< 40 m²) même quartier | 500–800 MAD |\n| F2 (40–60 m²) même quartier | 800–1 500 MAD |\n| F3 (60–90 m²) même quartier | 1 500–3 000 MAD |\n| F4 (90–120 m²) même quartier | 2 500–5 000 MAD |\n| Déménagement inter-quartiers | +200–500 MAD |\n| Emballage inclus | +30–50% |\n| Monte-meuble (étages élevés) | +300–800 MAD |\n\n*Les prix varient selon le nombre de déménageurs (généralement 2 à 4 personnes).*",
+                ],
+                [
+                    'title'   => "2. Comment choisir un déménageur fiable",
+                    'content' => "**Vérifications essentielles :**\n- L'entreprise dispose-t-elle d'un véhicule adapté (camionnette ou camion avec hayon) ?\n- Propose-t-elle une assurance marchandises ?\n- Le prix inclut-il l'emballage des objets fragiles ?\n- Y a-t-il un représentant qui supervise (pas juste des manœuvres) ?\n\n**Questions clés à poser :**\n- Combien de déménageurs pour mon volume ?\n- Avez-vous du matériel de protection (couvertures, sangles, cartons) ?\n- Que se passe-t-il en cas de dommage sur un meuble ?\n- Le tarif est-il fixe ou calculé au temps passé ?",
+                ],
+                [
+                    'title'   => "3. Checklist préparation : J-15 à J-1",
+                    'content' => "**J-15 :**\n- Contactez 2–3 déménageurs, comparez les devis\n- Réservez le déménageur retenu avec un acompte de 20–30%\n- Commandez les cartons si emballage auto\n\n**J-7 :**\n- Commencez l'emballage des objets non courants (livres, déco, vêtements hors-saison)\n- Démontez les meubles complexes\n- Informez vos voisins et demandez l'accès aux ascenseurs/monte-charges\n\n**J-1 :**\n- Préparez un carton \"urgence\" (médicaments, documents, chargeurs)\n- Videz et débranchez le réfrigérateur\n- Réservez un parking devant chaque logement",
+                ],
+                [
+                    'title'   => "4. Spécificités de Casablanca",
+                    'content' => "**Quartiers à circulation difficile :**\n- Médina, Derb Sultan, Hay Hassani : rues étroites → prévoir une petite camionnette\n- Maarif, Gauthier, Racine : stationnement difficile → venez tôt le matin\n- Ain Diab, Anfa : accès réglementé le week-end dans certaines résidences\n\n**Immeubles sans ascenseur :**\nCasablanca compte de nombreux immeubles R+4 ou R+5 sans ascenseur. Signalez-le au déménageur en amont — le tarif peut augmenter de 15–30%.\n\n**Horaires recommandés :**\n- Évitez les heures de pointe (7h–9h et 17h–19h)\n- Le vendredi matin est idéal (moins de circulation)\n- Le week-end en milieu de matinée est aussi une bonne option",
+                ],
+                [
+                    'title'   => "5. Pièges à éviter",
+                    'content' => "**Les arnaques fréquentes :**\n\n❌ **Le devis verbal** : toujours exiger un tarif écrit — certains gonflent la facture une fois les meubles dans le camion\n\n❌ **Le paiement à l'avance total** : maximum 30% d'acompte, solde à la fin\n\n❌ **L'absence d'assurance** : si un déménageur casse votre TV sans assurance, vous n'avez aucun recours\n\n❌ **Les sous-traitants non annoncés** : certaines \"entreprises\" sous-traitent sans informer le client — le niveau de soin chute drastiquement\n\n❌ **La camionnette trop petite** : un déménageur qui sous-estime le volume = 2 allers-retours = double le temps et le prix\n\n*Sur Jobly, contactez directement des déménageurs vérifiés avec avis clients réels.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un déménageur vérifié à Casablanca",
+                'url'   => '/professionnels/casablanca',
+                'label' => 'Voir les déménageurs',
+            ],
+            'related' => [
+                'prix-artisan-maroc-2026',
+                'femme-de-menage-casablanca',
+            ],
+        ],
+
+        'jardinage-marrakech' => [
+            'slug'        => 'jardinage-marrakech',
+            'title'       => "Trouver un jardinier à Marrakech en 2026",
+            'description' => "Guide pour trouver un jardinier fiable à Marrakech : tarifs, services proposés, entretien adapté au climat marocain et conseils pour votre jardin ou espace vert.",
+            'category'    => 'Jardinage',
+            'city'        => 'Marrakech',
+            'readTime'    => 5,
+            'date'        => '2026-05-22',
+            'intro'       => "Le climat de Marrakech — chaud et sec l'été, doux l'hiver — demande une approche spécifique du jardinage. Que vous ayez une villa avec jardin, une terrasse ou un riad avec patio, voici comment trouver le bon jardinier.",
+            'sections'    => [
+                [
+                    'title'   => "1. Services proposés par les jardiniers à Marrakech",
+                    'content' => "**Entretien régulier :**\n- Tonte de pelouse\n- Taille des haies et arbustes\n- Arrosage et gestion de l'arrosage automatique\n- Désherbage et traitement des mauvaises herbes\n\n**Création et aménagement :**\n- Création de jardin (conception, plantation, gazon)\n- Aménagement de terrasse ou patio\n- Création de potager\n- Pose de système d'arrosage automatique\n\n**Spécialités Marrakech :**\n- Entretien de palmiers (taille, traitement contre le charançon rouge)\n- Aménagement de jardins marocains traditionnels (cyprès, rosiers, buis taillés)\n- Gestion de la piscine entourée de végétation",
+                ],
+                [
+                    'title'   => "2. Tarifs à Marrakech (2026)",
+                    'content' => "| Prestation | Prix indicatif |\n|-----------|---------------|\n| Entretien mensuel (petit jardin < 100 m²) | 300–600 MAD |\n| Entretien mensuel (grand jardin 100–500 m²) | 600–1 500 MAD |\n| Taille de haie | 100–300 MAD |\n| Taille de palmier | 150–500 MAD (selon hauteur) |\n| Création de jardin (conception) | 1 500–5 000 MAD |\n| Pose arrosage automatique | 2 000–8 000 MAD |\n| Nettoyage unique (grand jardin) | 400–1 000 MAD |\n\n*Prix plus élevés pour les villas de Palmeraie et riads de la médina (accès difficile).*",
+                ],
+                [
+                    'title'   => "3. Plantes adaptées au climat de Marrakech",
+                    'content' => "Un bon jardinier marrakechi connaît les plantes adaptées au climat semi-aride local :\n\n**Résistantes à la chaleur et à la sécheresse :**\n- Bougainvillée (idéale pour les murs et tonnelles)\n- Laurier-rose (oleander)\n- Agave et cactus\n- Cyprès méditerranéen\n- Hibiscus\n\n**Pour les espaces ombragés et riads :**\n- Jasmin (parfum incontournable)\n- Menthe (pour thé à la menthe)\n- Géranium\n- Ficus\n\n**Pour la pelouse :**\n- Gazon bermuda (résistant chaleur)\n- Gazon kikuyu (pousse rapide)\n\n*Évitez les plantes européennes gourmandes en eau — elles souffrent en été marrakechi.*",
+                ],
+                [
+                    'title'   => "4. Questions à poser à votre jardinier",
+                    'content' => "**Compétence technique :**\n- Connaissez-vous le charançon rouge du palmier et comment le prévenir ?\n- Quel programme d'arrosage recommandez-vous pour l'été ?\n- Utilisez-vous des produits phytosanitaires homologués ?\n\n**Organisation :**\n- Venez-vous avec votre matériel (tondeuse, taille-haie, souffleur) ?\n- Êtes-vous disponible pour des interventions d'urgence après une tempête de sable ?\n- Proposez-vous un contrat d'entretien mensuel avec forfait fixe ?\n\n**Références :**\n- Avez-vous des clients dans mon quartier (Palmeraie, Guéliz, Hivernage) ?\n- Pouvez-vous me montrer des jardins que vous entretenez régulièrement ?",
+                ],
+                [
+                    'title'   => "5. Spécificités des riads et propriétés de Marrakech",
+                    'content' => "**Riads de la médina :**\n- Le patio central est souvent restreint et nécessite des plantes en pot\n- L'arrosage manuel est généralement nécessaire (pas d'arrosage automatique possible)\n- Faites appel à un jardinier habitué aux riads — les contraintes d'espace sont spécifiques\n\n**Villas de Palmeraie :**\n- Grandes surfaces nécessitant un entretien hebdomadaire ou bihebdomadaire\n- Arrosage automatique quasi-indispensable l'été (consommation d'eau importante)\n- Attention aux palmiers : inspection annuelle recommandée pour le charançon rouge\n\n**Agences de location :**\nSi vous louez votre propriété sur Airbnb ou Booking, un jardinier régulier est indispensable. Certains proposent des contrats avec disponibilité garantie entre chaque location.\n\n*Jobly liste des jardiniers vérifiés à Marrakech — consultez les avis et portfolios avant de contacter.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un jardinier vérifié à Marrakech",
+                'url'   => '/professionnels/marrakech',
+                'label' => 'Voir les jardiniers',
+            ],
+            'related' => [
+                'prix-artisan-maroc-2026',
+                'climatisation-maroc-guide',
+            ],
+        ],
+
+        'plombier-rabat-guide' => [
+            'slug'        => 'plombier-rabat-guide',
+            'title'       => "Plombier à Rabat : tarifs et conseils 2026",
+            'description' => "Guide complet pour trouver un plombier fiable à Rabat : tarifs actualisés 2026, vérifications essentielles et conseils pour éviter les arnaques dans la capitale.",
+            'category'    => 'Plomberie',
+            'city'        => 'Rabat',
+            'readTime'    => 5,
+            'date'        => '2026-05-23',
+            'intro'       => "Trouver un plombier de confiance à Rabat peut être délicat, entre les quartiers aux vieilles canalisations (Médina, Agdal historique) et les résidences modernes de Hay Riad et Souissi. Ce guide vous aide à faire le bon choix.",
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des plombiers à Rabat (2026)",
+                    'content' => "| Prestation | Prix indicatif |\n|-----------|---------------|\n| Fuite robinet | 150–300 MAD |\n| Débouchage évier / WC | 200–400 MAD |\n| Remplacement joint/mécanisme WC | 150–250 MAD |\n| Installation lavabo / évier | 300–600 MAD |\n| Remplacement chauffe-eau | 400–800 MAD (hors matériel) |\n| Fuite sous carrelage | 500–1 500 MAD |\n| Urgence soir/week-end | +50% sur le tarif normal |\n\n*Les tarifs à Rabat sont légèrement inférieurs à Casablanca (5–10%). Hay Riad et Souissi peuvent être plus chers.*",
+                ],
+                [
+                    'title'   => "2. Problèmes spécifiques à Rabat",
+                    'content' => "**Médina et vieux quartiers (Oudayas, Kasbah) :**\n- Canalisations anciennes en plomb ou en fonte → attention à la corrosion\n- Pression d'eau irrégulière → prévoir un surpresseur si nécessaire\n- Accès difficile pour les camions de débouchage → privilégiez les plombiers avec matériel portable\n\n**Résidences modernes (Hay Riad, Souissi) :**\n- Installations récentes mais parfois mal réalisées\n- Problèmes de pression dus aux chauffe-eaux solaires (courants dans ces quartiers)\n- Vérifiez la compatibilité des robinetteries avec la pression locale\n\n**Agdal / Hassan :**\n- Immeubles mixtes (anciens et récents) → diagnostics plus complexes\n- Fuites fréquentes dans les colonnes montantes des immeubles anciens",
+                ],
+                [
+                    'title'   => "3. Choisir le bon plombier",
+                    'content' => "**Vérifications avant d'appeler :**\n- Le plombier est-il joignable sur un numéro marocain stable ?\n- A-t-il des avis clients récents (moins de 6 mois) ?\n- Peut-il donner un premier avis par photos (via WhatsApp) avant de se déplacer ?\n\n**Questions à poser :**\n- Intervenez-vous dans mon quartier ? (certains refusent la Médina ou l'Agdal)\n- Quel est votre tarif de déplacement ?\n- Garantissez-vous votre intervention ?\n- Pouvez-vous établir un devis avant de commencer ?",
+                ],
+                [
+                    'title'   => "4. Urgences plomberie à Rabat",
+                    'content' => "**En cas de fuite urgente :**\n1. **Coupez l'eau** au compteur général (situé à l'entrée ou dans la cage d'escalier)\n2. Si l'eau coule d'un plafond ou mur → prévenez immédiatement votre voisin du dessus\n3. Photographiez les dégâts pour l'assurance\n4. Contactez un plombier disponible maintenant via Jobly (filtrez par disponibilité)\n\n**Numéros utiles Rabat :**\n- REDAL (eau) : signalement fuites réseau public\n- Syndic de résidence : pour les problèmes de colonne commune\n\n*Note : Les fuites dans les parties communes (colonnes montantes, toits) relèvent du syndic — pas à votre charge.*",
+                ],
+                [
+                    'title'   => "5. Entretien préventif recommandé",
+                    'content' => "Évitez les urgences coûteuses avec un entretien régulier :\n\n**Tous les 6 mois :**\n- Vérifiez les joints des robinets (changez-les si vous entendez une goutte)\n- Détartrez le pommeau de douche et les aérateurs de robinets\n- Inspectez les siphons sous les éviers\n\n**Tous les 2 ans :**\n- Vérifiez le chauffe-eau (anode, sécurité de pression)\n- Inspectez les raccords visibles (sous l'évier, derrière le WC)\n\n**Avant chaque hiver :**\n- Si chauffe-eau solaire : vérifiez le fluide caloporteur\n- Isolez les canalisations exposées aux balcons ou terrasses\n\n*Un plombier Jobly peut réaliser une inspection complète pour 150–300 MAD — c'est souvent moins cher qu'une urgence.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un plombier vérifié à Rabat",
+                'url'   => '/professionnels/rabat/plomberie',
+                'label' => 'Voir les plombiers de Rabat',
+            ],
+            'related' => [
+                'choisir-plombier-casablanca',
+                'prix-artisan-maroc-2026',
+            ],
+        ],
+
+        'femme-menage-rabat' => [
+            'slug'        => 'femme-menage-rabat',
+            'title'       => "Aide ménagère à Rabat : comment trouver la bonne",
+            'description' => "Guide pratique pour trouver une aide ménagère fiable à Rabat : tarifs 2026, questions essentielles, quartiers et conseils pour une relation de confiance durable.",
+            'category'    => 'Ménage',
+            'city'        => 'Rabat',
+            'readTime'    => 5,
+            'date'        => '2026-05-23',
+            'intro'       => "Rabat, ville administrative et résidentielle, compte une forte demande en services ménagers. Fonctionnaires, diplomates, familles d'expatriés — tout le monde cherche une aide ménagère de confiance. Voici comment ne pas se tromper.",
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs à Rabat en 2026",
+                    'content' => "| Prestation | Tarif indicatif |\n|-----------|----------------|\n| Ménage ponctuel (demi-journée, 4h) | 150–250 MAD |\n| Ménage ponctuel (journée, 8h) | 250–400 MAD |\n| Forfait hebdomadaire (1×/semaine) | 600–1 200 MAD/mois |\n| Forfait bihebdomadaire (2×/semaine) | 1 000–2 000 MAD/mois |\n| Grand ménage (appartement T3) | 350–600 MAD |\n| Repassage seul (2–3h) | 100–180 MAD |\n\n*Tarifs légèrement supérieurs dans les quartiers Hay Riad, Souissi, et pour les résidences diplomatiques.*",
+                ],
+                [
+                    'title'   => "2. Spécificités de Rabat",
+                    'content' => "**Quartiers résidentiels huppés (Hay Riad, Souissi) :**\n- Demande forte → certaines aides ménagères ont plusieurs clients et sont très demandées\n- Recommandez-vous d'une ambassade ou d'une administration → vos chances d'avoir un bon profil augmentent\n\n**Quartiers médina et Agdal :**\n- Tarifs légèrement inférieurs\n- Profils souvent recommandés par les voisins (réseau de confiance fort)\n\n**Familles d'expatriés :**\n- Préférence pour les profils bilingues (arabe + français)\n- Parfois besoin de garde d'enfants combiné au ménage\n- Budget généralement plus élevé, attentes de ponctualité très strictes",
+                ],
+                [
+                    'title'   => "3. Questions essentielles à poser",
+                    'content' => "**Lors du premier contact :**\n- Avez-vous des références vérifiables à Rabat ?\n- Êtes-vous disponible aux jours et heures souhaités ?\n- Quelle est votre expérience avec les enfants ou animaux ?\n- Parlez-vous français ? (important pour les familles expatriées)\n\n**À la première rencontre :**\n- Faites un tour complet du logement en listant les tâches\n- Testez la communication : comprend-elle ce que vous demandez ?\n- Observez si elle pose des questions pertinentes ou commence sans comprendre\n\n*Conseil : commencez toujours par une mission test payée avant tout engagement régulier.*",
+                ],
+                [
+                    'title'   => "4. Mettre en place une relation durable",
+                    'content' => "**Les bases d'une collaboration réussie :**\n\n1. **Soyez clair sur les attentes** : liste de tâches écrite la première fois\n2. **Soyez ponctuel** dans vos paiements — c'est la base du respect mutuel\n3. **Donnez un retour** après les premières prestations : ce qui est bien, ce qui peut être amélioré\n4. **Anticipez les absences** : prévenez au moins 48h à l'avance\n5. **Respectez les horaires** : si elle arrive à 9h, ne la faites pas attendre à la porte\n\n**Gérez les absences :**\n- Définissez à l'avance la politique pour les jours fériés marocains\n- Établissez une règle pour les remplacements en cas de maladie",
+                ],
+                [
+                    'title'   => "5. Aspects légaux et protection",
+                    'content' => "**Déclaration CNSS :**\nEn théorie, toute aide ménagère employée plus de 6h/semaine doit être déclarée à la CNSS. En pratique, peu de particuliers le font, mais cela protège les deux parties.\n\n**Pour votre sécurité :**\n- Demandez une photocopie de la CIN dès le début\n- Notez par écrit la remise des clés avec sa signature\n- Ne laissez pas d'objets de valeur visibles lors des premières prestations\n\n**Pour sa sécurité :**\n- Payez à la date convenue, sans délai\n- Ne demandez pas des tâches non convenues sans accord préalable\n- Respectez les horaires de pause\n\n*Sur Jobly, les professionnels de service à domicile sont vérifiés et notés — une garantie de sérieux supplémentaire.*",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver une aide ménagère vérifiée à Rabat",
+                'url'   => '/professionnels/rabat',
+                'label' => 'Voir les professionnels de Rabat',
+            ],
+            'related' => [
+                'femme-de-menage-casablanca',
+                'prix-artisan-maroc-2026',
+            ],
+        ],
     ];
 
     public function index(): \Inertia\Response
