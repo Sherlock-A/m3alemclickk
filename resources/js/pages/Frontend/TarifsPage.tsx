@@ -108,81 +108,18 @@ export default function TarifsPage() {
                 <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-14 px-4">
                     <div className="max-w-3xl mx-auto text-center">
                         <span className="inline-block bg-orange-500/20 text-orange-300 text-xs font-bold px-3 py-1 rounded-full mb-4">
-                            Tarifs simples et transparents
+                            Bientôt disponible
                         </span>
                         <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-                            Trouvez le plan adapté à votre activité
+                            Plans & Tarifs
                         </h1>
                         <p className="text-slate-300 text-base max-w-xl mx-auto">
-                            Commencez gratuitement. Passez Pro quand vous êtes prêt. Aucune commission sur vos transactions.
+                            Jobly est actuellement gratuit pour tous les artisans. Les plans payants arrivent bientôt — inscrivez-vous pour être parmi les premiers informés.
                         </p>
                     </div>
                 </div>
 
                 <div className="max-w-5xl mx-auto px-4 py-14">
-                    {/* Plans */}
-                    <div className="grid gap-6 md:grid-cols-3 mb-14">
-                        {PLANS.map((plan) => (
-                            <div
-                                key={plan.name}
-                                className={`relative rounded-2xl border bg-white dark:bg-slate-900 p-6 flex flex-col ${plan.color}`}
-                            >
-                                {plan.badge && (
-                                    <span className={`absolute -top-3 left-1/2 -translate-x-1/2 text-[11px] font-bold px-3 py-1 rounded-full ${
-                                        plan.badge === 'Populaire'
-                                            ? 'bg-orange-500 text-white'
-                                            : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                                    }`}>
-                                        {plan.badge}
-                                    </span>
-                                )}
-
-                                <div className="mb-5">
-                                    <h2 className="text-lg font-extrabold text-slate-900 dark:text-white mb-1">{plan.name}</h2>
-                                    <div className="flex items-end gap-1 mb-2">
-                                        <span className="text-3xl font-black text-slate-900 dark:text-white">{plan.price}</span>
-                                        {plan.period && <span className="text-slate-500 dark:text-slate-400 text-sm mb-1">MAD {plan.period}</span>}
-                                    </div>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400">{plan.description}</p>
-                                </div>
-
-                                <ul className="space-y-2 mb-5 flex-1">
-                                    {plan.features.map((f) => (
-                                        <li key={f} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
-                                            <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                                            {f}
-                                        </li>
-                                    ))}
-                                    {plan.missing.map((f) => (
-                                        <li key={f} className="flex items-start gap-2 text-sm text-slate-400 dark:text-slate-600 line-through">
-                                            <CheckCircle className="h-4 w-4 text-slate-200 dark:text-slate-700 shrink-0 mt-0.5" />
-                                            {f}
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                {plan.href ? (
-                                    <Link
-                                        href={plan.href}
-                                        className={`block text-center py-3 rounded-xl text-sm font-bold transition-colors ${plan.ctaColor}`}
-                                    >
-                                        {plan.cta}
-                                    </Link>
-                                ) : (
-                                    <button
-                                        onClick={() => {
-                                            setPlan(plan.name);
-                                            document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' });
-                                        }}
-                                        className={`block w-full text-center py-3 rounded-xl text-sm font-bold transition-colors ${plan.ctaColor}`}
-                                    >
-                                        {plan.cta}
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-
                     {/* FAQ */}
                     <div className="mb-14">
                         <h2 className="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Questions fréquentes</h2>
