@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { router } from '@inertiajs/react';
 import { Layout } from '../../components/Layout';
 import { BookOpen, Clock, ChevronRight, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +28,10 @@ const CAT_COLORS: Record<string, string> = {
     'Maçonnerie':    'bg-stone-50 text-stone-700 dark:bg-stone-900/20 dark:text-stone-300',
     'Carrelage':     'bg-teal-50 text-teal-700 dark:bg-teal-900/20 dark:text-teal-300',
     'Climatisation': 'bg-sky-50 text-sky-700 dark:bg-sky-900/20 dark:text-sky-300',
+    'Déménagement':  'bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-300',
+    'Jardinage':     'bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-300',
+    'Ménage':        'bg-rose-50 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300',
+    'Serrurerie':    'bg-slate-50 text-slate-700 dark:bg-slate-800/40 dark:text-slate-300',
 };
 
 const CAT_I18N_KEY: Record<string, string> = {
@@ -38,6 +43,10 @@ const CAT_I18N_KEY: Record<string, string> = {
     'Maçonnerie':    'cat_maconnerie',
     'Carrelage':     'cat_carrelage',
     'Climatisation': 'cat_climatisation',
+    'Déménagement':  'cat_demenagement',
+    'Jardinage':     'cat_jardinage',
+    'Ménage':        'cat_menage',
+    'Serrurerie':    'cat_serrurerie',
 };
 
 export default function GuidesListPage({ articles }: Props) {
@@ -90,11 +99,12 @@ export default function GuidesListPage({ articles }: Props) {
                         {articles.map((article) => {
                             const catKey = CAT_I18N_KEY[article.category];
                             const catLabel = catKey ? t(catKey) : article.category;
+                            const href = `/guides/${article.slug}`;
                             return (
-                                <Link
+                                <div
                                     key={article.slug}
-                                    href={`/guides/${article.slug}`}
-                                    className="group block rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 hover:shadow-md hover:border-orange-200 dark:hover:border-orange-800 transition-all"
+                                    onClick={() => router.visit(href)}
+                                    className="group cursor-pointer rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 hover:shadow-md hover:border-orange-200 dark:hover:border-orange-800 transition-all"
                                 >
                                     <div className="flex items-start justify-between gap-3 mb-4">
                                         <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${CAT_COLORS[article.category] ?? CAT_COLORS['Général']}`}>
@@ -111,13 +121,17 @@ export default function GuidesListPage({ articles }: Props) {
                                     <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">
                                         {article.description}
                                     </p>
-                                    <div className="mt-4 flex items-center gap-2">
-                                        <span className="inline-flex items-center gap-1.5 bg-orange-500 group-hover:bg-orange-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                                    <div className="mt-4">
+                                        <Link
+                                            href={href}
+                                            onClick={(e) => e.stopPropagation()}
+                                            className="inline-flex items-center gap-1.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                                        >
                                             {t('guides_read_more')}
                                             <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
-                                        </span>
+                                        </Link>
                                     </div>
-                                </Link>
+                                </div>
                             );
                         })}
                     </div>
