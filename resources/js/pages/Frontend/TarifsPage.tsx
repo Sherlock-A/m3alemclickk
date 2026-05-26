@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { Layout } from '../../components/Layout';
-import { CheckCircle, Zap, Shield, Star, ArrowRight, Mail } from 'lucide-react';
-import axios from 'axios';
+import { CheckCircle, Zap, Shield, Star, ArrowRight, MessageCircle } from 'lucide-react';
+
+const WHATSAPP_ADMIN = 'https://wa.me/212600000000?text=Bonjour%2C%20je%20souhaite%20activer%20le%20plan%20';
 
 const PLANS = [
     {
@@ -10,8 +10,10 @@ const PLANS = [
         price: '0',
         period: '',
         badge: null,
-        description: 'Pour démarrer et tester la plateforme.',
+        badgeColor: '',
+        description: "Pour démarrer et tester la plateforme.",
         color: 'border-slate-200 dark:border-slate-700',
+        headerBg: 'bg-slate-50 dark:bg-slate-800/50',
         ctaColor: 'border border-orange-500 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20',
         features: [
             '1 profil artisan',
@@ -23,18 +25,21 @@ const PLANS = [
         missing: ['Badge vérifié prioritaire', 'Statistiques détaillées', 'Mise en avant dans les résultats', 'Support dédié'],
         cta: 'Créer un profil gratuit',
         href: '/pro/register',
+        whatsapp: false,
     },
     {
         name: 'Pro',
         price: '99',
         period: '/ mois',
         badge: 'Populaire',
-        description: 'Pour les artisans qui veulent plus de clients.',
+        badgeColor: 'bg-orange-500 text-white',
+        description: "Pour les artisans qui veulent plus de clients.",
         color: 'border-orange-500 dark:border-orange-400 ring-2 ring-orange-500/20',
+        headerBg: 'bg-orange-50 dark:bg-orange-900/20',
         ctaColor: 'bg-orange-500 hover:bg-orange-600 text-white shadow-lg shadow-orange-500/20',
         features: [
             '1 profil artisan',
-            'Badge vérifié prioritaire',
+            'Badge Pro prioritaire dans les résultats',
             'Contact WhatsApp direct',
             'Statistiques détaillées (vues, clics)',
             'Mise en avant dans les résultats',
@@ -43,63 +48,41 @@ const PLANS = [
             'Avis clients + réponses',
         ],
         missing: ['Position #1 par ville+catégorie', 'Rapport mensuel', 'Support WhatsApp dédié'],
-        cta: 'Rejoindre la liste d\'attente',
+        cta: 'Activer le plan Pro',
         href: null,
+        whatsapp: true,
     },
     {
         name: 'Premium',
         price: '249',
         period: '/ mois',
-        badge: 'Bientôt',
-        description: 'Pour dominer votre marché local.',
-        color: 'border-slate-200 dark:border-slate-700',
-        ctaColor: 'border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800',
+        badge: 'Meilleure valeur',
+        badgeColor: 'bg-purple-600 text-white',
+        description: "Pour dominer votre marché local.",
+        color: 'border-purple-400 dark:border-purple-500 ring-2 ring-purple-500/20',
+        headerBg: 'bg-purple-50 dark:bg-purple-900/20',
+        ctaColor: 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-500/20',
         features: [
             'Tout le plan Pro',
             'Position #1 par ville + catégorie',
-            'Profil enrichi (vidéo, galerie illimitée)',
+            'Badge Premium exclusif',
             'Rapport mensuel de performance',
             'Support WhatsApp dédié',
             'Accès prioritaire aux nouvelles fonctions',
         ],
         missing: [],
-        cta: 'Rejoindre la liste d\'attente',
+        cta: 'Activer le plan Premium',
         href: null,
+        whatsapp: true,
     },
 ];
 
 export default function TarifsPage() {
-    const [email, setEmail]     = useState('');
-    const [plan,  setPlan]      = useState('Pro');
-    const [sent,  setSent]      = useState(false);
-    const [error, setError]     = useState('');
-    const [sending, setSending] = useState(false);
-
-    const joinWaitlist = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!email.trim()) { setError('Adresse email requise.'); return; }
-        setSending(true);
-        setError('');
-        try {
-            await axios.post('/api/contact', {
-                name:    email.split('@')[0],
-                email:   email.trim(),
-                subject: `Liste d'attente plan ${plan}`,
-                message: `Je souhaite rejoindre la liste d'attente pour le plan ${plan} de Jobly.`,
-            });
-            setSent(true);
-        } catch {
-            setError('Erreur lors de l\'envoi. Réessayez.');
-        } finally {
-            setSending(false);
-        }
-    };
-
     return (
         <Layout>
             <Head>
                 <title>Tarifs Artisans — Jobly Maroc</title>
-                <meta name="description" content="Découvrez les plans tarifaires Jobly pour artisans au Maroc. Démarrez gratuitement, passez Pro à 99 MAD/mois." />
+                <meta name="description" content="Plans tarifaires Jobly pour artisans au Maroc : Gratuit, Pro à 99 MAD/mois, Premium à 249 MAD/mois. Activation immédiate par virement." />
                 <link rel="canonical" href={`${window.location.origin}/tarifs`} />
             </Head>
 
@@ -107,19 +90,94 @@ export default function TarifsPage() {
                 {/* Hero */}
                 <div className="bg-gradient-to-br from-slate-900 to-slate-800 text-white py-14 px-4">
                     <div className="max-w-3xl mx-auto text-center">
-                        <span className="inline-block bg-orange-500/20 text-orange-300 text-xs font-bold px-3 py-1 rounded-full mb-4">
-                            Bientôt disponible
+                        <span className="inline-block bg-emerald-500/20 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full mb-4">
+                            Plans disponibles maintenant
                         </span>
-                        <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-                            Plans & Tarifs
-                        </h1>
+                        <h1 className="text-3xl md:text-4xl font-extrabold mb-3">Plans & Tarifs</h1>
                         <p className="text-slate-300 text-base max-w-xl mx-auto">
-                            Jobly est actuellement gratuit pour tous les artisans. Les plans payants arrivent bientôt — inscrivez-vous pour être parmi les premiers informés.
+                            Choisissez le plan qui correspond à vos ambitions. Activation par virement bancaire — aucune carte requise.
                         </p>
                     </div>
                 </div>
 
                 <div className="max-w-5xl mx-auto px-4 py-14">
+
+                    {/* Plans */}
+                    <div className="grid gap-6 sm:grid-cols-3 mb-14">
+                        {PLANS.map(plan => (
+                            <div key={plan.name} className={`relative rounded-2xl border ${plan.color} bg-white dark:bg-slate-900 flex flex-col overflow-hidden`}>
+                                {plan.badge && (
+                                    <div className={`absolute top-4 right-4 text-[10px] font-bold px-2 py-0.5 rounded-full ${plan.badgeColor}`}>
+                                        {plan.badge}
+                                    </div>
+                                )}
+                                <div className={`${plan.headerBg} px-6 py-5`}>
+                                    <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">{plan.name}</p>
+                                    <div className="flex items-end gap-1 mb-1">
+                                        <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{plan.price}</span>
+                                        {plan.period && <span className="text-slate-500 dark:text-slate-400 text-sm mb-1">MAD{plan.period}</span>}
+                                    </div>
+                                    <p className="text-xs text-slate-500 dark:text-slate-400">{plan.description}</p>
+                                </div>
+                                <div className="px-6 py-5 flex-1 flex flex-col">
+                                    <ul className="space-y-2 flex-1 mb-5">
+                                        {plan.features.map(f => (
+                                            <li key={f} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
+                                                <CheckCircle className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                                                {f}
+                                            </li>
+                                        ))}
+                                        {plan.missing.map(f => (
+                                            <li key={f} className="flex items-start gap-2 text-sm text-slate-400 line-through">
+                                                <span className="h-4 w-4 shrink-0 mt-0.5 text-slate-300">✗</span>
+                                                {f}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    {plan.whatsapp ? (
+                                        <a
+                                            href={`${WHATSAPP_ADMIN}${plan.name}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition-colors ${plan.ctaColor}`}
+                                        >
+                                            <MessageCircle className="h-4 w-4" /> {plan.cta}
+                                        </a>
+                                    ) : (
+                                        <Link
+                                            href={plan.href!}
+                                            className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition-colors ${plan.ctaColor}`}
+                                        >
+                                            {plan.cta} <ArrowRight className="h-4 w-4" />
+                                        </Link>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Comment ça marche */}
+                    <div className="rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30 p-8 mb-14">
+                        <h2 className="text-lg font-extrabold text-slate-900 dark:text-white text-center mb-6">Comment activer votre abonnement ?</h2>
+                        <div className="grid gap-6 sm:grid-cols-3">
+                            {[
+                                { step: '1', icon: <MessageCircle className="h-5 w-5" />, title: 'Contactez-nous', desc: 'Cliquez sur "Activer" et envoyez-nous un message WhatsApp avec le plan choisi.' },
+                                { step: '2', icon: <Shield className="h-5 w-5" />, title: 'Effectuez le virement', desc: 'Virez le montant mensuel sur notre compte CIH ou Attijariwafa. Aucune carte bancaire requise.' },
+                                { step: '3', icon: <Zap className="h-5 w-5" />, title: 'Activation immédiate', desc: 'Dès réception du virement, votre plan est activé dans les 2 heures par notre équipe.' },
+                            ].map(s => (
+                                <div key={s.step} className="flex gap-4">
+                                    <div className="h-10 w-10 rounded-2xl bg-orange-100 dark:bg-orange-900/30 text-orange-600 flex items-center justify-center shrink-0">
+                                        {s.icon}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-slate-900 dark:text-white text-sm mb-1">{s.title}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{s.desc}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* Prix moyens */}
                     <div className="mb-14">
                         <h2 className="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-2">Prix moyens des artisans au Maroc</h2>
@@ -153,7 +211,7 @@ export default function TarifsPage() {
                                 </tbody>
                             </table>
                         </div>
-                        <p className="text-xs text-slate-400 text-center mt-3">* Prix moyens indicatifs à Casablanca — peuvent varier selon la ville et la complexité des travaux.</p>
+                        <p className="text-xs text-slate-400 text-center mt-3">* Prix moyens indicatifs — peuvent varier selon la ville et la complexité des travaux.</p>
                     </div>
 
                     {/* FAQ */}
@@ -161,10 +219,10 @@ export default function TarifsPage() {
                         <h2 className="text-xl font-extrabold text-slate-900 dark:text-white text-center mb-6">Questions fréquentes</h2>
                         <div className="grid gap-4 sm:grid-cols-2">
                             {[
-                                { q: 'Y a-t-il une commission sur les transactions ?', a: 'Non. Jobly ne prend aucune commission sur vos contrats. Vous êtes payé directement par vos clients, comme toujours.' },
-                                { q: 'Puis-je changer de plan à tout moment ?', a: 'Oui. Vous pouvez passer de Gratuit à Pro ou annuler votre abonnement à tout moment, sans engagement.' },
-                                { q: 'Comment fonctionne la vérification ?', a: 'Chaque artisan est vérifié par notre équipe (CIN + appel téléphonique). Le badge "Vérifié" rassure vos clients et améliore votre visibilité.' },
-                                { q: 'Quand le plan Pro sera-t-il disponible ?', a: 'Le plan Pro est en cours de finalisation. Rejoignez la liste d\'attente pour être parmi les premiers à y avoir accès et bénéficier d\'un tarif de lancement.' },
+                                { q: 'Y a-t-il une commission sur les transactions ?', a: "Non. Jobly ne prend aucune commission sur vos contrats. Vous êtes payé directement par vos clients, comme toujours." },
+                                { q: 'Comment activer le plan Pro ou Premium ?', a: "Cliquez sur \"Activer le plan Pro\" (ou Premium), envoyez-nous un message WhatsApp et effectuez un virement CIH ou Attijariwafa. Votre plan est activé dans les 2 heures." },
+                                { q: 'Comment fonctionne la vérification ?', a: "Chaque artisan est vérifié par notre équipe (CIN + appel téléphonique). Le badge \"Vérifié\" rassure vos clients et améliore votre visibilité." },
+                                { q: "Puis-je annuler mon abonnement ?", a: "Oui, à tout moment. Contactez-nous par WhatsApp et votre plan reviendra au niveau Gratuit à la fin de la période payée. Aucun engagement minimum." },
                             ].map(({ q, a }) => (
                                 <div key={q} className="rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30 p-5">
                                     <p className="font-semibold text-slate-800 dark:text-white text-sm mb-2">{q}</p>
@@ -174,42 +232,37 @@ export default function TarifsPage() {
                         </div>
                     </div>
 
-                    {/* Waitlist */}
-                    <div id="waitlist" className="rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-8 text-white text-center">
+                    {/* CTA final */}
+                    <div className="rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-8 text-white text-center">
                         <div className="flex justify-center mb-3">
                             <div className="h-12 w-12 rounded-2xl bg-white/20 flex items-center justify-center">
-                                <Zap className="h-6 w-6 text-white" />
+                                <Star className="h-6 w-6 text-white fill-white" />
                             </div>
                         </div>
-                        <h2 className="text-xl font-extrabold mb-2">Soyez parmi les premiers</h2>
+                        <h2 className="text-xl font-extrabold mb-2">Prêt à recevoir plus de clients ?</h2>
                         <p className="text-orange-100 text-sm mb-6 max-w-sm mx-auto">
-                            Les plans payants arrivent bientôt. Inscrivez-vous pour obtenir un tarif de lancement exclusif.
+                            Rejoignez les artisans Pro et Premium qui apparaissent en tête des résultats Jobly.
                         </p>
-                        {sent ? (
-                            <div className="flex items-center justify-center gap-2 bg-white/20 rounded-xl py-3 px-4 mx-auto max-w-xs">
-                                <CheckCircle className="h-5 w-5 text-white" />
-                                <span className="text-white font-semibold text-sm">Inscription confirmée !</span>
-                            </div>
-                        ) : (
-                            <form onSubmit={joinWaitlist} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                                <input
-                                    type="email"
-                                    value={email}
-                                    onChange={e => setEmail(e.target.value)}
-                                    placeholder="votre@email.com"
-                                    className="flex-1 rounded-xl px-4 py-3 text-slate-900 text-sm bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-white/50"
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={sending}
-                                    className="rounded-xl bg-white hover:bg-orange-50 disabled:opacity-70 text-orange-600 font-bold px-5 py-3 text-sm transition-colors flex items-center justify-center gap-2 whitespace-nowrap"
-                                >
-                                    {sending ? 'Envoi...' : <><Mail className="h-4 w-4" /> M'inscrire</>}
-                                </button>
-                            </form>
-                        )}
-                        {error && <p className="text-orange-100 text-xs mt-2">{error}</p>}
+                        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                            <a
+                                href={`${WHATSAPP_ADMIN}Pro`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-orange-50 text-orange-600 font-bold px-6 py-3 text-sm transition-colors"
+                            >
+                                <MessageCircle className="h-4 w-4" /> Activer le plan Pro — 99 MAD/mois
+                            </a>
+                            <a
+                                href={`${WHATSAPP_ADMIN}Premium`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-2 rounded-xl bg-white/20 hover:bg-white/30 text-white font-bold px-6 py-3 text-sm transition-colors border border-white/30"
+                            >
+                                Premium — 249 MAD/mois
+                            </a>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </Layout>

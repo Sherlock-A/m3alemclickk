@@ -206,6 +206,50 @@ class MailService
         );
     }
 
+    public function sendNewReviewNotification(
+        string $proEmail,
+        string $proName,
+        string $clientName,
+        int    $rating,
+        string $comment,
+        string $dashboardUrl,
+    ): void {
+        if (! $proEmail) return;
+
+        $stars = str_repeat('⭐', $rating);
+
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.pro-new-review',
+            compact('proName', 'clientName', 'rating', 'stars', 'comment', 'dashboardUrl'),
+            $proEmail,
+            $proName,
+            "{$stars} Nouvel avis client approuvé sur votre profil Jobly",
+        );
+    }
+
+    public function sendWeeklyStats(
+        string $proEmail,
+        string $proName,
+        int    $views,
+        int    $whatsappClicks,
+        int    $calls,
+        int    $totalReviews,
+        float  $rating,
+        string $dashboardUrl,
+    ): void {
+        if (! $proEmail) return;
+
+        SendMailJob::dispatch(
+            $this->resolveMailer(),
+            'emails.pro-weekly-stats',
+            compact('proName', 'views', 'whatsappClicks', 'calls', 'totalReviews', 'rating', 'dashboardUrl'),
+            $proEmail,
+            $proName,
+            "📊 Vos stats Jobly de la semaine — {$views} vues, {$whatsappClicks} contacts WhatsApp",
+        );
+    }
+
     /**
      * Envoie un message de contact (formulaire public → admin).
      */

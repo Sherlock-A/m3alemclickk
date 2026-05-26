@@ -172,6 +172,20 @@ class AdminController extends Controller
         // Invalidate AI review summary cache
         \Illuminate\Support\Facades\Cache::forget("review_summary_{$review->professional_id}");
 
+        // Notify the professional by email
+        $pro     = Professional::find($review->professional_id);
+        $proUser = $pro?->user;
+        if ($pro && $proUser?->email) {
+            app(MailService::class)->sendNewReviewNotification(
+                proEmail:     $proUser->email,
+                proName:      $pro->name,
+                clientName:   $review->client_name,
+                rating:       (int) $review->rating,
+                comment:      (string) ($review->comment ?? ''),
+                dashboardUrl: config('app.url') . '/dashboard/professional',
+            );
+        }
+
         return response()->json(['success' => true]);
     }
 

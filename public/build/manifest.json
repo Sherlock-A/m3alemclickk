@@ -6,61 +6,61 @@
       "_vendor-react-CdQTdICl.js"
     ]
   },
-  "_Layout-DrAl6JEl.js": {
-    "file": "assets/Layout-DrAl6JEl.js",
+  "_Layout-CBxzHcSZ.js": {
+    "file": "assets/Layout-CBxzHcSZ.js",
     "name": "Layout",
     "imports": [
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js"
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js"
     ]
   },
-  "_ProfessionalBadges-BvKaFnuF.js": {
-    "file": "assets/ProfessionalBadges-BvKaFnuF.js",
+  "_ProfessionalBadges-C1VhnUkF.js": {
+    "file": "assets/ProfessionalBadges-C1VhnUkF.js",
     "name": "ProfessionalBadges",
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js"
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js"
     ]
   },
-  "_SearchBar-ClhkzqAa.js": {
-    "file": "assets/SearchBar-ClhkzqAa.js",
+  "_SearchBar-B7cUDU4r.js": {
+    "file": "assets/SearchBar-B7cUDU4r.js",
     "name": "SearchBar",
     "imports": [
       "_vendor-react-CdQTdICl.js",
       "_vendor-form-BMLarSMH.js",
       "_vendor-axios-BOeqtr82.js",
-      "_vendor-ui-UGgzTJkq.js",
-      "_useTranslation-CHfKv8cf.js"
+      "_vendor-ui-DME9bGz3.js",
+      "_useTranslation-0ndpFG_J.js"
     ]
   },
-  "_SentimentDashboard-DgJT_ebt.js": {
-    "file": "assets/SentimentDashboard-DgJT_ebt.js",
+  "_SentimentDashboard-pCBsg7n6.js": {
+    "file": "assets/SentimentDashboard-pCBsg7n6.js",
     "name": "SentimentDashboard",
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_vendor-ui-UGgzTJkq.js"
+      "_vendor-ui-DME9bGz3.js"
     ]
   },
-  "_categoryIconMap-BB1Nsq9I.js": {
-    "file": "assets/categoryIconMap-BB1Nsq9I.js",
+  "_categoryIconMap-vSIyCJe8.js": {
+    "file": "assets/categoryIconMap-vSIyCJe8.js",
     "name": "categoryIconMap",
     "imports": [
-      "_vendor-ui-UGgzTJkq.js"
+      "_vendor-ui-DME9bGz3.js"
     ]
   },
-  "_useCatName-CkZT1vG7.js": {
-    "file": "assets/useCatName-CkZT1vG7.js",
+  "_useCatName-BpPCjTUU.js": {
+    "file": "assets/useCatName-BpPCjTUU.js",
     "name": "useCatName",
     "imports": [
       "resources/js/app.tsx"
     ]
   },
-  "_useTranslation-CHfKv8cf.js": {
-    "file": "assets/useTranslation-CHfKv8cf.js",
+  "_useTranslation-0ndpFG_J.js": {
+    "file": "assets/useTranslation-0ndpFG_J.js",
     "name": "useTranslation",
     "imports": [
       "_vendor-react-CdQTdICl.js",
@@ -92,20 +92,20 @@
       "_vendor-axios-BOeqtr82.js"
     ]
   },
-  "_vendor-ui-UGgzTJkq.js": {
-    "file": "assets/vendor-ui-UGgzTJkq.js",
+  "_vendor-ui-DME9bGz3.js": {
+    "file": "assets/vendor-ui-DME9bGz3.js",
     "name": "vendor-ui",
     "imports": [
       "_vendor-react-CdQTdICl.js"
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app--3IfSEoO.css",
+    "file": "assets/app-C0yCeVY8.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.tsx": {
-    "file": "assets/app-DC3Rtt5P.js",
+    "file": "assets/app-COtL4VfO.js",
     "name": "app",
     "src": "resources/js/app.tsx",
     "isEntry": true,
@@ -138,7 +138,7 @@
       "resources/js/pages/Frontend/TarifsPage.tsx"
     ],
     "css": [
-      "assets/app--3IfSEoO.css"
+      "assets/app-C0yCeVY8.css"
     ]
   },
   "resources/js/components/StatsChart.tsx": {
@@ -153,7 +153,7 @@
     ]
   },
   "resources/js/pages/App.tsx": {
-    "file": "assets/App-DsLnB5xH.js",
+    "file": "assets/App-CKDLEzZq.js",
     "name": "App",
     "src": "resources/js/pages/App.tsx",
     "isDynamicEntry": true,
@@ -168,19 +168,19 @@
     ]
   },
   "resources/js/pages/Auth/AdminLoginPage.tsx": {
-    "file": "assets/AdminLoginPage-CKSVhTut.js",
+    "file": "assets/AdminLoginPage-kidjy4k2.js",
     "name": "AdminLoginPage",
     "src": "resources/js/pages/Auth/AdminLoginPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js"
     ]
   },
   "resources/js/pages/Auth/ClientLoginPage.tsx": {
-    "file": "assets/ClientLoginPage-BxPeETLN.js",
+    "file": "assets/ClientLoginPage-BwXSQ6b-.js",
     "name": "ClientLoginPage",
     "src": "resources/js/pages/Auth/ClientLoginPage.tsx",
     "isDynamicEntry": true,
@@ -188,13 +188,13 @@
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js"
     ]
   },
   "resources/js/pages/Auth/ClientRegisterPage.tsx": {
-    "file": "assets/ClientRegisterPage-CMrHtxen.js",
+    "file": "assets/ClientRegisterPage-BD55aG_K.js",
     "name": "ClientRegisterPage",
     "src": "resources/js/pages/Auth/ClientRegisterPage.tsx",
     "isDynamicEntry": true,
@@ -202,13 +202,13 @@
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js"
     ]
   },
   "resources/js/pages/Auth/ForgotPasswordPage.tsx": {
-    "file": "assets/ForgotPasswordPage-BiedJ3b5.js",
+    "file": "assets/ForgotPasswordPage-DbO6wtJo.js",
     "name": "ForgotPasswordPage",
     "src": "resources/js/pages/Auth/ForgotPasswordPage.tsx",
     "isDynamicEntry": true,
@@ -216,13 +216,13 @@
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js"
     ]
   },
   "resources/js/pages/Auth/ProLoginPage.tsx": {
-    "file": "assets/ProLoginPage-CIDODkSh.js",
+    "file": "assets/ProLoginPage-CD4RkMd4.js",
     "name": "ProLoginPage",
     "src": "resources/js/pages/Auth/ProLoginPage.tsx",
     "isDynamicEntry": true,
@@ -230,13 +230,13 @@
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js"
     ]
   },
   "resources/js/pages/Auth/ProRegisterPage.tsx": {
-    "file": "assets/ProRegisterPage-Br1R6do6.js",
+    "file": "assets/ProRegisterPage-CUbqNdcY.js",
     "name": "ProRegisterPage",
     "src": "resources/js/pages/Auth/ProRegisterPage.tsx",
     "isDynamicEntry": true,
@@ -244,27 +244,27 @@
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js"
     ]
   },
   "resources/js/pages/Auth/ResetPasswordPage.tsx": {
-    "file": "assets/ResetPasswordPage-U_WJZt81.js",
+    "file": "assets/ResetPasswordPage-nYdEDlWJ.js",
     "name": "ResetPasswordPage",
     "src": "resources/js/pages/Auth/ResetPasswordPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js",
       "resources/js/app.tsx"
     ]
   },
   "resources/js/pages/Auth/UnifiedLoginPage.tsx": {
-    "file": "assets/UnifiedLoginPage-Co5DoQr7.js",
+    "file": "assets/UnifiedLoginPage-DlDk_ZTO.js",
     "name": "UnifiedLoginPage",
     "src": "resources/js/pages/Auth/UnifiedLoginPage.tsx",
     "isDynamicEntry": true,
@@ -272,13 +272,13 @@
       "_vendor-react-CdQTdICl.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js"
     ]
   },
   "resources/js/pages/Dashboard/AdminDashboardPage.tsx": {
-    "file": "assets/AdminDashboardPage-WOCuBt8b.js",
+    "file": "assets/AdminDashboardPage-CjoVcQLh.js",
     "name": "AdminDashboardPage",
     "src": "resources/js/pages/Dashboard/AdminDashboardPage.tsx",
     "isDynamicEntry": true,
@@ -286,13 +286,13 @@
       "_vendor-react-CdQTdICl.js",
       "_vendor-axios-BOeqtr82.js",
       "_JoblyLogo-CBb4taMD.js",
-      "_SentimentDashboard-DgJT_ebt.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_SentimentDashboard-pCBsg7n6.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-chart-DD8piw8T.js"
     ]
   },
   "resources/js/pages/Dashboard/ClientDashboardPage.tsx": {
-    "file": "assets/ClientDashboardPage-q3pGP284.js",
+    "file": "assets/ClientDashboardPage-Bqqz6WBr.js",
     "name": "ClientDashboardPage",
     "src": "resources/js/pages/Dashboard/ClientDashboardPage.tsx",
     "isDynamicEntry": true,
@@ -300,11 +300,11 @@
       "_vendor-react-CdQTdICl.js",
       "_vendor-axios-BOeqtr82.js",
       "_JoblyLogo-CBb4taMD.js",
-      "_vendor-ui-UGgzTJkq.js"
+      "_vendor-ui-DME9bGz3.js"
     ]
   },
   "resources/js/pages/Dashboard/ProfessionalDashboardPage.tsx": {
-    "file": "assets/ProfessionalDashboardPage-BGljLm4A.js",
+    "file": "assets/ProfessionalDashboardPage-DuhTnxk0.js",
     "name": "ProfessionalDashboardPage",
     "src": "resources/js/pages/Dashboard/ProfessionalDashboardPage.tsx",
     "isDynamicEntry": true,
@@ -314,175 +314,175 @@
       "_vendor-axios-BOeqtr82.js",
       "_vendor-form-BMLarSMH.js",
       "_JoblyLogo-CBb4taMD.js",
-      "_SentimentDashboard-DgJT_ebt.js",
-      "_ProfessionalBadges-BvKaFnuF.js",
-      "_useCatName-CkZT1vG7.js",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js"
+      "_SentimentDashboard-pCBsg7n6.js",
+      "_ProfessionalBadges-C1VhnUkF.js",
+      "_useCatName-BpPCjTUU.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js"
     ],
     "dynamicImports": [
       "resources/js/components/StatsChart.tsx"
     ]
   },
   "resources/js/pages/Frontend/CategoriesPage.tsx": {
-    "file": "assets/CategoriesPage-NIMfp5kQ.js",
+    "file": "assets/CategoriesPage-DLOvkvpe.js",
     "name": "CategoriesPage",
     "src": "resources/js/pages/Frontend/CategoriesPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_Layout-DrAl6JEl.js",
+      "_Layout-CBxzHcSZ.js",
       "resources/js/app.tsx",
-      "_categoryIconMap-BB1Nsq9I.js",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_categoryIconMap-vSIyCJe8.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js",
       "_JoblyLogo-CBb4taMD.js"
     ]
   },
   "resources/js/pages/Frontend/ContactPage.tsx": {
-    "file": "assets/ContactPage-DM0S-1yn.js",
+    "file": "assets/ContactPage-DLRgTrQN.js",
     "name": "ContactPage",
     "src": "resources/js/pages/Frontend/ContactPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_Layout-DrAl6JEl.js",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_Layout-CBxzHcSZ.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx"
     ]
   },
   "resources/js/pages/Frontend/GuidePage.tsx": {
-    "file": "assets/GuidePage-BDM-CwRE.js",
+    "file": "assets/GuidePage-BHKfGXrM.js",
     "name": "GuidePage",
     "src": "resources/js/pages/Frontend/GuidePage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_Layout-DrAl6JEl.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_Layout-CBxzHcSZ.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js"
+      "_useTranslation-0ndpFG_J.js"
     ]
   },
   "resources/js/pages/Frontend/GuidesListPage.tsx": {
-    "file": "assets/GuidesListPage-fbUhO7_3.js",
+    "file": "assets/GuidesListPage-BqVaC14P.js",
     "name": "GuidesListPage",
     "src": "resources/js/pages/Frontend/GuidesListPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_Layout-DrAl6JEl.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_Layout-CBxzHcSZ.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js"
+      "_useTranslation-0ndpFG_J.js"
     ]
   },
   "resources/js/pages/Frontend/HomePage.tsx": {
-    "file": "assets/HomePage-D8LslkFO.js",
+    "file": "assets/HomePage-CUzQuZ5S.js",
     "name": "HomePage",
     "src": "resources/js/pages/Frontend/HomePage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
       "_vendor-axios-BOeqtr82.js",
-      "_Layout-DrAl6JEl.js",
-      "_SearchBar-ClhkzqAa.js",
-      "_useCatName-CkZT1vG7.js",
-      "_categoryIconMap-BB1Nsq9I.js",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_Layout-CBxzHcSZ.js",
+      "_SearchBar-B7cUDU4r.js",
+      "_useCatName-BpPCjTUU.js",
+      "_categoryIconMap-vSIyCJe8.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
       "_vendor-form-BMLarSMH.js"
     ]
   },
   "resources/js/pages/Frontend/HowItWorksPage.tsx": {
-    "file": "assets/HowItWorksPage-CW4J_BkY.js",
+    "file": "assets/HowItWorksPage-DasmQHr4.js",
     "name": "HowItWorksPage",
     "src": "resources/js/pages/Frontend/HowItWorksPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_Layout-DrAl6JEl.js",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_Layout-CBxzHcSZ.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx"
     ]
   },
   "resources/js/pages/Frontend/LeaderboardPage.tsx": {
-    "file": "assets/LeaderboardPage-z7JUc3Ia.js",
+    "file": "assets/LeaderboardPage-BwpUwPtr.js",
     "name": "LeaderboardPage",
     "src": "resources/js/pages/Frontend/LeaderboardPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_Layout-DrAl6JEl.js",
-      "_vendor-ui-UGgzTJkq.js",
+      "_Layout-CBxzHcSZ.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js"
+      "_useTranslation-0ndpFG_J.js"
     ]
   },
   "resources/js/pages/Frontend/ProfessionalShowPage.tsx": {
-    "file": "assets/ProfessionalShowPage-B8PmcZ5G.js",
+    "file": "assets/ProfessionalShowPage-8l3rZIyR.js",
     "name": "ProfessionalShowPage",
     "src": "resources/js/pages/Frontend/ProfessionalShowPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
       "_vendor-axios-BOeqtr82.js",
-      "_Layout-DrAl6JEl.js",
-      "_useCatName-CkZT1vG7.js",
-      "_vendor-ui-UGgzTJkq.js",
-      "_ProfessionalBadges-BvKaFnuF.js",
-      "_useTranslation-CHfKv8cf.js",
+      "_Layout-CBxzHcSZ.js",
+      "_useCatName-BpPCjTUU.js",
+      "_vendor-ui-DME9bGz3.js",
+      "_ProfessionalBadges-C1VhnUkF.js",
+      "_useTranslation-0ndpFG_J.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx"
     ]
   },
   "resources/js/pages/Frontend/ProfessionalsPage.tsx": {
-    "file": "assets/ProfessionalsPage-DRkhvkW_.js",
+    "file": "assets/ProfessionalsPage-DTTC9EuN.js",
     "name": "ProfessionalsPage",
     "src": "resources/js/pages/Frontend/ProfessionalsPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
       "_vendor-axios-BOeqtr82.js",
-      "_Layout-DrAl6JEl.js",
+      "_Layout-CBxzHcSZ.js",
       "resources/js/app.tsx",
-      "_useCatName-CkZT1vG7.js",
-      "_useTranslation-CHfKv8cf.js",
-      "_vendor-ui-UGgzTJkq.js",
-      "_SearchBar-ClhkzqAa.js",
-      "_categoryIconMap-BB1Nsq9I.js",
+      "_useCatName-BpPCjTUU.js",
+      "_useTranslation-0ndpFG_J.js",
+      "_vendor-ui-DME9bGz3.js",
+      "_SearchBar-B7cUDU4r.js",
+      "_categoryIconMap-vSIyCJe8.js",
       "_JoblyLogo-CBb4taMD.js",
       "_vendor-form-BMLarSMH.js"
     ]
   },
   "resources/js/pages/Frontend/TarifsPage.tsx": {
-    "file": "assets/TarifsPage-ClJTHPQO.js",
+    "file": "assets/TarifsPage-DdVFeAUD.js",
     "name": "TarifsPage",
     "src": "resources/js/pages/Frontend/TarifsPage.tsx",
     "isDynamicEntry": true,
     "imports": [
       "_vendor-react-CdQTdICl.js",
-      "_Layout-DrAl6JEl.js",
+      "_Layout-CBxzHcSZ.js",
+      "_vendor-ui-DME9bGz3.js",
       "_vendor-axios-BOeqtr82.js",
-      "_vendor-ui-UGgzTJkq.js",
       "_JoblyLogo-CBb4taMD.js",
       "resources/js/app.tsx",
-      "_useTranslation-CHfKv8cf.js"
+      "_useTranslation-0ndpFG_J.js"
     ]
   }
 }
