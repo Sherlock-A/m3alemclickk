@@ -608,6 +608,26 @@ const resources = {
       top_pros_title: 'Les meilleurs artisans par ville',
       top_pros_sub: 'Découvrez le classement des professionnels les mieux notés dans votre ville',
 
+      // Top artisans category labels
+      top_cat_plomberie: 'Plombiers',
+      top_cat_electricite: 'Électriciens',
+      top_cat_menage: 'Aide ménagère',
+      top_cat_climatisation: 'Climatisation',
+
+      // Orange CTA section (pro join)
+      cta_pro_badge: 'Vous êtes artisan ?',
+      cta_pro_title: 'Développez votre activité avec Jobly',
+      cta_pro_desc: "Rejoignez des centaines d'artisans qui reçoivent des contacts qualifiés directement sur WhatsApp — sans commission, sans abonnement.",
+      cta_pro_register: 'Créer mon profil gratuitement',
+      cta_feat_direct_title: 'Contact direct',
+      cta_feat_direct_desc: "Clients vous contactent sur WhatsApp ou par téléphone — sans intermédiaire",
+      cta_feat_commission_title: 'Zéro commission',
+      cta_feat_commission_desc: "Vous gardez 100% de vos revenus. Inscription et visibilité gratuites.",
+      cta_feat_reviews_title: 'Avis clients',
+      cta_feat_reviews_desc: "Construisez votre réputation avec des avis vérifiés de vrais clients.",
+      cta_feat_stats_title: 'Statistiques',
+      cta_feat_stats_desc: "Suivez vos vues, appels et contacts depuis votre dashboard.",
+
       // Categories page
       cat_page_head: 'Catégories — Jobly',
       cat_title_1: 'Trouvez le bon',
@@ -1238,6 +1258,26 @@ const resources = {
       testi_by: 'عبر',
       top_pros_title: 'أفضل الحرفيين حسب المدينة',
       top_pros_sub: 'اكتشف تصنيف المهنيين الأعلى تقييماً في مدينتك',
+
+      // Top artisans category labels
+      top_cat_plomberie: 'السباكين',
+      top_cat_electricite: 'الكهربائيين',
+      top_cat_menage: 'مساعدة منزلية',
+      top_cat_climatisation: 'التكييف',
+
+      // Orange CTA section (pro join)
+      cta_pro_badge: 'أنت حرفي؟',
+      cta_pro_title: 'طوّر نشاطك مع Jobly',
+      cta_pro_desc: 'انضم إلى مئات الحرفيين الذين يتلقون طلبات مؤهلة مباشرة على واتساب — بدون عمولة، بدون اشتراك.',
+      cta_pro_register: 'إنشاء ملفي مجاناً',
+      cta_feat_direct_title: 'تواصل مباشر',
+      cta_feat_direct_desc: 'يتواصل معك العملاء عبر واتساب أو الهاتف — بدون وسيط',
+      cta_feat_commission_title: 'صفر عمولة',
+      cta_feat_commission_desc: 'تحتفظ بـ 100% من دخلك. التسجيل والظهور مجانيان.',
+      cta_feat_reviews_title: 'تقييمات العملاء',
+      cta_feat_reviews_desc: 'ابنِ سمعتك بتقييمات موثقة من عملاء حقيقيين.',
+      cta_feat_stats_title: 'إحصائيات',
+      cta_feat_stats_desc: 'تابع مشاهداتك ومكالماتك وتواصلاتك من لوحة التحكم.',
 
       // Categories page
       cat_page_head: 'الفئات — Jobly',

@@ -594,13 +594,13 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
           <div className="relative z-10 grid gap-8 md:grid-cols-2 items-center">
             <div>
               <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white mb-4">
-                Vous êtes artisan ?
+                {t('cta_pro_badge')}
               </span>
               <h2 className="text-3xl font-black text-white mb-3 leading-tight">
-                Développez votre activité avec Jobly
+                {t('cta_pro_title')}
               </h2>
               <p className="text-orange-100 text-sm mb-6 max-w-md">
-                Rejoignez des centaines d'artisans qui reçoivent des contacts qualifiés directement sur WhatsApp — sans commission, sans abonnement.
+                {t('cta_pro_desc')}
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
@@ -608,28 +608,28 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-orange-600 hover:bg-orange-50 transition-colors shadow-lg"
                 >
                   <Sparkles className="h-4 w-4" />
-                  Créer mon profil gratuitement
+                  {t('cta_pro_register')}
                 </a>
                 <a
                   href="/how-it-works"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/40 px-6 py-3 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
                 >
-                  Comment ça marche <ArrowRight className="h-4 w-4" />
+                  {t('how_it_works')} <ArrowRight className="h-4 w-4" />
                 </a>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               {[
-                { emoji: '📱', title: 'Contact direct', desc: 'Clients vous contactent sur WhatsApp ou par téléphone — sans intermédiaire' },
-                { emoji: '🎯', title: 'Zéro commission', desc: 'Vous gardez 100% de vos revenus. Inscription et visibilité gratuites.' },
-                { emoji: '⭐', title: 'Avis clients', desc: 'Construisez votre réputation avec des avis vérifiés de vrais clients.' },
-                { emoji: '📊', title: 'Statistiques', desc: 'Suivez vos vues, appels et contacts depuis votre dashboard.' },
-              ].map(({ emoji, title, desc }) => (
-                <div key={title} className="rounded-2xl bg-white/15 backdrop-blur-sm p-4 border border-white/20">
+                { emoji: '📱', titleKey: 'cta_feat_direct_title',     descKey: 'cta_feat_direct_desc' },
+                { emoji: '🎯', titleKey: 'cta_feat_commission_title', descKey: 'cta_feat_commission_desc' },
+                { emoji: '⭐', titleKey: 'cta_feat_reviews_title',    descKey: 'cta_feat_reviews_desc' },
+                { emoji: '📊', titleKey: 'cta_feat_stats_title',      descKey: 'cta_feat_stats_desc' },
+              ].map(({ emoji, titleKey, descKey }) => (
+                <div key={titleKey} className="rounded-2xl bg-white/15 backdrop-blur-sm p-4 border border-white/20">
                   <div className="text-2xl mb-2">{emoji}</div>
-                  <h3 className="text-sm font-bold text-white mb-1">{title}</h3>
-                  <p className="text-xs text-orange-100 leading-relaxed">{desc}</p>
+                  <h3 className="text-sm font-bold text-white mb-1">{t(titleKey)}</h3>
+                  <p className="text-xs text-orange-100 leading-relaxed">{t(descKey)}</p>
                 </div>
               ))}
             </div>
@@ -705,22 +705,22 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {[
-              { city: 'Casablanca', cat: 'plomberie',     label: 'Plombiers',     emoji: '🔧', slug: 'plomberie' },
-              { city: 'Casablanca', cat: 'electricite',   label: 'Électriciens',  emoji: '⚡', slug: 'electricite' },
-              { city: 'Casablanca', cat: 'menage',        label: 'Aide ménagère', emoji: '🧹', slug: 'menage' },
-              { city: 'Rabat',      cat: 'plomberie',     label: 'Plombiers',     emoji: '🔧', slug: 'plomberie' },
-              { city: 'Rabat',      cat: 'electricite',   label: 'Électriciens',  emoji: '⚡', slug: 'electricite' },
-              { city: 'Marrakech',  cat: 'climatisation', label: 'Climatisation', emoji: '❄️', slug: 'climatisation' },
-            ].map(({ city, cat, label, emoji, slug }) => (
+              { city: 'Casablanca', cat: 'plomberie',     catKey: 'top_cat_plomberie',     emoji: '🔧', slug: 'plomberie' },
+              { city: 'Casablanca', cat: 'electricite',   catKey: 'top_cat_electricite',   emoji: '⚡', slug: 'electricite' },
+              { city: 'Casablanca', cat: 'menage',        catKey: 'top_cat_menage',        emoji: '🧹', slug: 'menage' },
+              { city: 'Rabat',      cat: 'plomberie',     catKey: 'top_cat_plomberie',     emoji: '🔧', slug: 'plomberie' },
+              { city: 'Rabat',      cat: 'electricite',   catKey: 'top_cat_electricite',   emoji: '⚡', slug: 'electricite' },
+              { city: 'Marrakech',  cat: 'climatisation', catKey: 'top_cat_climatisation', emoji: '❄️', slug: 'climatisation' },
+            ].map(({ city, catKey, emoji, slug }) => (
               <a
-                key={`${city}-${cat}`}
+                key={`${city}-${slug}`}
                 href={`/top-artisans/${city.toLowerCase()}/${slug}`}
                 className="flex items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3 hover:border-orange-300 hover:shadow-sm dark:hover:border-orange-700 transition-all group"
               >
                 <span className="text-2xl shrink-0">{emoji}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-slate-800 dark:text-white truncate">
-                    Top 10 {label}
+                    Top 10 {t(catKey)}
                   </p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{city}</p>
                 </div>

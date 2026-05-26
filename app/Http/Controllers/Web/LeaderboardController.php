@@ -44,9 +44,10 @@ class LeaderboardController extends Controller
         $seoDescription = "Découvrez les meilleurs {$catTitle}s vérifiés à {$cityTitle} classés par note. Contactez-les directement sur WhatsApp.";
 
         // FAQ schema
+        $topProName = $pros->first()?->name ?? 'disponible sur Jobly';
         $faqs = [
             ['q' => "Quel est le meilleur {$catTitle} à {$cityTitle} ?",
-             'a' => "Selon les avis clients Jobly, le meilleur {$catTitle} à {$cityTitle} est {$pros->first()?->name ?? 'disponible sur Jobly'}. Consultez le classement complet ci-dessous."],
+             'a' => "Selon les avis clients Jobly, le meilleur {$catTitle} à {$cityTitle} est {$topProName}. Consultez le classement complet ci-dessous."],
             ['q' => "Comment trouver un {$catTitle} fiable à {$cityTitle} ?",
              'a' => "Sur Jobly, tous les {$catTitle}s sont vérifiés (identité + appel). Consultez les avis clients et contactez-les directement sur WhatsApp."],
             ['q' => "Combien coûte un {$catTitle} à {$cityTitle} ?",
