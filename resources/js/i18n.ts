@@ -476,6 +476,21 @@ const resources = {
       dash_quote_new: 'Nouvelle',
       dash_quote_seen: 'Vue',
       dash_quote_status_new: 'Nouvelle demande',
+      // Subscription & Referral
+      dash_plan_until: "jusqu'au {{date}}",
+      dash_referral_code: '🎁 Code parrainage',
+      dash_referral_hint: 'Partagez ce code → gagnez 1 mois Pro offert',
+      dash_refer_pro: 'Parrainer un artisan',
+      dash_referral_link_sub: 'Copiez votre lien de parrainage',
+
+      // Push notifications
+      dash_push_title: 'Notifications push',
+      dash_push_desc: 'Soyez alerté instantanément quand un client vous contacte',
+      dash_push_activate: 'Activer',
+      dash_push_active_title: 'Notifications actives',
+      dash_push_active_desc: 'Vous recevez une alerte push à chaque nouveau contact',
+      dash_push_deactivate: 'Désactiver',
+
       // Admin edit pro
       admin_edit_pro: 'Modifier',
       admin_edit_name: 'Nom',
@@ -1093,6 +1108,21 @@ const resources = {
       dash_quote_new: 'جديدة',
       dash_quote_seen: 'مشاهدة',
       dash_quote_status_new: 'طلب جديد',
+      // Subscription & Referral
+      dash_plan_until: 'حتى {{date}}',
+      dash_referral_code: '🎁 رمز الإحالة',
+      dash_referral_hint: 'شارك هذا الرمز → اربح شهراً Pro مجاناً',
+      dash_refer_pro: 'إحالة حرفي',
+      dash_referral_link_sub: 'انسخ رابط الإحالة الخاص بك',
+
+      // Push notifications
+      dash_push_title: 'إشعارات فورية',
+      dash_push_desc: 'تنبّه فوراً عندما يتصل بك عميل',
+      dash_push_activate: 'تفعيل',
+      dash_push_active_title: 'الإشعارات نشطة',
+      dash_push_active_desc: 'ستتلقى تنبيهاً فورياً عند كل تواصل جديد',
+      dash_push_deactivate: 'إلغاء التفعيل',
+
       admin_edit_pro: 'تعديل',
       admin_edit_name: 'الاسم',
       admin_edit_profession: 'المهنة',

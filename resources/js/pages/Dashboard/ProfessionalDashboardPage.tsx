@@ -908,7 +908,7 @@ export default function ProfessionalDashboardPage() {
                   )}
                   {pro.subscription_expires_at && pro.subscription_plan !== 'free' && (
                     <span className="text-xs text-slate-400">
-                      jusqu&apos;au {new Date(pro.subscription_expires_at).toLocaleDateString('fr-FR')}
+                      {t('dash_plan_until', { date: new Date(pro.subscription_expires_at).toLocaleDateString() })}
                     </span>
                   )}
                 </div>
@@ -917,7 +917,7 @@ export default function ProfessionalDashboardPage() {
               {/* Referral code */}
               {!loading && pro?.referral_code && (
                 <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">🎁 Code parrainage</p>
+                  <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">{t('dash_referral_code')}</p>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 px-3 py-1.5 text-sm font-bold text-orange-700 dark:text-orange-300 tracking-wider">
                       {pro.referral_code}
@@ -932,7 +932,7 @@ export default function ProfessionalDashboardPage() {
                       </svg>
                     </button>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1.5">Partagez ce code → gagnez 1 mois Pro offert</p>
+                  <p className="text-xs text-slate-400 mt-1.5">{t('dash_referral_hint')}</p>
                 </div>
               )}
 
@@ -1041,15 +1041,15 @@ export default function ProfessionalDashboardPage() {
               <div className="rounded-2xl border border-orange-100 dark:border-orange-900/30 bg-orange-50/60 dark:bg-orange-900/10 px-4 py-3 flex items-center gap-3">
                 <span className="text-2xl shrink-0">🔔</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-orange-700 dark:text-orange-400">Notifications push</p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">Soyez alerté instantanément quand un client vous contacte</p>
+                  <p className="text-xs font-semibold text-orange-700 dark:text-orange-400">{t('dash_push_title')}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">{t('dash_push_desc')}</p>
                 </div>
                 <button
                   onClick={push.subscribe}
                   className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold px-3 py-1.5 transition-colors"
                 >
                   <Bell className="h-3 w-3" />
-                  Activer
+                  {t('dash_push_activate')}
                 </button>
               </div>
             )}
@@ -1057,15 +1057,15 @@ export default function ProfessionalDashboardPage() {
               <div className="rounded-2xl border border-green-100 dark:border-green-900/30 bg-green-50/60 dark:bg-green-900/10 px-4 py-3 flex items-center gap-3">
                 <span className="text-2xl shrink-0">🔔</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-green-700 dark:text-green-400">Notifications actives</p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">Vous recevez une alerte push à chaque nouveau contact</p>
+                  <p className="text-xs font-semibold text-green-700 dark:text-green-400">{t('dash_push_active_title')}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400">{t('dash_push_active_desc')}</p>
                 </div>
                 <button
                   onClick={push.unsubscribe}
                   className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold px-3 py-1.5 transition-colors"
                 >
                   <BellOff className="h-3 w-3" />
-                  Désactiver
+                  {t('dash_push_deactivate')}
                 </button>
               </div>
             )}
@@ -1152,9 +1152,9 @@ export default function ProfessionalDashboardPage() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-slate-800 dark:text-white group-hover:text-orange-500 transition-colors">
-                    {copiedReferral ? 'Lien copié !' : 'Parrainer un artisan'}
+                    {copiedReferral ? t('dash_link_copied') : t('dash_refer_pro')}
                   </p>
-                  <p className="text-xs text-slate-400">Copiez votre lien de parrainage</p>
+                  <p className="text-xs text-slate-400">{t('dash_referral_link_sub')}</p>
                 </div>
               </button>
               <button
