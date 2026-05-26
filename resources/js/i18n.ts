@@ -618,6 +618,25 @@ const resources = {
       top_cat_maconnerie: 'Maçons',
       top_cat_carrelage: 'Carreleurs',
 
+      // GuidesListPage
+      cat_general: 'Général',
+      guides_badge: 'Guides Jobly',
+      guides_title: 'Guides & Conseils',
+      guides_desc: "Tout ce que vous devez savoir pour choisir le bon artisan, connaître les tarifs du marché et réussir vos travaux au Maroc.",
+      guides_breadcrumb: 'Guides',
+      guides_read_more: 'Lire le guide',
+      guides_read_min: '{{n}} min',
+      guides_cta_title: 'Prêt à trouver votre artisan ?',
+      guides_cta_desc: 'Plus de 100 artisans vérifiés disponibles dans votre ville.',
+      guides_cta_btn: 'Trouver un artisan',
+
+      // GuidePage
+      guide_read_time: '{{n}} min de lecture',
+      guide_toc: 'Sommaire',
+      guide_related: 'Guides similaires',
+      guide_back: '← Tous les guides',
+      guide_cta_desc: 'Artisans vérifiés — contact WhatsApp direct — 0% commission',
+
       // LeaderboardPage
       lb_badge: 'Classement Jobly',
       lb_title: 'Top 10 {{cat}}\nà {{city}}',

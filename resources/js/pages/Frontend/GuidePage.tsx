@@ -1,6 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { Layout } from '../../components/Layout';
 import { Clock, ChevronRight, ArrowRight, BookOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Section {
     title: string;
@@ -142,6 +143,7 @@ function renderInline(text: string): string {
 }
 
 export default function GuidePage({ article, relatedArticles, canonical }: Props) {
+    const { t } = useTranslation();
     const jsonLd = {
         '@context': 'https://schema.org',
         '@type': 'Article',
@@ -169,11 +171,11 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
             <div className="min-h-screen bg-white dark:bg-slate-900">
                 <div className="max-w-3xl mx-auto px-4 py-10">
                     {/* Breadcrumb */}
-                    <nav className="flex items-center gap-2 text-xs text-slate-400 mb-8" aria-label="Fil d'Ariane">
-                        <Link href="/" className="hover:text-orange-500 transition-colors">Accueil</Link>
-                        <ChevronRight className="h-3 w-3" />
-                        <Link href="/guides" className="hover:text-orange-500 transition-colors">Guides</Link>
-                        <ChevronRight className="h-3 w-3" />
+                    <nav className="flex items-center gap-2 text-xs text-slate-400 mb-8" aria-label="breadcrumb">
+                        <Link href="/" className="hover:text-orange-500 transition-colors">{t('nav_home')}</Link>
+                        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
+                        <Link href="/guides" className="hover:text-orange-500 transition-colors">{t('guides_breadcrumb')}</Link>
+                        <ChevronRight className="h-3 w-3 rtl:rotate-180" />
                         <span className="text-slate-600 dark:text-slate-300 truncate max-w-[200px]">{article.category}</span>
                     </nav>
 
@@ -185,7 +187,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                             </span>
                             <span className="flex items-center gap-1 text-xs text-slate-400">
                                 <Clock className="h-3 w-3" />
-                                {article.readTime} min de lecture
+                                {t('guide_read_time', { n: article.readTime })}
                             </span>
                         </div>
                         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
@@ -201,7 +203,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                         <div className="mb-8 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-5">
                             <div className="flex items-center gap-2 mb-3">
                                 <BookOpen className="h-4 w-4 text-orange-500" />
-                                <span className="text-sm font-bold text-slate-700 dark:text-slate-300">Sommaire</span>
+                                <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{t('guide_toc')}</span>
                             </div>
                             <ol className="space-y-1.5">
                                 {article.sections.map((s, i) => (
@@ -236,7 +238,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                     {/* CTA */}
                     <div className="mt-12 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-6 text-white">
                         <p className="font-bold text-lg mb-1">{article.cta.text}</p>
-                        <p className="text-orange-100 text-sm mb-4">Artisans vérifiés — contact WhatsApp direct — 0% commission</p>
+                        <p className="text-orange-100 text-sm mb-4">{t('guide_cta_desc')}</p>
                         <a
                             href={article.cta.url}
                             className="inline-flex items-center gap-2 bg-white text-orange-600 hover:bg-orange-50 font-bold px-5 py-2.5 rounded-xl transition-colors text-sm"
@@ -248,7 +250,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                     {/* Related articles */}
                     {relatedArticles.length > 0 && (
                         <div className="mt-12">
-                            <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">Guides similaires</h2>
+                            <h2 className="text-base font-bold text-slate-900 dark:text-white mb-4">{t('guide_related')}</h2>
                             <div className="grid gap-4 sm:grid-cols-2">
                                 {relatedArticles.map((rel) => (
                                     <Link
@@ -262,7 +264,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                                                 {rel.title}
                                             </p>
                                             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                                                <Clock className="h-3 w-3" /> {rel.readTime} min
+                                                <Clock className="h-3 w-3" /> {t('guides_read_min', { n: rel.readTime })}
                                             </p>
                                         </div>
                                     </Link>
@@ -277,7 +279,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                             href="/guides"
                             className="text-sm text-slate-400 hover:text-orange-500 transition-colors flex items-center gap-1"
                         >
-                            ← Tous les guides
+                            {t('guide_back')}
                         </Link>
                     </div>
                 </div>
