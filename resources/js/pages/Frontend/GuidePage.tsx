@@ -21,7 +21,7 @@ interface Article {
     city: string | null;
     readTime: number;
     date: string;
-    intro: string;
+    intro?: string | null;
     sections: Section[];
     cta: Cta;
 }
@@ -39,7 +39,8 @@ interface Props {
     canonical: string;
 }
 
-function renderMarkdown(text: string): JSX.Element[] {
+function renderMarkdown(text: string | null | undefined): JSX.Element[] {
+    if (!text) return [];
     const lines = text.split('\n');
     const elements: JSX.Element[] = [];
     let tableLines: string[] = [];

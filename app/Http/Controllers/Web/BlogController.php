@@ -980,6 +980,7 @@ class BlogController extends Controller
             'city'        => 'Fès',
             'readTime'    => 5,
             'date'        => '2026-05-26',
+            'intro'       => "Fès, avec sa médina millénaire et ses quartiers modernes en pleine expansion, présente des défis uniques pour trouver un plombier compétent. Ce guide vous donne les tarifs locaux et les clés pour choisir le bon professionnel.",
             'sections'    => [
                 [
                     'title'   => "1. Prix d'un plombier à Fès en 2026",
@@ -1017,6 +1018,7 @@ class BlogController extends Controller
             'city'        => 'Casablanca',
             'readTime'    => 5,
             'date'        => '2026-05-26',
+            'intro'       => "Trouver une aide ménagère fiable à Casablanca est un défi quotidien pour de nombreuses familles. Entre les tarifs variables, les questions de confiance et les formalités, ce guide vous donne toutes les informations pour faire le bon choix.",
             'sections'    => [
                 [
                     'title'   => "1. Tarifs d'une femme de ménage à Casablanca",
@@ -1054,6 +1056,7 @@ class BlogController extends Controller
             'city'        => 'Marrakech',
             'readTime'    => 5,
             'date'        => '2026-05-26',
+            'intro'       => "Marrakech, avec ses étés caniculaires et sa médina historique, pose des défis électriques particuliers. Climatisation surchargée, installations anciennes, accès difficile en médina : voici tout ce qu'il faut savoir pour choisir un électricien compétent.",
             'sections'    => [
                 [
                     'title'   => "1. Tarifs des électriciens à Marrakech en 2026",
@@ -1091,6 +1094,7 @@ class BlogController extends Controller
             'city'        => 'Casablanca',
             'readTime'    => 5,
             'date'        => '2026-05-26',
+            'intro'       => "Rénover ses sols ou revêtements muraux est un investissement important. À Casablanca, les carreleurs varient fortement en qualité et en prix. Ce guide vous aide à comprendre les tarifs, choisir les bons matériaux et sélectionner un professionnel fiable.",
             'sections'    => [
                 [
                     'title'   => "1. Prix de la pose de carrelage à Casablanca",
@@ -1128,6 +1132,7 @@ class BlogController extends Controller
             'city'        => 'Tanger',
             'readTime'    => 6,
             'date'        => '2026-05-26',
+            'intro'       => "Tanger est en pleine transformation urbaine. Cette croissance rapide a créé une forte demande en artisans qualifiés — mais aussi l'arrivée de prestataires non vérifiés. Ce guide vous aide à trouver un artisan fiable dans toutes les zones de Tanger.",
             'sections'    => [
                 [
                     'title'   => "1. Le marché de l'artisanat à Tanger",
@@ -1165,6 +1170,7 @@ class BlogController extends Controller
             'city'        => 'Rabat',
             'readTime'    => 5,
             'date'        => '2026-05-26',
+            'intro'       => "Rabat, capitale du Maroc, bénéficie d'un marché de peintres compétitif avec des tarifs accessibles. Mais entre un travail soigné et une peinture bâclée, la différence est énorme. Ce guide vous aide à choisir le bon professionnel et à comprendre les tarifs locaux.",
             'sections'    => [
                 [
                     'title'   => "1. Tarifs des peintres à Rabat en 2026",

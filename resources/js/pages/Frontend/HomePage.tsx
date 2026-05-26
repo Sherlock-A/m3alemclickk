@@ -348,7 +348,7 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
               🚨 Besoin urgent
             </button>
             <a
-              href="/register/pro"
+              href="/pro/register"
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
             >
               Vous êtes artisan ?{' '}
@@ -604,7 +604,7 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <a
-                  href="/register/pro"
+                  href="/pro/register"
                   className="inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-bold text-orange-600 hover:bg-orange-50 transition-colors shadow-lg"
                 >
                   <Sparkles className="h-4 w-4" />
