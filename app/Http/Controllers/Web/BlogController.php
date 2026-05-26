@@ -971,6 +971,228 @@ class BlogController extends Controller
                 'carreleur-maroc-guide',
             ],
         ],
+
+        'plombier-fes-guide' => [
+            'slug'        => 'plombier-fes-guide',
+            'title'       => "Plombier à Fès : tarifs et conseils 2026",
+            'description' => "Trouvez un plombier fiable à Fès : prix des interventions, conseils pour éviter les arnaques et artisans vérifiés disponibles rapidement.",
+            'category'    => 'Plomberie',
+            'city'        => 'Fès',
+            'readTime'    => 5,
+            'date'        => '2026-05-26',
+            'sections'    => [
+                [
+                    'title'   => "1. Prix d'un plombier à Fès en 2026",
+                    'content' => "Les tarifs des plombiers à Fès sont légèrement inférieurs à ceux de Casablanca :\n\n- **Fuite robinet** : 120–250 MAD\n- **Débouchage WC** : 180–400 MAD\n- **Remplacement chauffe-eau** : 350–700 MAD (hors matériel)\n- **Détection de fuite cachée** : 300–600 MAD\n- **Installation salle de bain complète** : 1 500–4 000 MAD\n\nUne majorité des plombiers de Fès travaille en zone médina et en périphérie (Saïss, Route d'Imouzzer).",
+                ],
+                [
+                    'title'   => "2. Spécificités des canalisations à Fès",
+                    'content' => "La médina de Fès possède un réseau de canalisations ancien, parfois centenaire. Les interventions en médina sont souvent plus complexes :\n\n- Tuyaux en plomb ou en fonte dans les anciennes constructions\n- Accès difficile pour le matériel professionnel (ruelles étroites)\n- Canalisations partagées entre plusieurs propriétés (riads mitoyens)\n\n**Conseil :** pour les riads et demeures historiques, choisissez un plombier ayant une expérience en médina — c'est une spécialité. Demandez-lui s'il a déjà travaillé dans la médina.",
+                ],
+                [
+                    'title'   => "3. Urgences plomberie à Fès",
+                    'content' => "En cas de fuite importante ou d'inondation :\n\n1. **Coupez l'eau** au robinet principal (souvent dans le hall ou à l'entrée du logement)\n2. **Appelez un plombier d'urgence** — sur Jobly, filtrez par « Disponible maintenant » pour trouver un artisan réactif\n3. **Photographiez les dégâts** avant toute intervention (pour votre assurance)\n\n**Délai moyen d'intervention à Fès :** 30–90 minutes pour les quartiers principaux (Ville Nouvelle, Agdal, Narjis), plus long pour la médina en heure de pointe.",
+                ],
+                [
+                    'title'   => "4. Questions à poser avant de choisir",
+                    'content' => "Avant de confier votre installation à un plombier à Fès, posez ces questions :\n\n- Travaillez-vous en médina ? (si applicable)\n- Le devis inclut-il les pièces de rechange ?\n- Proposez-vous une garantie après intervention ?\n- Avez-vous une assurance responsabilité civile professionnelle ?\n\nUn artisan qui hésite à répondre à ces questions mérite d'être remplacé par un concurrent.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un plombier à Fès",
+                'url'   => '/professionnels/fes/plomberie',
+                'label' => 'Voir les plombiers de Fès',
+            ],
+            'related' => [
+                'choisir-plombier-casablanca',
+                'plombier-marrakech',
+            ],
+        ],
+
+        'femme-menage-casablanca-guide' => [
+            'slug'        => 'femme-menage-casablanca-guide',
+            'title'       => "Femme de ménage à Casablanca : tarifs et conseils 2026",
+            'description' => "Comment trouver une aide ménagère fiable à Casablanca : prix à l'heure, à la journée, ou au mois, ce qu'il faut vérifier et les meilleures pratiques.",
+            'category'    => 'Ménage',
+            'city'        => 'Casablanca',
+            'readTime'    => 5,
+            'date'        => '2026-05-26',
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs d'une femme de ménage à Casablanca",
+                    'content' => "Les prix varient selon la formule choisie :\n\n| Formule | Tarif moyen |\n|---------|------------|\n| À l'heure (ponctuel) | 80–150 MAD/h |\n| Journée complète (8h) | 250–450 MAD |\n| Passage hebdomadaire | 300–500 MAD/passage |\n| Aide mensuelle (4×/mois) | 1 000–1 800 MAD |\n| Femme de ménage à temps plein | 2 500–4 000 MAD/mois |\n\n*Note :* les quartiers haut de gamme (Anfa, CIL, Palmier) pratiquent généralement des tarifs supérieurs de 15–25%.",
+                ],
+                [
+                    'title'   => "2. Ponctuelle ou régulière : quelle formule choisir ?",
+                    'content' => "**Intervention ponctuelle :** idéale pour un grand ménage de printemps, après une fête ou avant un déménagement. Comptez 4–8 heures pour un appartement de taille standard (80–100 m²).\n\n**Aide régulière :** recommandée si vous avez des enfants ou un rythme de travail chargé. Une aide hebdomadaire de 3–4 heures maintient le logement propre sans accumulation.\n\n**Temps plein :** pour les familles nombreuses ou les villas (200 m² et plus). La femme de ménage peut également s'occuper de la cuisine et du linge.",
+                ],
+                [
+                    'title'   => "3. Ce qu'il faut vérifier avant l'embauche",
+                    'content' => "**Vérifications essentielles :**\n- A-t-elle des références vérifiables (anciens employeurs) ?\n- Est-elle ponctuelle et autonome dans son travail ?\n- Apporte-t-elle ses propres produits ou faut-il les fournir ?\n\n**Questions pratiques :**\n- Avez-vous des allergies aux produits d'entretien ?\n- Pouvez-vous gérer les escaliers / terrasse / jardin ?\n- Êtes-vous disponible le week-end ?\n\nSur Jobly, les aides ménagères ont un profil vérifié avec notes et commentaires de clients précédents.",
+                ],
+                [
+                    'title'   => "4. Formalités : déclarée ou non ?",
+                    'content' => "Au Maroc, une femme de ménage travaillant régulièrement dans un foyer doit idéalement être déclarée à la CNSS (Caisse Nationale de Sécurité Sociale). En pratique :\n\n- La déclaration CNSS coûte environ 15% du salaire brut (part employeur)\n- Elle protège la travailleuse (accidents de travail, retraite)\n- Elle vous protège en cas de litige\n\nPour les interventions ponctuelles (moins de 3 fois par mois), la déclaration est moins fréquente mais reste recommandée.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver une aide ménagère à Casablanca",
+                'url'   => '/professionnels/casablanca/menage',
+                'label' => 'Voir les aides ménagères',
+            ],
+            'related' => [
+                'femme-de-menage-casablanca',
+                'femme-menage-rabat',
+            ],
+        ],
+
+        'electricien-marrakech-guide' => [
+            'slug'        => 'electricien-marrakech-guide',
+            'title'       => "Électricien à Marrakech : tarifs et conseils 2026",
+            'description' => "Trouver un électricien à Marrakech : prix des interventions électriques, réglementation, et artisans vérifiés disponibles rapidement dans l'Ochre City.",
+            'category'    => 'Électricité',
+            'city'        => 'Marrakech',
+            'readTime'    => 5,
+            'date'        => '2026-05-26',
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des électriciens à Marrakech en 2026",
+                    'content' => "Les tarifs à Marrakech sont comparables à ceux de Casablanca, avec quelques nuances selon le quartier :\n\n- **Dépannage simple (prise, interrupteur)** : 120–280 MAD\n- **Remplacement tableau électrique** : 800–2 500 MAD\n- **Installation climatisation (câblage)** : 400–900 MAD\n- **Mise aux normes appartement** : 1 500–4 000 MAD\n- **Installation panneau solaire (câblage)** : 1 000–3 000 MAD\n\nLes zones touristiques (Guéliz, Hivernage, Palmeraie) ont tendance à pratiquer des tarifs supérieurs de 20–30%.",
+                ],
+                [
+                    'title'   => "2. Spécificités électriques à Marrakech",
+                    'content' => "Marrakech présente des défis électriques particuliers liés à son climat :\n\n**Chaleur extrême (40–48°C en été) :**\n- Surcharge des circuits due aux climatiseurs\n- Câbles qui vieillissent plus vite (chaleur accélère la dégradation des isolants)\n- Risque accru de courts-circuits en été\n\n**Médina :**\n- Installations souvent vieilles de 30–50 ans\n- Câblages en aluminium (vs cuivre dans les constructions modernes)\n- Travaux plus complexes et longs qu'en Ville Nouvelle\n\n**Recommandation :** faites réviser votre installation électrique tous les 5 ans si votre logement a plus de 20 ans.",
+                ],
+                [
+                    'title'   => "3. Climatisation et électricité à Marrakech",
+                    'content' => "L'installation d'une climatisation à Marrakech nécessite un électricien qualifié pour :\n\n1. **Vérifier la capacité du tableau électrique** (un split 12 000 BTU consomme 1 200–1 500W)\n2. **Créer un circuit dédié** (câble 2,5 mm² minimum)\n3. **Poser un disjoncteur différentiel** pour la protection\n4. **Respecter la distance extérieur/intérieur** pour l'unité extérieure\n\nNe jamais brancher un climatiseur sur une simple prise murale existante — risque de surchauffe et d'incendie.\n\n**Prix installation électrique clim :** 400–900 MAD selon la puissance et la longueur des câbles.",
+                ],
+                [
+                    'title'   => "4. Comment choisir son électricien à Marrakech",
+                    'content' => "**Signes d'un bon électricien :**\n✅ Utilise un multimètre pour tester l'installation avant et après\n✅ Explique clairement ce qu'il fait et pourquoi\n✅ Remet un bon d'intervention avec les travaux effectués\n✅ Dispose d'une assurance responsabilité civile professionnelle\n\n**Red flags :**\n❌ Travaille sans coupe-circuit\n❌ Ne mesure pas les câbles (taille à la volée)\n❌ Refuse de faire un test final\n❌ Devis verbal uniquement",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un électricien à Marrakech",
+                'url'   => '/professionnels/marrakech/electricite',
+                'label' => 'Voir les électriciens de Marrakech',
+            ],
+            'related' => [
+                'electricien-casablanca',
+                'electricien-rabat-guide',
+            ],
+        ],
+
+        'carreleur-casablanca-guide' => [
+            'slug'        => 'carreleur-casablanca-guide',
+            'title'       => "Carreleur à Casablanca : tarifs pose et conseils 2026",
+            'description' => "Tout sur la pose de carrelage à Casablanca : prix au m², types de carreaux, durée des travaux et comment choisir un carreleur fiable.",
+            'category'    => 'Carrelage',
+            'city'        => 'Casablanca',
+            'readTime'    => 5,
+            'date'        => '2026-05-26',
+            'sections'    => [
+                [
+                    'title'   => "1. Prix de la pose de carrelage à Casablanca",
+                    'content' => "Les tarifs varient selon le type de pose et la surface :\n\n| Type de pose | Prix main-d'œuvre |\n|-------------|------------------|\n| Carrelage sol standard (< 60×60 cm) | 80–130 MAD/m² |\n| Grand format (> 60×60 cm) | 120–180 MAD/m² |\n| Carrelage mural (cuisine/salle de bain) | 90–150 MAD/m² |\n| Pose en diagonale | +20–30% |\n| Dépose ancienne carrelage | 30–60 MAD/m² |\n| Ragréage sol avant pose | 40–80 MAD/m² |\n\n*Ces prix n'incluent pas les carreaux eux-mêmes ni les colles et joints.*",
+                ],
+                [
+                    'title'   => "2. Quel carrelage choisir à Casablanca ?",
+                    'content' => "**Pour les salons et couloirs :**\n- Grès cérame poli (brillant) : 40–120 MAD/m² en magasin\n- Grand format (80×80 ou 120×60) : effet contemporain, très tendance à Casablanca\n- Imitation marbre ou bois : populaire dans les appartements haut de gamme\n\n**Pour les salles de bain et cuisines :**\n- Carreaux muraux 30×60 : bon rapport qualité/prix, pose rapide\n- Mosaïque : effet décoratif, plus cher à poser (+30%)\n- Carreaux de ciment : tendance, fragile si mal entretenu\n\n**Pour les terrasses et extérieurs :**\n- Grès antidérapant (R10 ou R11) — obligatoire pour éviter les chutes\n- Résistant au gel si votre terrasse est exposée\n- Évitez les carreaux polis en extérieur (dangereux mouillés)",
+                ],
+                [
+                    'title'   => "3. Durée des travaux et organisation",
+                    'content' => "**Estimation du temps de travaux :**\n- Pièce de 15 m² : 1–2 jours (hors séchage)\n- Appartement complet (70 m²) : 4–7 jours ouvrables\n- Séchage complet avant nettoyage : 24–48h minimum\n- Séchage avant joints : 24h minimum\n\n**Pendant les travaux :**\n- Prévoyez une solution de repli (hôtel ou famille) si la salle de bain est indisponible\n- Protégez les meubles et les murs environnants\n- Assurez-vous que les pièces sont bien ventilées (colles peuvent dégager des vapeurs)\n\n**Commandez 10% de carreaux en plus** que la surface mesurée — pour les coupes et les casses.",
+                ],
+                [
+                    'title'   => "4. Ce qu'un bon carreleur doit faire",
+                    'content' => "**Avant la pose :**\n✅ Mesurer précisément la surface et calculer la quantité\n✅ Vérifier la planéité du sol (avec niveau à bulle)\n✅ Préparer le support (ragréage si nécessaire)\n✅ Centrer le calepinage (pas de petites bandes visibles aux angles)\n\n**Pendant la pose :**\n✅ Utiliser des croisillons pour des joints réguliers\n✅ Vérifier la planéité ligne par ligne\n✅ Laisser sécher correctement avant de marcher dessus\n\n**Après la pose :**\n✅ Réaliser les joints proprement (sans excès)\n✅ Nettoyage complet des résidus de joint\n✅ Silicone aux jonctions mur/sol dans la salle de bain",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un carreleur à Casablanca",
+                'url'   => '/professionnels/casablanca/carrelage',
+                'label' => 'Voir les carreleurs de Casablanca',
+            ],
+            'related' => [
+                'carreleur-maroc-guide',
+                'peintre-casablanca',
+            ],
+        ],
+
+        'artisan-tanger-guide' => [
+            'slug'        => 'artisan-tanger-guide',
+            'title'       => "Artisans à Tanger : trouver un professionnel fiable en 2026",
+            'description' => "Guide complet pour trouver des artisans vérifiés à Tanger : plombiers, électriciens, peintres et plus — tarifs locaux et conseils pratiques.",
+            'category'    => 'Général',
+            'city'        => 'Tanger',
+            'readTime'    => 6,
+            'date'        => '2026-05-26',
+            'sections'    => [
+                [
+                    'title'   => "1. Le marché de l'artisanat à Tanger",
+                    'content' => "Tanger connaît un boom immobilier sans précédent depuis 2015 (Tanger Med, investissements étrangers, TGV Casablanca-Tanger). Cette croissance a généré une forte demande en artisans de tous corps de métiers.\n\n**Métiers les plus demandés à Tanger :**\n- Plombiers (forte croissance des nouveaux immeubles)\n- Électriciens (rénovations et climatisation)\n- Peintres (appartements neufs et rénovations)\n- Carreleurs (finitions de logements neufs)\n- Femmes de ménage (expatriés et familles aisées)\n\n**Prix à Tanger vs Casablanca :** en moyenne 10–20% moins élevés, sauf dans les zones huppées (Malabata, Marchane, Achakar).",
+                ],
+                [
+                    'title'   => "2. Tarifs des artisans à Tanger",
+                    'content' => "**Prix indicatifs à Tanger en 2026 :**\n\n| Métier | Intervention courante | Prix |\n|--------|----------------------|------|\n| Plombier | Fuite / débouchage | 150–350 MAD |\n| Électricien | Dépannage électrique | 130–300 MAD |\n| Peintre | Chambre (15 m²) | 400–800 MAD |\n| Carreleur | Pose au m² | 70–120 MAD/m² |\n| Femme de ménage | À l'heure | 70–120 MAD/h |\n| Maçon | Journée | 300–500 MAD/jour |\n| Menuisier | Porte intérieure | 250–500 MAD |",
+                ],
+                [
+                    'title'   => "3. Quartiers de Tanger : où trouver des artisans ?",
+                    'content' => "Les artisans de Tanger se concentrent dans certaines zones :\n\n**Ville Nouvelle (Beni Makada, Mghogha) :** La plupart des entreprises d'artisanat sont installées ici. Délais d'intervention courts.\n\n**Médina et Kasbah :** Travaux plus complexes (bâtiments anciens, accès difficile). Choisissez un artisan ayant une expérience en médina.\n\n**Cap Spartel / Achakar / Malabata :** Villas et résidences de standing. Les artisans pratiquent des tarifs plus élevés dans ces zones.\n\n**Tanger Med (Zone industrielle) :** Peu de demande résidentielle, concentrée sur les locaux commerciaux.",
+                ],
+                [
+                    'title'   => "4. Conseils pour trouver un artisan fiable à Tanger",
+                    'content' => "**Ne faites pas confiance aux rabatteurs :** À Tanger, des intermédiaires proposent parfois des artisans non qualifiés avec des marges importantes. Passez directement par une plateforme vérifiée ou par recommandation.\n\n**Vérifiez l'identité :** demandez toujours la CIN et un numéro de téléphone stable. Un artisan qui refuse est un signal d'alerte.\n\n**Méfiez-vous des « touristes » de la construction :** Tanger attire des travailleurs d'autres régions (Fès, Tétouan) pas toujours qualifiés. Privilégiez les artisans locaux avec des références à Tanger.\n\n**Exigez un devis écrit**, même pour une intervention simple — c'est la norme pour les professionnels sérieux.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un artisan à Tanger",
+                'url'   => '/professionnels/tanger/plomberie',
+                'label' => 'Voir les artisans de Tanger',
+            ],
+            'related' => [
+                'choisir-plombier-casablanca',
+                'electricien-casablanca',
+            ],
+        ],
+
+        'peintre-rabat-guide' => [
+            'slug'        => 'peintre-rabat-guide',
+            'title'       => "Peintre à Rabat : tarifs et conseils pour vos travaux 2026",
+            'description' => "Tout sur les travaux de peinture à Rabat : prix au m², types de peinture recommandés pour le climat atlantique, et peintres vérifiés disponibles rapidement.",
+            'category'    => 'Peinture',
+            'city'        => 'Rabat',
+            'readTime'    => 5,
+            'date'        => '2026-05-26',
+            'sections'    => [
+                [
+                    'title'   => "1. Tarifs des peintres à Rabat en 2026",
+                    'content' => "Les tarifs des peintres à Rabat sont parmi les plus compétitifs du Maroc :\n\n| Prestation | Tarif indicatif |\n|-----------|----------------|\n| Peinture murs intérieurs (main-d'œuvre) | 20–45 MAD/m² |\n| Peinture plafond | 25–50 MAD/m² |\n| Peinture façade extérieure | 30–60 MAD/m² |\n| Chambre complète (15 m², 2 couches) | 350–700 MAD |\n| Appartement 70 m² (murs + plafonds) | 2 000–4 500 MAD |\n| Enduit décoratif (tadelakt, stucco) | 80–200 MAD/m² |\n\nCes prix incluent la main-d'œuvre uniquement — la peinture est généralement à la charge du client.",
+                ],
+                [
+                    'title'   => "2. Quel type de peinture pour Rabat ?",
+                    'content' => "Le climat de Rabat (humidité atlantique, pluies hivernales) impose des contraintes particulières :\n\n**Intérieur :**\n- **Peinture acrylique mate** : idéale pour les chambres et salons (non lavable, bonne couvrance)\n- **Peinture acrylique satin/velours** : recommandée pour les cuisines et salles de bain (résiste à la vapeur)\n- **Peinture glycéro** : pour les boiseries, portes et radiateurs\n\n**Extérieur (façades à Rabat) :**\n- Peinture imperméable de façade obligatoire\n- Teinte anti-moisissures recommandée (l'humidité atlantique favorise les moisissures sur les façades nord)\n- Primaire accrochage si façade ancienne ou en mauvais état\n\n**Finitions artisanales :**\n- **Tadelakt** : enduit imperméable typiquement marocain — idéal pour hammam et douche\n- **Gypse peint (jebs)** : utilisé pour les corniches et moulures décoratives",
+                ],
+                [
+                    'title'   => "3. Durée des travaux et conseils d'organisation",
+                    'content' => "**Estimation du temps :**\n- Chambre (15 m²) : 1 jour (préparation + 2 couches)\n- Appartement standard (70–90 m²) : 3–5 jours ouvrables\n- Façade (150 m²) : 4–7 jours (selon état et accessibilité)\n\n**Avant les travaux :**\n- Protégez les sols avec des bâches\n- Retirez les meubles ou regroupez-les au centre\n- Masquez les prises, interrupteurs et plinthes avec du ruban\n\n**Conditions idéales :**\n- Température entre 10°C et 30°C (évitez les jours de pluie ou de vent fort)\n- Bonne ventilation pour le séchage (ouvrez les fenêtres)\n- Ne pas chauffer la pièce pendant le séchage (crée des bulles)",
+                ],
+                [
+                    'title'   => "4. Comment choisir son peintre à Rabat",
+                    'content' => "**Les bons signes :**\n✅ Prépare correctement les surfaces (ponçage, rebouchage des trous)\n✅ Applique une couche d'impression (primaire) si nécessaire\n✅ Respecte le temps de séchage entre les couches\n✅ Nettoie son chantier à la fin\n✅ Utilise des pinceaux et rouleaux de qualité (pas de traces visibles)\n\n**Ce qu'il faut éviter :**\n❌ Peintre qui n'applique qu'une seule couche « pour aller plus vite »\n❌ Dilution excessive de la peinture (rendu terne et protection réduite)\n❌ Pas de protection des sols et meubles\n❌ Devis uniquement à l'oral\n\nSur Jobly, comparez les peintres de Rabat selon leurs avis et leur spécialité.",
+                ],
+            ],
+            'cta' => [
+                'text'  => "Trouver un peintre à Rabat",
+                'url'   => '/professionnels/rabat/peinture',
+                'label' => 'Voir les peintres de Rabat',
+            ],
+            'related' => [
+                'peintre-casablanca',
+                'peintre-marrakech',
+            ],
+        ],
     ];
 
     public function index(): \Inertia\Response

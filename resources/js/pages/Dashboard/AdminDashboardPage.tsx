@@ -621,6 +621,18 @@ function SectionProfessionals({ headers }: { headers: any }) {
                             <AlertCircle className="h-3.5 w-3.5 shrink-0" /> {editError}
                           </div>
                         )}
+                        {/* Referral info */}
+                        {u.professional?.referral_code && (
+                          <div className="border-t border-blue-100 pt-3 flex flex-wrap gap-4 items-start text-xs text-slate-500">
+                            <span>
+                              🎁 <strong>Code parrainage :</strong>{' '}
+                              <code className="font-bold text-orange-600 bg-orange-50 px-1.5 py-0.5 rounded">{u.professional.referral_code}</code>
+                            </span>
+                            {u.professional.referred_by && (
+                              <span>👥 <strong>Parrainé par :</strong> pro #{u.professional.referred_by}</span>
+                            )}
+                          </div>
+                        )}
                         {/* Subscription edit */}
                         <div className="border-t border-blue-100 pt-3 flex flex-wrap gap-3 items-end">
                           <div>
