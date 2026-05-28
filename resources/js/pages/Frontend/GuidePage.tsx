@@ -252,7 +252,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
     return (
         <Layout>
             <Head>
-                <title>{displayTitle} — Jobly</title>
+                <title>{`${displayTitle} — Jobly`}</title>
                 <meta name="description" content={displayDesc} />
                 <link rel="canonical" href={canonical} />
                 <meta property="og:title" content={displayTitle} />
