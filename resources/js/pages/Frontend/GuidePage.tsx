@@ -31,11 +31,14 @@ const UI: Record<string, { fr: string; ar: string }> = {
 interface Section { title: string; content: string; }
 interface Cta { text: string; url: string; label: string; }
 interface Article {
-    slug: string; title: string; description: string;
+    slug: string; title: string; title_ar?: string | null;
+    description: string; description_ar?: string | null;
     category: string; city: string | null; readTime: number;
-    date: string; intro?: string | null; sections: Section[]; cta: Cta;
+    date: string; intro?: string | null; intro_ar?: string | null;
+    sections: Section[]; sections_ar?: Section[] | null;
+    cta: Cta; cta_ar?: Partial<Cta> | null;
 }
-interface RelatedArticle { slug: string; title: string; category: string; readTime: number; }
+interface RelatedArticle { slug: string; title: string; title_ar?: string | null; category: string; readTime: number; }
 interface Props { article: Article; relatedArticles: RelatedArticle[]; canonical: string; }
 
 function renderInline(text: string): string {
@@ -145,6 +148,13 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
     const catEntry = CAT_MAP[article.category];
     const catLabel = catEntry ? (isAr ? catEntry.ar : catEntry.fr) : article.category;
 
+    const displayTitle    = isAr ? (article.title_ar    ?? article.title)   : article.title;
+    const displayIntro    = isAr ? (article.intro_ar    ?? article.intro)   : article.intro;
+    const displaySections = isAr ? (article.sections_ar ?? article.sections) : article.sections;
+    const displayCta      = isAr && article.cta_ar
+        ? { ...article.cta, text: article.cta_ar.text ?? article.cta.text, label: article.cta_ar.label ?? article.cta.label }
+        : article.cta;
+
     const relArray = Array.isArray(relatedArticles) ? relatedArticles : [];
 
     const jsonLd = {
@@ -161,11 +171,11 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
     return (
         <Layout>
             <Head>
-                <title>{article.title} — Jobly</title>
-                <meta name="description" content={article.description} />
+                <title>{displayTitle} — Jobly</title>
+                <meta name="description" content={isAr ? (article.description_ar ?? article.description) : article.description} />
                 <link rel="canonical" href={canonical} />
-                <meta property="og:title" content={article.title} />
-                <meta property="og:description" content={article.description} />
+                <meta property="og:title" content={displayTitle} />
+                <meta property="og:description" content={isAr ? (article.description_ar ?? article.description) : article.description} />
                 <meta property="og:type" content="article" />
                 <meta property="og:url" content={canonical} />
                 <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
@@ -194,24 +204,24 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                             </span>
                         </div>
                         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white leading-tight mb-4">
-                            {article.title}
+                            {displayTitle}
                         </h1>
-                        {article.intro && (
+                        {displayIntro && (
                             <p className="text-base text-slate-500 dark:text-slate-400 leading-relaxed border-s-4 border-orange-400 ps-4">
-                                {article.intro}
+                                {displayIntro}
                             </p>
                         )}
                     </header>
 
                     {/* Table of contents */}
-                    {article.sections && article.sections.length > 2 && (
+                    {displaySections && displaySections.length > 2 && (
                         <div className="mb-8 rounded-2xl border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40 p-5">
                             <div className="flex items-center gap-2 mb-3">
                                 <BookOpen className="h-4 w-4 text-orange-500" />
                                 <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{tr('toc')}</span>
                             </div>
                             <ol className="space-y-1.5">
-                                {article.sections.map((s, i) => (
+                                {displaySections.map((s, i) => (
                                     <li key={i}>
                                         <a href={`#section-${i}`}
                                             className="text-sm text-slate-600 dark:text-slate-400 hover:text-orange-500 transition-colors flex items-center gap-1.5">
@@ -225,9 +235,9 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                     )}
 
                     {/* Content sections */}
-                    {article.sections && (
+                    {displaySections && (
                         <div className="space-y-10">
-                            {article.sections.map((section, i) => (
+                            {displaySections.map((section, i) => (
                                 <section key={i} id={`section-${i}`}>
                                     <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-slate-800">
                                         {section.title}
@@ -243,11 +253,11 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                     {/* CTA */}
                     {article.cta && (
                         <div className="mt-12 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 p-6 text-white">
-                            <p className="font-bold text-lg mb-1">{article.cta.text}</p>
+                            <p className="font-bold text-lg mb-1">{displayCta.text}</p>
                             <p className="text-orange-100 text-sm mb-4">{tr('ctaDesc')}</p>
                             <a href={article.cta.url}
                                 className="inline-flex items-center gap-2 bg-white text-orange-600 hover:bg-orange-50 font-bold px-5 py-2.5 rounded-xl transition-colors text-sm">
-                                {article.cta.label} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
+                                {displayCta.label} <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                             </a>
                         </div>
                     )}
@@ -263,7 +273,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                                         <BookOpen className="h-4 w-4 text-orange-400 mt-0.5 shrink-0" />
                                         <div className="min-w-0">
                                             <p className="text-sm font-semibold text-slate-800 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors leading-snug">
-                                                {rel.title}
+                                                {isAr ? (rel.title_ar ?? rel.title) : rel.title}
                                             </p>
                                             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
                                                 <Clock className="h-3 w-3" /> {rel.readTime} min

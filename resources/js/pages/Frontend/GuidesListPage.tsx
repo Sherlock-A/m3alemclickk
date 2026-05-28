@@ -8,7 +8,9 @@ import { useLanguage } from '../../contexts/LanguageContext';
 interface ArticleSummary {
     slug: string;
     title: string;
+    title_ar?: string | null;
     description: string;
+    description_ar?: string | null;
     category: string;
     city: string | null;
     readTime: number;
@@ -116,10 +118,10 @@ export default function GuidesListPage({ articles }: Props) {
                                         </span>
                                     </div>
                                     <h2 className="font-bold text-slate-900 dark:text-white text-base leading-snug mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                                        {article.title}
+                                        {language === 'ar' ? (article.title_ar ?? article.title) : article.title}
                                     </h2>
                                     <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-2">
-                                        {article.description}
+                                        {language === 'ar' ? (article.description_ar ?? article.description) : article.description}
                                     </p>
                                     <div className="mt-4">
                                         <Link

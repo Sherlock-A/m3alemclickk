@@ -1203,15 +1203,21 @@ class BlogController extends Controller
 
     public function index(): \Inertia\Response
     {
-        $articles = array_map(fn($a) => [
-            'slug'        => $a['slug'],
-            'title'       => $a['title'],
-            'description' => $a['description'],
-            'category'    => $a['category'],
-            'city'        => $a['city'],
-            'readTime'    => $a['readTime'],
-            'date'        => $a['date'],
-        ], self::$ARTICLES);
+        $ar = BlogTranslationsAr::$AR;
+        $articles = array_map(function ($a) use ($ar) {
+            $t = $ar[$a['slug']] ?? [];
+            return [
+                'slug'         => $a['slug'],
+                'title'        => $a['title'],
+                'description'  => $a['description'],
+                'category'     => $a['category'],
+                'city'         => $a['city'],
+                'readTime'     => $a['readTime'],
+                'date'         => $a['date'],
+                'title_ar'     => $t['title'] ?? null,
+                'description_ar' => $t['description'] ?? null,
+            ];
+        }, self::$ARTICLES);
 
         return Inertia::render('Frontend/GuidesListPage', [
             'articles' => array_values($articles),
@@ -1226,20 +1232,31 @@ class BlogController extends Controller
             abort(404);
         }
 
-        $relatedArticles = array_map(
-            fn($s) => isset(self::$ARTICLES[$s]) ? [
-                'slug'     => self::$ARTICLES[$s]['slug'],
-                'title'    => self::$ARTICLES[$s]['title'],
-                'category' => self::$ARTICLES[$s]['category'],
-                'readTime' => self::$ARTICLES[$s]['readTime'],
-            ] : null,
-            $article['related'] ?? []
-        );
+        $ar = BlogTranslationsAr::$AR;
+        $t  = $ar[$slug] ?? [];
+        $article['title_ar']       = $t['title'] ?? null;
+        $article['description_ar'] = $t['description'] ?? null;
+        $article['intro_ar']       = $t['intro'] ?? null;
+        $article['sections_ar']    = $t['sections'] ?? null;
+        $article['cta_ar']         = isset($t['cta']) ? array_merge($article['cta'], $t['cta']) : null;
+
+        $relatedArticles = array_map(function ($s) use ($ar) {
+            if (! isset(self::$ARTICLES[$s])) return null;
+            $a  = self::$ARTICLES[$s];
+            $rt = $ar[$s] ?? [];
+            return [
+                'slug'     => $a['slug'],
+                'title'    => $a['title'],
+                'title_ar' => $rt['title'] ?? null,
+                'category' => $a['category'],
+                'readTime' => $a['readTime'],
+            ];
+        }, $article['related'] ?? []);
 
         return Inertia::render('Frontend/GuidePage', [
-            'article'        => $article,
+            'article'         => $article,
             'relatedArticles' => array_filter(array_values($relatedArticles)),
-            'canonical'      => config('app.url') . "/guides/{$slug}",
+            'canonical'       => config('app.url') . "/guides/{$slug}",
         ]);
     }
 
