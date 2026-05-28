@@ -706,6 +706,31 @@ const resources = {
       cookie_cat_marketing_title: 'Cookies marketing',
       cookie_cat_marketing_desc: 'Utilisés pour afficher des publicités pertinentes sur d\'autres sites.',
 
+      // HomePage — stats bar & quick actions
+      home_artisans_actifs: 'artisans actifs',
+      home_villes: 'villes',
+      home_contacts_week: 'contacts cette semaine',
+      home_disponibles: 'Disponibles maintenant',
+      home_besoin_urgent: '🚨 Besoin urgent',
+      home_etes_artisan: 'Vous êtes artisan ?',
+      home_creer_profil: 'Créez votre profil gratuit →',
+      // SOS modal
+      sos_title: "Besoin urgent d'un artisan",
+      sos_subtitle: 'Alertez tous les artisans disponibles dans votre ville',
+      sos_close: 'Fermer',
+      sos_error: 'Une erreur est survenue. Essayez à nouveau.',
+      sos_city_label: 'Votre ville *',
+      sos_city_placeholder: 'Ex: Casablanca',
+      sos_service_type: 'Type de service',
+      sos_all_services: 'Tous les services',
+      sos_name_label: 'Votre nom (optionnel)',
+      sos_name_placeholder: 'Ex: Karim',
+      sos_desc_label: 'Description rapide (optionnel)',
+      sos_desc_placeholder: "Ex: Fuite d'eau dans la cuisine, urgent...",
+      sos_sending: 'Envoi en cours...',
+      sos_submit: '🚨 Alerter les artisans disponibles',
+      sos_privacy: 'Vos coordonnées ne sont pas transmises — les artisans verront votre demande sur leur dashboard',
+
       // WhatsApp contact modal (ProfessionalShowPage)
       show_wa_contact: 'Contacter {{name}}',
       show_wa_time: 'via WhatsApp · 2 secondes',
@@ -1478,6 +1503,31 @@ const resources = {
       cookie_cat_analytics_desc: 'تساعدنا على فهم كيفية استخدامك لـ Jobly لتحسين المنصة.',
       cookie_cat_marketing_title: 'ملفات تسويقية',
       cookie_cat_marketing_desc: 'تُستخدم لعرض إعلانات ملائمة على مواقع أخرى.',
+
+      // HomePage — stats bar & quick actions
+      home_artisans_actifs: 'حرفيون نشطون',
+      home_villes: 'مدينة',
+      home_contacts_week: 'تواصل هذا الأسبوع',
+      home_disponibles: 'متاحون الآن',
+      home_besoin_urgent: '🚨 حاجة عاجلة',
+      home_etes_artisan: 'أنت حرفي؟',
+      home_creer_profil: 'أنشئ ملفك مجاناً ←',
+      // SOS modal
+      sos_title: 'حاجة عاجلة لحرفي',
+      sos_subtitle: 'أرسل تنبيهاً لجميع الحرفيين المتاحين في مدينتك',
+      sos_close: 'إغلاق',
+      sos_error: 'حدث خطأ. حاول مرة أخرى.',
+      sos_city_label: 'مدينتك *',
+      sos_city_placeholder: 'مثال: الدار البيضاء',
+      sos_service_type: 'نوع الخدمة',
+      sos_all_services: 'جميع الخدمات',
+      sos_name_label: 'اسمك (اختياري)',
+      sos_name_placeholder: 'مثال: كريم',
+      sos_desc_label: 'وصف سريع (اختياري)',
+      sos_desc_placeholder: 'مثال: تسرب ماء في المطبخ، عاجل...',
+      sos_sending: 'جاري الإرسال...',
+      sos_submit: '🚨 تنبيه الحرفيين المتاحين',
+      sos_privacy: 'لا تُشارَك معلوماتك — سيرى الحرفيون طلبك في لوحة تحكمهم',
 
       // Missing guides keys
       cat_general: 'عام',

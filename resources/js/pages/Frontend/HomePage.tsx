@@ -316,7 +316,7 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
               <strong className="text-slate-700 dark:text-slate-200">{stats.professionals}+</strong>
-              {' '}artisans actifs
+              {' '}{t('home_artisans_actifs')}
             </span>
             <span className="text-slate-300 dark:text-slate-600">·</span>
             <span className="flex items-center gap-1">
@@ -325,9 +325,9 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
             </span>
             <span className="text-slate-300 dark:text-slate-600">·</span>
             {stats.weekly_contacts != null && stats.weekly_contacts > 0 ? (
-              <span className="font-medium text-orange-600 dark:text-orange-400">🔥 {stats.weekly_contacts}+ contacts cette semaine</span>
+              <span className="font-medium text-orange-600 dark:text-orange-400">🔥 {stats.weekly_contacts}+ {t('home_contacts_week')}</span>
             ) : (
-              <span className="font-medium text-orange-600 dark:text-orange-400">{stats.cities}+ villes</span>
+              <span className="font-medium text-orange-600 dark:text-orange-400">{stats.cities}+ {t('home_villes')}</span>
             )}
           </p>
 
@@ -338,22 +338,22 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
               className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-100 transition-colors dark:border-green-800 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
             >
               <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-              Disponibles maintenant
-              <ArrowRight className="h-3.5 w-3.5" />
+              {t('home_disponibles')}
+              <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" />
             </a>
             <button
               onClick={() => { setSosCity(geo?.city ?? ''); setSosResult(null); setShowSos(true); }}
               className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 transition-colors dark:border-red-800/50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 animate-pulse"
             >
-              🚨 Besoin urgent
+              {t('home_besoin_urgent')}
             </button>
             <a
               href="/pro/register"
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
             >
-              Vous êtes artisan ?{' '}
+              {t('home_etes_artisan')}{' '}
               <span className="font-semibold text-orange-600 dark:text-orange-400">
-                Créez votre profil gratuit →
+                {t('home_creer_profil')}
               </span>
             </a>
           </div>
@@ -742,8 +742,8 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
             <div className="flex items-center gap-3 mb-5">
               <span className="text-3xl">🚨</span>
               <div>
-                <h2 className="text-lg font-black text-slate-800 dark:text-white">Besoin urgent d'un artisan</h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Alertez tous les artisans disponibles dans votre ville</p>
+                <h2 className="text-lg font-black text-slate-800 dark:text-white">{t('sos_title')}</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t('sos_subtitle')}</p>
               </div>
               <button onClick={() => setShowSos(false)} className="ml-auto text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
                 <X className="h-5 w-5" />
@@ -758,7 +758,7 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
                   onClick={() => setShowSos(false)}
                   className="mt-4 w-full rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 transition-colors"
                 >
-                  Fermer
+                  {t('sos_close')}
                 </button>
               </div>
             ) : (
@@ -774,49 +774,49 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
                   });
                   setSosResult(res.data.message);
                 } catch {
-                  setSosResult('Une erreur est survenue. Essayez à nouveau.');
+                  setSosResult(t('sos_error'));
                 } finally {
                   setSosSending(false);
                 }
               }} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Votre ville *</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t('sos_city_label')}</label>
                   <input
                     required
                     value={sosCity}
                     onChange={e => setSosCity(e.target.value)}
-                    placeholder="Ex: Casablanca"
+                    placeholder={t('sos_city_placeholder')}
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Type de service</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t('sos_service_type')}</label>
                   <select
                     value={sosCatId}
                     onChange={e => setSosCatId(e.target.value)}
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
                   >
-                    <option value="">Tous les services</option>
+                    <option value="">{t('sos_all_services')}</option>
                     {categories.map(c => (
                       <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Votre nom (optionnel)</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t('sos_name_label')}</label>
                   <input
                     value={sosName}
                     onChange={e => setSosName(e.target.value)}
-                    placeholder="Ex: Karim"
+                    placeholder={t('sos_name_placeholder')}
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">Description rapide (optionnel)</label>
+                  <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{t('sos_desc_label')}</label>
                   <textarea
                     value={sosMsg}
                     onChange={e => setSosMsg(e.target.value)}
-                    placeholder="Ex: Fuite d'eau dans la cuisine, urgent..."
+                    placeholder={t('sos_desc_placeholder')}
                     rows={2}
                     maxLength={300}
                     className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2.5 text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"
@@ -828,10 +828,10 @@ export default function HomePage({ categories, featured, stats, testimonials, ge
                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white font-bold py-3.5 text-sm transition-colors"
                 >
                   {sosSending ? <Loader2 className="h-4 w-4 animate-spin" /> : <AlertTriangle className="h-4 w-4" />}
-                  {sosSending ? 'Envoi en cours...' : '🚨 Alerter les artisans disponibles'}
+                  {sosSending ? t('sos_sending') : t('sos_submit')}
                 </button>
                 <p className="text-center text-[10px] text-slate-400 dark:text-slate-500">
-                  Vos coordonnées ne sont pas transmises — les artisans verront votre demande sur leur dashboard
+                  {t('sos_privacy')}
                 </p>
               </form>
             )}
