@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import { Layout } from '../../components/Layout';
 import { Clock, ChevronRight, ArrowRight, BookOpen, Calendar, Search } from 'lucide-react';
@@ -191,7 +191,6 @@ function formatDate(dateStr: string, lang: string): string {
 export default function GuidePage({ article, relatedArticles, canonical }: Props) {
     const { language } = useLanguage();
     const isAr = language === 'ar';
-    const [activeSection, setActiveSection] = useState(-1);
     const [shareCopied, setShareCopied] = useState(false);
 
     const tr = (key: keyof typeof UI) => isAr ? UI[key].ar : UI[key].fr;
@@ -215,23 +214,6 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
         ? `/professionals?profession=${encodeURIComponent(CAT_PROFESSION[article.category])}`
         : '/professionals';
 
-    // IntersectionObserver: track active TOC section
-    useEffect(() => {
-        if (!displaySections || displaySections.length === 0) return;
-        const observers: IntersectionObserver[] = [];
-        displaySections.forEach((_, i) => {
-            const el = document.getElementById(`section-${i}`);
-            if (!el) return;
-            const obs = new IntersectionObserver(
-                ([entry]) => { if (entry.isIntersecting) setActiveSection(i); },
-                { rootMargin: '-20% 0px -70% 0px' }
-            );
-            obs.observe(el);
-            observers.push(obs);
-        });
-        return () => observers.forEach(o => o.disconnect());
-    }, [displaySections]);
-
     const handleShare = async () => {
         try {
             if (navigator.share) {
@@ -245,28 +227,27 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
     };
 
     // JSON-LD: Article + BreadcrumbList
-    const jsonLd = [
-        {
-            '@context': 'https://schema.org',
-            '@type': 'Article',
-            headline: article.title,
-            description: article.description,
-            datePublished: article.date,
-            author: { '@type': 'Organization', name: 'Jobly', url: siteUrl },
-            publisher: { '@type': 'Organization', name: 'Jobly', url: siteUrl },
-            url: canonical,
-            image: `${siteUrl}/images/og-guides.jpg`,
-        },
-        {
-            '@context': 'https://schema.org',
-            '@type': 'BreadcrumbList',
-            itemListElement: [
-                { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
-                { '@type': 'ListItem', position: 2, name: 'Guides', item: `${siteUrl}/guides` },
-                { '@type': 'ListItem', position: 3, name: article.title, item: canonical },
-            ],
-        },
-    ];
+    const articleJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: article.title,
+        description: article.description,
+        datePublished: article.date,
+        author: { '@type': 'Organization', name: 'Jobly', url: siteUrl },
+        publisher: { '@type': 'Organization', name: 'Jobly', url: siteUrl },
+        url: canonical,
+        image: `${siteUrl}/images/og-guides.jpg`,
+    };
+
+    const breadcrumbJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: siteUrl },
+            { '@type': 'ListItem', position: 2, name: 'Guides', item: `${siteUrl}/guides` },
+            { '@type': 'ListItem', position: 3, name: article.title, item: canonical },
+        ],
+    };
 
     return (
         <Layout>
@@ -279,7 +260,8 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                 <meta property="og:type" content="article" />
                 <meta property="og:url" content={canonical} />
                 <meta property="og:image" content={`${siteUrl}/images/og-guides.jpg`} />
-                <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+                <script type="application/ld+json">{JSON.stringify(articleJsonLd)}</script>
+                <script type="application/ld+json">{JSON.stringify(breadcrumbJsonLd)}</script>
             </Head>
 
             {/* ── HERO ─────────────────────────────────────────────────────────── */}
@@ -443,11 +425,7 @@ export default function GuidePage({ article, relatedArticles, canonical }: Props
                                             {displaySections.map((s, i) => (
                                                 <li key={i}>
                                                     <a href={`#section-${i}`}
-                                                        className={`block text-xs py-1.5 px-2.5 rounded-lg transition-all leading-snug ${
-                                                            activeSection === i
-                                                                ? 'bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 font-semibold'
-                                                                : 'text-slate-500 dark:text-slate-400 hover:text-orange-500 hover:bg-slate-50 dark:hover:bg-slate-800'
-                                                        }`}>
+                                                        className="block text-xs py-1.5 px-2.5 rounded-lg transition-all leading-snug text-slate-500 dark:text-slate-400 hover:text-orange-500 hover:bg-slate-50 dark:hover:bg-slate-800">
                                                         {s.title}
                                                     </a>
                                                 </li>
