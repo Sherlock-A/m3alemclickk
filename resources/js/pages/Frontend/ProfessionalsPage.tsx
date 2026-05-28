@@ -60,7 +60,7 @@ function FilterButton({
 }
 
 function EmptyLeadForm({ profession, city, onClear }: { profession?: string; city?: string; onClear: () => void }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [phone, setPhone] = useState('');
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
@@ -71,8 +71,12 @@ function EmptyLeadForm({ profession, city, onClear }: { profession?: string; cit
     setSending(true);
     try {
       const profLabel = profession || t('professionals');
+      const isAr = i18n.language === 'ar';
+      const cityPart = city ? (isAr ? ` في *${city}*` : ` à *${city}*`) : '';
       const msg = encodeURIComponent(
-        `Bonjour Jobly 👋\nJe cherche un *${profLabel}*${city ? ` à *${city}*` : ''} et je n'ai pas trouvé de résultat.\nMon numéro : ${phone}\nMerci de me rappeler.`
+        isAr
+          ? `مرحباً Jobly 👋\nأبحث عن *${profLabel}*${cityPart} ولم أجد نتيجة.\nرقمي: ${phone}\nشكراً لإعادة الاتصال.`
+          : `Bonjour Jobly 👋\nJe cherche un *${profLabel}*${cityPart} et je n'ai pas trouvé de résultat.\nMon numéro : ${phone}\nMerci de me rappeler.`
       );
       window.open(`https://wa.me/212600000000?text=${msg}`, '_blank');
       setSent(true);

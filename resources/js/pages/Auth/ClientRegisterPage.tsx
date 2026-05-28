@@ -64,9 +64,9 @@ export default function ClientRegisterPage() {
       const res  = await fetch('/api/auth/google?role=client', { headers: { Accept: 'application/json' } });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
-      else setError('Impossible d\'initialiser Google.');
+      else setError(t('err_login'));
     } catch {
-      setError('Erreur réseau.');
+      setError(t('err_network'));
     } finally {
       setGoogleLoading(false);
     }
@@ -108,7 +108,7 @@ export default function ClientRegisterPage() {
       localStorage.setItem('auth_role', 'client');
       window.location.href = '/dashboard/client?onboarding=1';
     } catch {
-      setError('Erreur réseau. Vérifiez votre connexion internet.');
+      setError(t('err_network_connection'));
     } finally {
       setLoading(false);
     }

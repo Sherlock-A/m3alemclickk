@@ -5,6 +5,7 @@ import {
   Heart, LogOut, MapPin, Search, Star, User2,
   Trash2, ExternalLink, ChevronRight, Mail, Save, CheckCircle, X, ArrowRight, Award,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { JoblyLogo } from '../../components/JoblyLogo';
 
 type ClientUser = { name: string; email: string; phone?: string; city?: string };
@@ -40,6 +41,7 @@ function setFavIds(ids: number[]) {
 }
 
 export default function ClientDashboardPage() {
+  const { t } = useTranslation();
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('client_token'));
   const [user, setUser] = useState<ClientUser | null>(null);
   const [favPros, setFavPros] = useState<FavPro[]>([]);
@@ -240,7 +242,7 @@ export default function ClientDashboardPage() {
         <div className="rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-orange-100 text-sm font-medium">Bonjour 👋</p>
+              <p className="text-orange-100 text-sm font-medium">{t('client_hello')}</p>
               <h1 className="text-2xl font-black mt-0.5">{user?.name ?? '…'}</h1>
               <p className="text-orange-100 text-xs mt-1">{user?.email}</p>
             </div>

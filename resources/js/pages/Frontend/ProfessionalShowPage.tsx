@@ -48,7 +48,7 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
 }
 
 export default function ProfessionalShowPage({ professional, similar = [], seo }: Props) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const getCatName = useCatName();
   const [isFav, setIsFav] = useState(() => getFavIds().includes(professional.id));
 
@@ -108,7 +108,7 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
     if (name?.trim()) {
       axios.post(`/api/professionals/${professional.id}/contact`, {
         client_name: name.trim(),
-        message: need?.trim() || 'Bonjour, je souhaite vous contacter via Jobly.',
+        message: need?.trim() || t('show_wa_default_msg'),
       }).catch(() => {});
     }
     const params = new URLSearchParams();
@@ -945,17 +945,17 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
                 <MessageCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="font-black text-slate-800 dark:text-white">Contacter {professional.name}</p>
-                <p className="text-xs text-slate-400">via WhatsApp · 2 secondes</p>
+                <p className="font-black text-slate-800 dark:text-white">{t('show_wa_contact', { name: professional.name })}</p>
+                <p className="text-xs text-slate-400">{t('show_wa_time')}</p>
               </div>
             </div>
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">Votre prénom</label>
+                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">{t('show_wa_first_name')}</label>
                 <input
                   value={waName}
                   onChange={(e) => setWaName(e.target.value)}
-                  placeholder="Mohammed..."
+                  placeholder={t('show_wa_placeholder_name')}
                   autoFocus
                   onKeyDown={(e) => e.key === 'Enter' && openWhatsApp(waName, waNeed)}
                   className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400"
@@ -963,12 +963,12 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
-                  Votre besoin <span className="text-slate-400 font-normal">(optionnel)</span>
+                  {t('show_wa_need_label')} <span className="text-slate-400 font-normal">{t('show_wa_need_optional')}</span>
                 </label>
                 <input
                   value={waNeed}
                   onChange={(e) => setWaNeed(e.target.value)}
-                  placeholder="Ex: fuite d'eau, prise électrique…"
+                  placeholder={t('show_wa_placeholder_need')}
                   onKeyDown={(e) => e.key === 'Enter' && openWhatsApp(waName, waNeed)}
                   className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400"
                 />
@@ -980,18 +980,18 @@ export default function ProfessionalShowPage({ professional, similar = [], seo }
                 onClick={() => setShowWaModal(false)}
                 className="flex-1 rounded-xl border border-slate-200 dark:border-slate-700 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
-                Annuler
+                {t('dash_cancel')}
               </button>
               <button
                 type="button"
                 onClick={() => openWhatsApp(waName, waNeed)}
                 className="flex-1 rounded-xl bg-green-500 hover:bg-green-600 text-white py-2.5 text-sm font-bold transition-colors flex items-center justify-center gap-2"
               >
-                <MessageCircle className="h-4 w-4" /> Envoyer
+                <MessageCircle className="h-4 w-4" /> {t('show_wa_send')}
               </button>
             </div>
             <p className="mt-3 text-center text-[11px] text-slate-400">
-              Votre prénom sera partagé avec l'artisan dans le message WhatsApp
+              {t('show_wa_footer')}
             </p>
           </div>
         </div>

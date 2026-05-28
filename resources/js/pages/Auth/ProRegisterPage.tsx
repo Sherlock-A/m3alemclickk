@@ -107,9 +107,9 @@ export default function ProRegisterPage() {
       const res  = await fetch('/api/auth/google?role=professional', { headers: { Accept: 'application/json' } });
       const data = await res.json();
       if (data.url) window.location.href = data.url;
-      else setGlobalError('Impossible d\'initialiser Google.');
+      else setGlobalError(t('err_login'));
     } catch {
-      setGlobalError('Erreur réseau.');
+      setGlobalError(t('err_network'));
     } finally {
       setGoogleLoading(false);
     }
@@ -201,9 +201,9 @@ export default function ProRegisterPage() {
         else if (errors.email || errors.password || errors.password_confirmation) setStep(3);
         return;
       }
-      setGlobalError(translateError(data.message || "Erreur lors de l'inscription."));
+      setGlobalError(translateError(data.message || t('err_register')));
     } catch {
-      setGlobalError('Erreur réseau. Vérifiez votre connexion.');
+      setGlobalError(t('err_network_connection'));
     } finally {
       setLoading(false);
     }
