@@ -17,7 +17,7 @@ function GoogleIcon() {
 
 type City = { id: number; name: string; name_ar?: string | null };
 type Category = { id: number; name: string; icon: string; slug: string };
-type ProfessionSuggestion = { label: string; category: string };
+type ProfessionSuggestion = { label: string; label_ar?: string; category: string; category_ar?: string };
 type FieldErrors = Record<string, string>;
 type Step = 1 | 2 | 3;
 
@@ -37,7 +37,8 @@ function translateError(msg: string): string {
 
 export default function ProRegisterPage() {
   const { t } = useTranslation();
-  const { rtl } = useLanguage();
+  const { rtl, language } = useLanguage();
+  const isAr = language === 'ar';
 
   const STEPS = [
     { id: 1 as Step, label: t('reg_step_identity'), icon: User },
@@ -131,7 +132,8 @@ export default function ProRegisterPage() {
     }
   };
 
-  const pickSuggestion = (label: string) => {
+  const pickSuggestion = (s: ProfessionSuggestion) => {
+    const label = isAr ? (s.label_ar ?? s.label) : s.label;
     setForm(f => ({ ...f, profession: label }));
     setSuggestions([]); setShowSug(false);
     if (fieldErrors.profession) setFieldErrors(prev => { const n = { ...prev }; delete n.profession; return n; });
@@ -444,10 +446,14 @@ export default function ProRegisterPage() {
                     {showSug && suggestions.length > 0 && (
                       <div className="absolute z-50 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl overflow-hidden">
                         {suggestions.map((s, i) => (
-                          <button key={i} type="button" onMouseDown={() => pickSuggestion(s.label)}
+                          <button key={i} type="button" onMouseDown={() => pickSuggestion(s)}
                             className="w-full text-start px-4 py-2.5 hover:bg-orange-50 dark:hover:bg-orange-900/20 flex items-center justify-between gap-3 border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors">
-                            <span className="text-sm font-medium text-slate-800 dark:text-white">{s.label}</span>
-                            <span className="text-xs text-slate-400 shrink-0">{s.category}</span>
+                            <span className="text-sm font-medium text-slate-800 dark:text-white">
+                              {isAr ? (s.label_ar ?? s.label) : s.label}
+                            </span>
+                            <span className="text-xs text-slate-400 shrink-0">
+                              {isAr ? (s.category_ar ?? s.category) : s.category}
+                            </span>
                           </button>
                         ))}
                       </div>
