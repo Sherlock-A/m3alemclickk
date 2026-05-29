@@ -706,6 +706,11 @@ const resources = {
       cookie_cat_marketing_title: 'Cookies marketing',
       cookie_cat_marketing_desc: 'Utilisés pour afficher des publicités pertinentes sur d\'autres sites.',
 
+      // Footer specific links
+      footer_top_plombiers: '🏆 Top plombiers Casablanca',
+      footer_top_electriciens: '🏆 Top électriciens Rabat',
+      footer_tarifs: 'Tarifs',
+
       // HomePage — stats bar & quick actions
       home_artisans_actifs: 'artisans actifs',
       home_villes: 'villes',
@@ -1503,6 +1508,11 @@ const resources = {
       cookie_cat_analytics_desc: 'تساعدنا على فهم كيفية استخدامك لـ Jobly لتحسين المنصة.',
       cookie_cat_marketing_title: 'ملفات تسويقية',
       cookie_cat_marketing_desc: 'تُستخدم لعرض إعلانات ملائمة على مواقع أخرى.',
+
+      // Footer specific links
+      footer_top_plombiers: '🏆 أفضل سباكي الدار البيضاء',
+      footer_top_electriciens: '🏆 أفضل كهربائيي الرباط',
+      footer_tarifs: 'الأسعار',
 
       // HomePage — stats bar & quick actions
       home_artisans_actifs: 'حرفيون نشطون',
