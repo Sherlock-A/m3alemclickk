@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class ProAuthController extends Controller
@@ -106,21 +107,27 @@ class ProAuthController extends Controller
                     'completed_missions' => 0,
                 ]);
 
-                // Générer un code parrainage unique
-                $letters = strtoupper(preg_replace('/[^a-zA-Z]/', '', $data['name']));
-                $prefix  = substr($letters, 0, 5) ?: 'PRO';
-                $code    = $prefix . '-' . str_pad((string) rand(1000, 9999), 4, '0', STR_PAD_LEFT);
-                while (Professional::where('referral_code', $code)->exists()) {
-                    $code = $prefix . '-' . str_pad((string) rand(1000, 9999), 4, '0', STR_PAD_LEFT);
-                }
-                $professional->update(['referral_code' => $code]);
+                // Générer un code parrainage unique (optionnel — ignoré si migration pas encore exécutée)
+                try {
+                    if (Schema::hasColumn('professionals', 'referral_code')) {
+                        $letters = strtoupper(preg_replace('/[^a-zA-Z]/', '', $data['name']));
+                        $prefix  = substr($letters, 0, 5) ?: 'PRO';
+                        $code    = $prefix . '-' . str_pad((string) rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+                        while (Professional::where('referral_code', $code)->exists()) {
+                            $code = $prefix . '-' . str_pad((string) rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+                        }
+                        $professional->update(['referral_code' => $code]);
 
-                // Attribuer le parrain si le code fourni est valide
-                if ($referralCode !== '') {
-                    $referrer = Professional::where('referral_code', $referralCode)->first();
-                    if ($referrer) {
-                        $professional->update(['referred_by' => $referrer->id]);
+                        // Attribuer le parrain si le code fourni est valide
+                        if ($referralCode !== '' && Schema::hasColumn('professionals', 'referred_by')) {
+                            $referrer = Professional::where('referral_code', $referralCode)->first();
+                            if ($referrer) {
+                                $professional->update(['referred_by' => $referrer->id]);
+                            }
+                        }
                     }
+                } catch (\Throwable $refErr) {
+                    Log::warning('Referral code generation skipped: ' . $refErr->getMessage());
                 }
 
                 if (! empty($categoryIds)) {
@@ -139,7 +146,7 @@ class ProAuthController extends Controller
                 return [$professional, $user];
             });
         } catch (\Throwable $e) {
-            Log::error('Pro register failed: ' . $e->getMessage());
+            Log::error('Pro register failed: ' . $e->getMessage() . ' | ' . $e->getFile() . ':' . $e->getLine());
             return response()->json(['message' => 'Erreur lors de la création du compte. Veuillez réessayer.'], 500);
         }
 
